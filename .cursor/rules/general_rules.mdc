@@ -33,13 +33,13 @@ Avoir participé à la formation Python « Fondamentaux » ou posséder les comp
 ## PLAN DE COURS COMPLET
 
 ### 1. Concepts généraux
-- Introduction à Qt et PyQt5
+- Introduction à Qt et PyQt6
 - Présentation du binding PyQt
-- Installation des librairies Qt et PyQt5
+- Installation des librairies Qt et PyQt6
 - Configuration de l'environnement VSCode
 - Utilisation des documentations en ligne
 
-### 2. Principes généraux de PyQt5
+### 2. Principes généraux de PyQt6
 - Notion d'application Qt
 - Intégration des technologies HTML et CSS dans Qt
 - Interconnexion des différentes barres (barres de menus, d'outils et de status)
@@ -111,7 +111,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 1. **Proposer du contenu pertinent** adapté au contexte pédagogique
 2. **Suggérer des actions pratiques** à proposer aux stagiaires
 3. **Créer des énoncés de TP** concrets et progressifs
-4. **Fournir des exemples de code** fonctionnels en PyQt5
+4. **Fournir des exemples de code** fonctionnels en PyQt6
 5. **Structurer le contenu** de manière pédagogique
 6. **Respecter la contrainte** de 50% de travaux pratiques
 7. **Inclure les aspects MVC** dans les exemples appropriés
@@ -120,7 +120,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 
 ## TECHNOLOGIES À UTILISER
 - **Python** (version moderne)
-- **PyQt5** comme bibliothèque GUI principale
+- **PyQt6** comme bibliothèque GUI principale
 - **Qt Designer** pour la conception d'interfaces
 - **VSCode** comme environnement de développement
 - **Git** pour la gestion de version
@@ -142,7 +142,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 # Règles Générales - Formation QT Programming avec Python
 
 ## CONTEXTE DU PROJET
-En tant qu'expert Python et formateur, l'objectif est de créer une formation complète sur le thème « QT Programming – Python » en utilisant PyQt5.
+En tant qu'expert Python et formateur, l'objectif est de créer une formation complète sur le thème « QT Programming – Python » en utilisant PyQt6.
 
 ## OBJECTIFS DE LA FORMATION
 Les objectifs de cette formation résident dans l'acquisition des connaissances afin d'obtenir les compétences pour :
@@ -170,13 +170,13 @@ Avoir participé à la formation Python « Fondamentaux » ou posséder les comp
 ## PLAN DE COURS COMPLET
 
 ### 1. Concepts généraux
-- Introduction à Qt et PyQt5
+- Introduction à Qt et PyQt6
 - Présentation du binding PyQt
-- Installation des librairies Qt et PyQt5
+- Installation des librairies Qt et PyQt6
 - Configuration de l'environnement VSCode
 - Utilisation des documentations en ligne
 
-### 2. Principes généraux de PyQt5
+### 2. Principes généraux de PyQt6
 - Notion d'application Qt
 - Intégration des technologies HTML et CSS dans Qt
 - Interconnexion des différentes barres (barres de menus, d'outils et de status)
@@ -248,7 +248,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 1. **Proposer du contenu pertinent** adapté au contexte pédagogique
 2. **Suggérer des actions pratiques** à proposer aux stagiaires
 3. **Créer des énoncés de TP** concrets et progressifs
-4. **Fournir des exemples de code** fonctionnels en PyQt5
+4. **Fournir des exemples de code** fonctionnels en PyQt6
 5. **Structurer le contenu** de manière pédagogique
 6. **Respecter la contrainte** de 50% de travaux pratiques
 7. **Inclure les aspects MVC** dans les exemples appropriés
@@ -257,7 +257,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 
 ## TECHNOLOGIES À UTILISER
 - **Python** (version moderne)
-- **PyQt5** comme bibliothèque GUI principale
+- **PyQt6** comme bibliothèque GUI principale
 - **Qt Designer** pour la conception d'interfaces
 - **VSCode** comme environnement de développement
 - **Git** pour la gestion de version
