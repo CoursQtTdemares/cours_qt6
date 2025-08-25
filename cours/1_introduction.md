@@ -10,9 +10,9 @@
 - Naviguer efficacement dans la documentation Qt/PyQt6
 - Créer votre première application Qt fonctionnelle
 
-## Durée estimée : 3h00
-- **Théorie** : 1h30
-- **Travaux pratiques** : 1h30
+## Durée estimée : 2h00
+- **Théorie** : 1h
+- **Travaux pratiques** : 1h
 
 ---
 

@@ -124,7 +124,7 @@ Quand l'utilisateur demande de l'aide pour développer le cours :
 - **Qt Designer** pour la conception d'interfaces
 - **VSCode** comme environnement de développement
 - **Git** pour la gestion de version
-- **UV** ou **pip** pour la gestion des dépendances
+- **UV** pour la gestion des dépendances
 
 ## STRUCTURE DES RÉPONSES
 - Toujours répondre en **français**
