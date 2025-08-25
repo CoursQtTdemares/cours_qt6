@@ -371,19 +371,15 @@ if __name__ == "__main__":
 
 ### 🚧 TP1 - Installation et validation de l'environnement
 **Durée** : 15 minutes  
-*[Détails à venir dans un fichier séparé]*
 
 ### 🚧 TP2 - Configuration VSCode et premier debug
 **Durée** : 20 minutes  
-*[Détails à venir dans un fichier séparé]*
 
 ### 🚧 TP3 - Navigation dans la documentation
 **Durée** : 15 minutes  
-*[Détails à venir dans un fichier séparé]*
 
 ### 🚧 TP4 - Première application personnalisée
 **Durée** : 30 minutes  
-*[Détails à venir dans un fichier séparé]*
 
 ---
 
