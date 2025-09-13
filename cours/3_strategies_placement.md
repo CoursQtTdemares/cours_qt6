@@ -23,59 +23,58 @@
 Les layouts (gestionnaires de disposition) sont essentiels pour créer des interfaces utilisateur professionnelles et adaptatives :
 
 ```python
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QGridLayout, QLabel, QPushButton, QLineEdit
-)
-from PyQt6.QtCore import Qt
-import sys
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
+
 
 class BadExample(QMainWindow):
     """Exemple de ce qu'il ne faut PAS faire"""
-    def __init__(self):
+
+    def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Sans Layout - Problématique")
+        self.setWindowTitle('Sans Layout - Problématique')
         self.setGeometry(100, 100, 400, 300)
-        
+
         # Positionnement absolu (à éviter !)
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         # Widgets positionnés manuellement
-        label = QLabel("Nom:", central_widget)
+        label = QLabel('Nom:', central_widget)
         label.move(10, 10)  # Position fixe
         label.resize(80, 30)
-        
+
         line_edit = QLineEdit(central_widget)
         line_edit.move(100, 10)  # Position fixe
         line_edit.resize(200, 30)
-        
-        button = QPushButton("Valider", central_widget)
+
+        button = QPushButton('Valider', central_widget)
         button.move(150, 50)  # Position fixe
         button.resize(100, 30)
 
+
 class GoodExample(QMainWindow):
     """Exemple avec layout - Recommandé"""
-    def __init__(self):
+
+    def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Avec Layout - Adaptatif")
+        self.setWindowTitle('Avec Layout - Adaptatif')
         self.setGeometry(100, 100, 400, 300)
-        
+
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         # Layout qui s'adapte automatiquement
         layout = QVBoxLayout()
         central_widget.setLayout(layout)
-        
+
         # Layout horizontal pour le champ
         input_layout = QHBoxLayout()
-        input_layout.addWidget(QLabel("Nom:"))
+        input_layout.addWidget(QLabel('Nom:'))
         input_layout.addWidget(QLineEdit())
-        
+
         # Ajout au layout principal
         layout.addLayout(input_layout)
-        layout.addWidget(QPushButton("Valider"))
+        layout.addWidget(QPushButton('Valider'))
 ```
 
 ### 1.2 Avantages des layouts
@@ -92,57 +91,65 @@ class GoodExample(QMainWindow):
 ### 2.1 Widgets d'entrée essentiels
 
 ```python
-from PyQt6.QtWidgets import (
-    QLineEdit, QTextEdit, QComboBox, QSpinBox, QDoubleSpinBox,
-    QCheckBox, QRadioButton, QSlider, QProgressBar, QDateEdit
-)
 from PyQt6.QtCore import QDate
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDateEdit,
+    QLabel,
+    QLineEdit,
+    QSpinBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
 
 class InputWidgetsDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Composants d'entrée")
         self.setup_ui()
-    
-    def setup_ui(self):
+
+    def setup_ui(self) -> None:
         layout = QVBoxLayout()
         self.setLayout(layout)
-        
+
         # QLineEdit - Saisie de texte sur une ligne
         layout.addWidget(QLabel("Nom d'utilisateur:"))
         self.username_edit = QLineEdit()
-        self.username_edit.setPlaceholderText("Entrez votre nom")
+        self.username_edit.setPlaceholderText('Entrez votre nom')
         self.username_edit.setMaxLength(50)
         layout.addWidget(self.username_edit)
-        
+
         # QTextEdit - Saisie multiligne
-        layout.addWidget(QLabel("Description:"))
+        layout.addWidget(QLabel('Description:'))
         self.description_edit = QTextEdit()
         self.description_edit.setMaximumHeight(100)
         layout.addWidget(self.description_edit)
-        
+
         # QComboBox - Liste déroulante
-        layout.addWidget(QLabel("Pays:"))
+        layout.addWidget(QLabel('Pays:'))
         self.country_combo = QComboBox()
-        self.country_combo.addItems(["France", "Allemagne", "Espagne", "Italie"])
-        self.country_combo.setCurrentText("France")
+        self.country_combo.addItems(['France', 'Allemagne', 'Espagne', 'Italie'])
+        self.country_combo.setCurrentText('France')
         layout.addWidget(self.country_combo)
-        
+
         # QSpinBox - Saisie de nombres entiers
-        layout.addWidget(QLabel("Âge:"))
+        layout.addWidget(QLabel('Âge:'))
         self.age_spin = QSpinBox()
         self.age_spin.setRange(0, 120)
         self.age_spin.setValue(25)
-        self.age_spin.setSuffix(" ans")
+        self.age_spin.setSuffix(' ans')
         layout.addWidget(self.age_spin)
-        
+
         # QCheckBox - Case à cocher
         self.newsletter_check = QCheckBox("S'abonner à la newsletter")
         self.newsletter_check.setChecked(True)
         layout.addWidget(self.newsletter_check)
-        
+
         # QDateEdit - Sélection de date
-        layout.addWidget(QLabel("Date de naissance:"))
+        layout.addWidget(QLabel('Date de naissance:'))
         self.birth_date = QDateEdit()
         self.birth_date.setDate(QDate.currentDate())
         self.birth_date.setCalendarPopup(True)
@@ -152,51 +159,51 @@ class InputWidgetsDemo(QWidget):
 ### 2.2 Gestion des événements des widgets
 
 ```python
-def setup_connections(self):
-    """Configure les connexions signal/slot"""
-    # Réaction aux changements de texte
-    self.username_edit.textChanged.connect(self.on_username_changed)
-    
-    # Validation à la fin de saisie
-    self.username_edit.editingFinished.connect(self.validate_username)
-    
-    # Changement de sélection
-    self.country_combo.currentTextChanged.connect(self.on_country_changed)
-    
-    # Changement de valeur numérique
-    self.age_spin.valueChanged.connect(self.on_age_changed)
-    
-    # État des cases à cocher
-    self.newsletter_check.toggled.connect(self.on_newsletter_toggled)
+    def setup_connections(self) -> None:
+        """Configure les connexions signal/slot"""
+        # Réaction aux changements de texte
+        self.username_edit.textChanged.connect(self.on_username_changed)
 
-def on_username_changed(self, text):
-    """Appelé à chaque caractère tapé"""
-    if len(text) < 3:
-        self.username_edit.setStyleSheet("border: 2px solid red;")
-    else:
-        self.username_edit.setStyleSheet("border: 2px solid green;")
+        # Validation à la fin de saisie
+        self.username_edit.editingFinished.connect(self.validate_username)
 
-def validate_username(self):
-    """Validation finale du nom d'utilisateur"""
-    username = self.username_edit.text().strip()
-    if not username:
-        QMessageBox.warning(self, "Erreur", "Le nom d'utilisateur est requis")
+        # Changement de sélection
+        self.country_combo.currentTextChanged.connect(self.on_country_changed)
 
-def on_country_changed(self, country):
-    """Réaction au changement de pays"""
-    print(f"Pays sélectionné: {country}")
+        # Changement de valeur numérique
+        self.age_spin.valueChanged.connect(self.on_age_changed)
 
-def on_age_changed(self, age):
-    """Réaction au changement d'âge"""
-    if age >= 18:
-        print("Utilisateur majeur")
-    else:
-        print("Utilisateur mineur")
+        # État des cases à cocher
+        self.newsletter_check.toggled.connect(self.on_newsletter_toggled)
 
-def on_newsletter_toggled(self, checked):
-    """Réaction au changement d'abonnement"""
-    status = "abonné" if checked else "désabonné"
-    print(f"Newsletter: {status}")
+    def on_username_changed(self, text: str) -> None:
+        """Appelé à chaque caractère tapé"""
+        if len(text) < 3:
+            self.username_edit.setStyleSheet('border: 2px solid red;')
+        else:
+            self.username_edit.setStyleSheet('border: 2px solid green;')
+
+    def validate_username(self) -> None:
+        """Validation finale du nom d'utilisateur"""
+        username = self.username_edit.text().strip()
+        if not username:
+            QMessageBox.warning(self, 'Erreur', "Le nom d'utilisateur est requis")
+
+    def on_country_changed(self, country: str) -> None:
+        """Réaction au changement de pays"""
+        print(f'Pays sélectionné: {country}')
+
+    def on_age_changed(self, age: int) -> None:
+        """Réaction au changement d'âge"""
+        if age >= 18:
+            print('Utilisateur majeur')
+        else:
+            print('Utilisateur mineur')
+
+    def on_newsletter_toggled(self, checked: bool) -> None:
+        """Réaction au changement d'abonnement"""
+        status = 'abonné' if checked else 'désabonné'
+        print(f'Newsletter: {status}')
 ```
 
 ---
