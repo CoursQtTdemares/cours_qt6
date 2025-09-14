@@ -73,9 +73,7 @@
 
 ## Exercices supplémentaires
 
-- **Animations CSS** : Ajoutez des transitions fluides lors du changement de thème (piste: `transition` en CSS).
 - **Thème personnalisé** : Créez un troisième thème avec vos couleurs préférées (bleu, vert, violet...).
 - **Styles conditionnels** : Ajoutez des styles différents selon l'état des actions (activé/désactivé).
 - **Préférences utilisateur** : Sauvegardez le thème choisi et restaurez-le au démarrage (piste: `QSettings`).
-- **CSS avancé** : Expérimentez avec les dégradés (`linear-gradient`) et les ombres (`box-shadow`).
 - **Hot-reload** : Implémentez un rechargement automatique du CSS quand le fichier est modifié (piste: `QFileSystemWatcher`).

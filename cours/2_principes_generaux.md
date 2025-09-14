@@ -649,7 +649,7 @@ if __name__ == "__main__":
 ### 7.1 Synchronisation entre menus et barres d'outils
 
 ```python
-def create_synchronized_actions(self):
+def create_synchronized_actions(self) -> None:
     """Crée des actions synchronisées entre menus et barres d'outils"""
     # Action partagée
     self.save_action = QAction("Sauvegarder", self)
@@ -668,12 +668,12 @@ def create_synchronized_actions(self):
     # État initial
     self.save_action.setEnabled(False)  # Désactivé au début
 
-def document_modified(self):
+def document_modified(self) -> None:
     """Appelé quand le document est modifié"""
     self.save_action.setEnabled(True)
     self.setWindowTitle("Mon Application* - Document modifié")
 
-def save_document(self):
+def save_document(self) -> None:
     """Sauvegarde le document"""
     # Logique de sauvegarde...
     self.save_action.setEnabled(False)
@@ -690,14 +690,14 @@ class MainWindow(QMainWindow):
     # Signal personnalisé
     status_changed = pyqtSignal(str, str)  # message, type
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Connecter le signal au gestionnaire
         self.status_changed.connect(self.update_status_display)
         
         self.setup_ui()
     
-    def setup_interconnected_components(self):
+    def setup_interconnected_components(self) -> None:
         """Configure les composants interconnectés"""
         # Menu Affichage
         view_menu = self.menuBar().addMenu("Affichage")
@@ -715,7 +715,7 @@ class MainWindow(QMainWindow):
         self.statusbar_action.toggled.connect(self.toggle_statusbar)
         view_menu.addAction(self.statusbar_action)
     
-    def toggle_toolbar(self, visible):
+    def toggle_toolbar(self, visible: bool) -> None:
         """Affiche/cache la barre d'outils"""
         toolbar = self.findChild(QToolBar)
         if toolbar:
@@ -723,13 +723,13 @@ class MainWindow(QMainWindow):
             status = "visible" if visible else "cachée"
             self.status_changed.emit(f"Barre d'outils {status}", "info")
     
-    def toggle_statusbar(self, visible):
+    def toggle_statusbar(self, visible: bool) -> None:
         """Affiche/cache la barre de statut"""
         self.statusBar().setVisible(visible)
         if visible:
             self.status_changed.emit("Barre de statut restaurée", "info")
     
-    def update_status_display(self, message, msg_type):
+    def update_status_display(self, message: str, msg_type: str) -> None:
         """Met à jour l'affichage du statut"""
         if self.statusBar().isVisible():
             self.statusBar().showMessage(message, 3000)

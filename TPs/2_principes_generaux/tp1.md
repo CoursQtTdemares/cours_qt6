@@ -11,7 +11,7 @@
 - **Action** : Créez un nouveau dossier `tp_interface_complete` et initialisez un projet `uv` avec PyQt6.
 - **Indice** : 
   - Utilisez `uv init` puis `uv add PyQt6`
-  - Créez un fichier `main.py` et un dossier `src` avec un fichier `src/main_window.py`
+  - Créez un fichier `main.py` ("hello world") et un dossier `src` avec un fichier `src/main_window.py`
 - **Validation** : Le projet se lance sans erreur avec `uv run main.py`
 
 ## 2) Classe MainWindow héritant de QMainWindow
