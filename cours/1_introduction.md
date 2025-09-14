@@ -359,7 +359,7 @@ if __name__ == "__main__":
 - **URL** : https://www.riverbankcomputing.com/static/Docs/PyQt6/
 - **Contenu** : 
   - Index des modules et classes Python
-  - Différences par rapport à PyQt5
+  - Différences par rapport à PyQt6
   - Notes spécifiques sur les enums et flags
 
 #### Qt 6 Documentation (C++)

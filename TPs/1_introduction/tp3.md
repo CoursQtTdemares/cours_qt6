@@ -9,12 +9,12 @@
 ## 1) Identifier les bonnes ressources
 
 - **Action** : Ouvrez la doc Qt (C++) et la doc PyQt6.
-- **Indice** : Cherchez "Qt Widgets" et "PyQt6 reference". Note: les API PyQt6 référencent souvent les pages Qt (C++), la correspondance nom d'API est prévisible.
+- **Indice** : Cherchez "Qt Widgets". Note: les API PyQt6 référencent souvent les pages Qt (C++), la correspondance nom d'API est prévisible.
 
 ## 2) Trouver une propriété utile de `QLabel`
 
 - **Action** : Recherchez comment afficher du texte riche (HTML simple) dans un `QLabel`.
-- **Piste** : Comparez `setText` vs `setTextFormat` et repérez le type `Qt.RichText`.
+- **Piste** : Comparez `setText` vs `setTextFormat` et repérez la définition de `Rich Text`.
 - **Validation** : Modifiez votre `hello_qt` pour afficher un texte en gras ou coloré.
 
 ## 3) Trouver un signal d'intérêt sur un bouton

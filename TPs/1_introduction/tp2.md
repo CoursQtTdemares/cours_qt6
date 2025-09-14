@@ -2,7 +2,7 @@
 
 **Durée** : 20 minutes
 
-**Objectif** : Configurer VSCode pour Python/uv, poser un point d'arrêt, déboguer un script PyQt5 et inspecter une variable.
+**Objectif** : Configurer VSCode pour Python/uv, poser un point d'arrêt, déboguer un script PyQt6 et inspecter une variable.
 
 **Pré-requis** : TP1 réussi (projet `uv` avec script `hello_qt`).
 
@@ -14,7 +14,7 @@
 ## 2) Sélection de l'interpréteur
 
 - **Action** : Sélectionnez l'interpréteur Python utilisé par `uv` pour le dossier du projet.
-- **Indice** : Palette > "Python: Select Interpreter". Vérifiez que la résolution des imports PyQt5 fonctionne (aucune erreur de type non résolu sur `from PyQt6 import QtWidgets`).
+- **Indice** : Palette > "Python: Select Interpreter". Vérifiez que la résolution des imports PyQt6 fonctionne (aucune erreur de type non résolu sur `from PyQt6 import QtWidgets`).
 
 ## 3) Créer une configuration de débogage
 
@@ -43,6 +43,5 @@
 
 ## Exercices supplémentaires
 
-- **Configuration alternative** : Ajoutez une configuration de débogage qui lance `uv run` (piste: `type: python`, args, ou `preLaunchTask`).
 - **Points d'arrêts conditionnels** : Créez un compteur de clics sur un bouton, ajoutez un breakpoint conditionnel (par ex, `compteur == 5`).
 - **Logs** : Ajoutez un log à la levée d'un signal (piste: connexion signal/slot), observez-le en console.

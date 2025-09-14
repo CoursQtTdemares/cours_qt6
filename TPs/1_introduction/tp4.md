@@ -8,7 +8,7 @@
 
 ## 1) Structure minimale
 
-- **Action** : Créez un fichier `src/app.py` qui contiendra une classe fenêtre principale.
+- **Action** : Créez un fichier `src/main_window.py` qui contiendra une classe fenêtre principale.
 - **Piste** : Héritez de `QWidget` (ou `QMainWindow` si vous préférez) et créez les widgets suivants: `QLineEdit`, `QPushButton`, `QTextEdit`.
 
 ## 2) Disposition
