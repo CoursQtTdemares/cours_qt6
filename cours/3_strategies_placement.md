@@ -23,11 +23,19 @@
 Les layouts (gestionnaires de disposition) sont essentiels pour créer des interfaces utilisateur professionnelles et adaptatives :
 
 ```python
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class BadExample(QMainWindow):
-    """Exemple de ce qu'il ne faut PAS faire"""
+    """Exemple de ce qu'il ne faut PAS faire."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -53,7 +61,7 @@ class BadExample(QMainWindow):
 
 
 class GoodExample(QMainWindow):
-    """Exemple avec layout - Recommandé"""
+    """Exemple avec layout - Recommandé."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -160,7 +168,7 @@ class InputWidgetsDemo(QWidget):
 
 ```python
     def setup_connections(self) -> None:
-        """Configure les connexions signal/slot"""
+        """Configure les connexions signal/slot."""
         # Réaction aux changements de texte
         self.username_edit.textChanged.connect(self.on_username_changed)
 
@@ -177,31 +185,31 @@ class InputWidgetsDemo(QWidget):
         self.newsletter_check.toggled.connect(self.on_newsletter_toggled)
 
     def on_username_changed(self, text: str) -> None:
-        """Appelé à chaque caractère tapé"""
+        """Appelé à chaque caractère tapé."""
         if len(text) < 3:
             self.username_edit.setStyleSheet('border: 2px solid red;')
         else:
             self.username_edit.setStyleSheet('border: 2px solid green;')
 
     def validate_username(self) -> None:
-        """Validation finale du nom d'utilisateur"""
+        """Validation finale du nom d'utilisateur."""
         username = self.username_edit.text().strip()
         if not username:
             QMessageBox.warning(self, 'Erreur', "Le nom d'utilisateur est requis")
 
     def on_country_changed(self, country: str) -> None:
-        """Réaction au changement de pays"""
+        """Réaction au changement de pays."""
         print(f'Pays sélectionné: {country}')
 
     def on_age_changed(self, age: int) -> None:
-        """Réaction au changement d'âge"""
+        """Réaction au changement d'âge."""
         if age >= 18:
             print('Utilisateur majeur')
         else:
             print('Utilisateur mineur')
 
     def on_newsletter_toggled(self, checked: bool) -> None:
-        """Réaction au changement d'abonnement"""
+        """Réaction au changement d'abonnement."""
         status = 'abonné' if checked else 'désabonné'
         print(f'Newsletter: {status}')
 ```
@@ -213,13 +221,23 @@ class InputWidgetsDemo(QWidget):
 ### 3.1 Utilisation basique
 
 ```python
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+    QWidget,
+)
+
+
 class HorizontalLayoutDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layout Horizontal")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         # Création du layout horizontal
         layout = QHBoxLayout()
         self.setLayout(layout)
@@ -230,14 +248,16 @@ class HorizontalLayoutDemo(QWidget):
         layout.addWidget(QPushButton("Rechercher"))
         layout.addWidget(QPushButton("Effacer"))
 
+
 class AdvancedHorizontalLayout(QWidget):
-    """Layout horizontal avec contrôle avancé"""
-    def __init__(self):
+    """Layout horizontal avec contrôle avancé."""
+    
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layout Horizontal Avancé")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QHBoxLayout()
         self.setLayout(layout)
         
@@ -264,8 +284,8 @@ class AdvancedHorizontalLayout(QWidget):
 ### 3.2 Facteurs d'étirement et espacement
 
 ```python
-def demonstrate_stretch_factors(self):
-    """Démonstration des facteurs d'étirement"""
+def demonstrate_stretch_factors(self) -> QHBoxLayout:
+    """Démonstration des facteurs d'étirement."""
     layout = QHBoxLayout()
     
     # Widget 1: facteur 1 (prend 1 part de l'espace disponible)
@@ -282,8 +302,8 @@ def demonstrate_stretch_factors(self):
     
     return layout
 
-def demonstrate_spacing_control(self):
-    """Contrôle précis de l'espacement"""
+def demonstrate_spacing_control(self) -> QHBoxLayout:
+    """Contrôle précis de l'espacement."""
     layout = QHBoxLayout()
     
     layout.addWidget(QLabel("Début"))
@@ -308,13 +328,23 @@ def demonstrate_spacing_control(self):
 ### 4.1 Organisation verticale des widgets
 
 ```python
+from PyQt6.QtWidgets import (
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
+
 class VerticalLayoutDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layout Vertical")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QVBoxLayout()
         self.setLayout(layout)
         
@@ -342,14 +372,16 @@ class VerticalLayoutDemo(QWidget):
         layout.addWidget(QPushButton("Enregistrer"))
         layout.addWidget(QPushButton("Annuler"))
 
+
 class ResponsiveVerticalLayout(QWidget):
-    """Layout vertical adaptatif"""
-    def __init__(self):
+    """Layout vertical adaptatif."""
+    
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layout Vertical Adaptatif")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
         
@@ -378,8 +410,12 @@ class ResponsiveVerticalLayout(QWidget):
 ### 4.2 Alignement dans les layouts verticaux
 
 ```python
-def demonstrate_vertical_alignment(self):
-    """Démonstration des alignements verticaux"""
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLineEdit, QPushButton, QVBoxLayout
+
+
+def demonstrate_vertical_alignment(self) -> QVBoxLayout:
+    """Démonstration des alignements verticaux."""
     layout = QVBoxLayout()
     
     # Alignement à gauche (par défaut)
@@ -408,13 +444,24 @@ def demonstrate_vertical_alignment(self):
 ### 5.1 Organisation tabulaire
 
 ```python
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+    QTextEdit,
+    QWidget,
+)
+
+
 class GridLayoutDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layout en Grille")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QGridLayout()
         self.setLayout(layout)
         
@@ -445,14 +492,16 @@ class GridLayoutDemo(QWidget):
         layout.addWidget(QPushButton("Valider"), 6, 0)
         layout.addWidget(QPushButton("Annuler"), 6, 1)
 
+
 class AdvancedGridLayout(QWidget):
-    """Layout en grille avec fonctionnalités avancées"""
-    def __init__(self):
+    """Layout en grille avec fonctionnalités avancées."""
+    
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Grille Avancée")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QGridLayout()
         self.setLayout(layout)
         
@@ -490,8 +539,12 @@ class AdvancedGridLayout(QWidget):
 ### 5.2 Techniques avancées de grille
 
 ```python
-def create_calculator_layout(self):
-    """Exemple: disposition de calculatrice"""
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QGridLayout, QLineEdit, QPushButton
+
+
+def create_calculator_layout(self) -> QGridLayout:
+    """Exemple: disposition de calculatrice."""
     layout = QGridLayout()
     
     # Écran de la calculatrice
@@ -533,13 +586,24 @@ def create_calculator_layout(self):
 ### 6.1 Combinaison de layouts
 
 ```python
+from PyQt6.QtWidgets import (
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
+
 class NestedLayoutDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layouts Imbriqués")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         # Layout principal vertical
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
@@ -576,8 +640,8 @@ class NestedLayoutDemo(QWidget):
         footer_layout.addWidget(QLabel("Ligne: 1, Col: 1"))
         main_layout.addLayout(footer_layout)
     
-    def create_left_panel(self):
-        """Crée le panneau de navigation gauche"""
+    def create_left_panel(self) -> QWidget:
+        """Crée le panneau de navigation gauche."""
         widget = QWidget()
         layout = QVBoxLayout()
         widget.setLayout(layout)
@@ -592,14 +656,14 @@ class NestedLayoutDemo(QWidget):
         widget.setStyleSheet("background-color: #f8f9fa; border-right: 1px solid #dee2e6;")
         return widget
     
-    def create_main_area(self):
-        """Crée la zone principale de travail"""
+    def create_main_area(self) -> QTextEdit:
+        """Crée la zone principale de travail."""
         widget = QTextEdit()
         widget.setPlainText("Zone de travail principale\n\nContenu de l'application...")
         return widget
     
-    def create_right_panel(self):
-        """Crée le panneau d'outils de droite"""
+    def create_right_panel(self) -> QWidget:
+        """Crée le panneau d'outils de droite."""
         widget = QWidget()
         layout = QVBoxLayout()
         widget.setLayout(layout)
@@ -625,12 +689,12 @@ class NestedLayoutDemo(QWidget):
 
 ```python
 class DynamicLayoutDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Layouts Dynamiques")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
         
@@ -657,11 +721,11 @@ class DynamicLayoutDemo(QWidget):
         self.content_widget = QWidget()
         self.main_layout.addWidget(self.content_widget)
         
-        self.widgets_list = []
+        self.widgets_list: list[QPushButton] = []
         self.change_layout("Vertical")  # Layout initial
     
-    def change_layout(self, layout_type):
-        """Change le type de layout dynamiquement"""
+    def change_layout(self, layout_type: str) -> None:
+        """Change le type de layout dynamiquement."""
         # Supprimer l'ancien layout
         if self.content_widget.layout():
             QWidget().setLayout(self.content_widget.layout())
@@ -679,22 +743,22 @@ class DynamicLayoutDemo(QWidget):
         # Ré-ajouter tous les widgets
         self.reorganize_widgets()
     
-    def add_widget(self):
-        """Ajoute un nouveau widget"""
+    def add_widget(self) -> None:
+        """Ajoute un nouveau widget."""
         widget_count = len(self.widgets_list)
         button = QPushButton(f"Widget {widget_count + 1}")
         self.widgets_list.append(button)
         self.reorganize_widgets()
     
-    def remove_widget(self):
-        """Supprime le dernier widget"""
+    def remove_widget(self) -> None:
+        """Supprime le dernier widget."""
         if self.widgets_list:
             widget = self.widgets_list.pop()
             widget.setParent(None)
             self.reorganize_widgets()
     
-    def reorganize_widgets(self):
-        """Réorganise les widgets selon le layout actuel"""
+    def reorganize_widgets(self) -> None:
+        """Réorganise les widgets selon le layout actuel."""
         layout = self.content_widget.layout()
         
         for widget in self.widgets_list:
@@ -718,12 +782,12 @@ class DynamicLayoutDemo(QWidget):
 from PyQt6.QtWidgets import QSizePolicy
 
 class SizePolicyDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Politiques de Taille")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QVBoxLayout()
         self.setLayout(layout)
         
@@ -771,8 +835,8 @@ class SizePolicyDemo(QWidget):
         maximum_label.setStyleSheet("border: 1px solid black;")
         layout.addWidget(maximum_label)
 
-def demonstrate_size_hints(self):
-    """Démonstration des indices de taille"""
+def demonstrate_size_hints(self) -> QPushButton:
+    """Démonstration des indices de taille."""
     widget = QPushButton("Bouton personnalisé")
     
     # Définir les tailles recommandées
@@ -791,12 +855,12 @@ def demonstrate_size_hints(self):
 
 ```python
 class SpacingDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Gestion de l'espacement")
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
         
@@ -856,13 +920,13 @@ class SpacingDemo(QWidget):
 
 ```python
 class ResponsiveDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Interface Responsive")
         self.setMinimumSize(300, 200)
         self.setup_ui()
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
         
@@ -871,8 +935,8 @@ class ResponsiveDemo(QWidget):
         # Détecter les changements de taille
         self.resizeEvent = self.on_resize
     
-    def create_responsive_content(self):
-        """Crée un contenu qui s'adapte à la taille"""
+    def create_responsive_content(self) -> None:
+        """Crée un contenu qui s'adapte à la taille."""
         # En-tête adaptatif
         header_layout = QHBoxLayout()
         
@@ -904,8 +968,8 @@ class ResponsiveDemo(QWidget):
         
         self.main_layout.addLayout(self.content_layout)
     
-    def create_sidebar(self):
-        """Crée une barre latérale adaptative"""
+    def create_sidebar(self) -> QWidget:
+        """Crée une barre latérale adaptative."""
         sidebar = QWidget()
         sidebar.setMinimumWidth(150)
         sidebar.setMaximumWidth(200)
@@ -922,8 +986,8 @@ class ResponsiveDemo(QWidget):
         sidebar.setStyleSheet("background-color: #f8f9fa;")
         return sidebar
     
-    def on_resize(self, event):
-        """Appelé lors du redimensionnement"""
+    def on_resize(self, event) -> None:
+        """Appelé lors du redimensionnement."""
         super().resizeEvent(event)
         
         width = self.width()
@@ -936,8 +1000,8 @@ class ResponsiveDemo(QWidget):
             self.sidebar.show()
             self.menu_button.hide()
     
-    def toggle_sidebar(self):
-        """Affiche/masque la sidebar"""
+    def toggle_sidebar(self) -> None:
+        """Affiche/masque la sidebar."""
         self.sidebar.setVisible(not self.sidebar.isVisible())
 ```
 
@@ -945,14 +1009,14 @@ class ResponsiveDemo(QWidget):
 
 ```python
 class MultiResolutionDemo(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Support Multi-Résolution")
         self.setup_ui()
         self.adapt_to_screen()
     
-    def adapt_to_screen(self):
-        """Adapte l'interface à la résolution d'écran"""
+    def adapt_to_screen(self) -> None:
+        """Adapte l'interface à la résolution d'écran."""
         from PyQt6.QtGui import QGuiApplication
         
         screen = QGuiApplication.primaryScreen()
@@ -979,7 +1043,7 @@ class MultiResolutionDemo(QWidget):
         spacing = max(5, int(dpi / 96 * 5))
         self.layout().setSpacing(spacing)
     
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QGridLayout()
         self.setLayout(layout)
         

@@ -35,28 +35,13 @@
 - **Indice** : Remplacez les boutons du menu par un seul bouton "☰" et masquez les éléments.
 - **Validation** : Le menu se transforme en hamburger sur les tailles moyennes.
 
-## 6) Mode mobile (largeur < 500px)
-
-- **Action** : En mode mobile, masquez la sidebar et empilez tout verticalement.
-- **Piste** : Utilisez `setVisible(False)` sur la sidebar et réorganisez le layout principal.
-- **Validation** : Interface simplifiée en une colonne pour les petites tailles.
-
-## 7) Menu hamburger fonctionnel
-
-- **Action** : Implémentez l'ouverture/fermeture du menu hamburger au clic.
-- **Indice** : Créez un `QFrame` overlay qui apparaît/disparaît avec les options du menu.
-- **Validation** : Le menu hamburger affiche les options de navigation quand cliqué.
-
-## 8) Adaptations avancées
-
-- **Action** : Ajustez les tailles de police et espacement selon la résolution d'écran.
-- **Piste** : Utilisez `QApplication.primaryScreen().logicalDotsPerInch()` pour adapter le DPI.
-- **Validation** : L'interface s'adapte visuellement aux différentes résolutions.
-
 ---
 
 ## Exercices supplémentaires
 
+- **Mode mobile** : Masquez la sidebar et empilez tout verticalement quand largeur < 500px (piste: `setVisible(False)`).
+- **Menu hamburger fonctionnel** : Implémentez l'ouverture/fermeture du menu hamburger au clic (piste: `QFrame` overlay).
+- **Adaptations DPI** : Ajustez les tailles de police selon la résolution d'écran (piste: `logicalDotsPerInch()`).
 - **Transitions fluides** : Ajoutez des animations lors des changements de layout (piste: `QPropertyAnimation`).
 - **Breakpoints personnalisés** : Permettez à l'utilisateur de définir ses propres seuils de responsive.
 - **Orientation** : Gérez les changements d'orientation mobile (portrait/paysage).

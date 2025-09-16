@@ -13,7 +13,7 @@
 
 ## 2) Créer la fenêtre principale
 
-- **Action** : Dans `main.py`, créez une classe `FormWindow` héritant de `QMainWindow`.
+- **Action** : Dans `main_window.py`, créez une classe `FormWindow` héritant de `QMainWindow`.
 - **Piste** : Utilisez un widget central avec un layout vertical principal.
 - **Validation** : Une fenêtre vide s'affiche avec un titre approprié.
 

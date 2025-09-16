@@ -42,18 +42,6 @@
 - **Indice** : Utilisez la `QToolBar` de `QMainWindow` ou un layout horizontal avec `QPushButton`.
 - **Validation** : Rangée de boutons accessibles en haut de l'interface.
 
-## 7) Barre de statut informative
-
-- **Action** : Configurez la barre de statut pour afficher : position curseur, mode, nombre de lignes.
-- **Piste** : Recherchez `statusBar()` et comment ajouter des widgets permanents.
-- **Validation** : Informations factices affichées dans la barre de statut.
-
-## 8) Responsive adaptatif
-
-- **Action** : Implémentez un mécanisme pour masquer les panneaux latéraux quand la fenêtre est trop petite.
-- **Indice** : Surchargez `resizeEvent()` et utilisez `setVisible()` selon la largeur.
-- **Validation** : Les panneaux latéraux disparaissent quand la fenêtre devient trop étroite.
-
 ---
 
 ## Exercices supplémentaires
