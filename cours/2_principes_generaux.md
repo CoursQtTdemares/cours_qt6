@@ -251,8 +251,8 @@ window.show()
 app.exec()
 ```
 
-① **Connexion signal-slot** : Le signal `clicked` du bouton est connecté à notre méthode `handle_click`
-② **Réaction** : Quand le bouton est cliqué, ce message s'affiche dans la console
+**Connexion signal-slot** : Le signal `clicked` du bouton est connecté à notre méthode `handle_click`
+**Réaction** : Quand le bouton est cliqué, ce message s'affiche dans la console
 
 **Ce qui se passe :**
 1. L'utilisateur clique sur le bouton
@@ -283,10 +283,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Application utilisée")  # ④
 ```
 
-① **Référence importante** : On stocke le bouton dans `self.button` pour pouvoir le modifier plus tard
-② **Changer le texte** : On utilise `setText()` pour modifier le texte du bouton
-③ **Désactiver le widget** : `setEnabled(False)` rend le bouton non-cliquable
-④ **Modifier le titre** : On peut aussi changer le titre de la fenêtre
+**Référence importante** : On stocke le bouton dans `self.button` pour pouvoir le modifier plus tard
+**Changer le texte** : On utilise `setText()` pour modifier le texte du bouton
+**Désactiver le widget** : `setEnabled(False)` rend le bouton non-cliquable
+**Modifier le titre** : On peut aussi changer le titre de la fenêtre
 
 **🚨 Point important :** Pour pouvoir modifier un widget dans un slot, vous devez garder une référence vers ce widget (le stocker dans `self`).
 
@@ -330,10 +330,10 @@ class MainWindow(QMainWindow):
             self.button.setEnabled(False)  # ④
 ```
 
-① **Signal de fenêtre** : `windowTitleChanged` est émis quand le titre change
-② **Déclencheur** : Changer le titre avec `setWindowTitle()` émet automatiquement le signal
-③ **Réaction automatique** : Notre slot reçoit le nouveau titre
-④ **Action finale** : Si le titre est "Stop !", on désactive le bouton
+**Signal de fenêtre** : `windowTitleChanged` est émis quand le titre change
+**Déclencheur** : Changer le titre avec `setWindowTitle()` émet automatiquement le signal
+**Réaction automatique** : Notre slot reçoit le nouveau titre
+**Action finale** : Si le titre est "Stop !", on désactive le bouton
 
 **🔑 Concept clé :** Les signaux permettent de créer des **réactions en chaîne** sans que les composants aient besoin de se connaître directement. Le bouton ne sait pas qu'il va désactiver quelque chose, mais les règles que vous définissez créent ces interactions.
 
@@ -381,10 +381,10 @@ class MainWindow(QMainWindow):
             self.setStyleSheet("background-color: white; color: black;")
 ```
 
-① **Bouton basculant** : `setCheckable(True)` permet au bouton d'avoir deux états
-② **Connexion avec données** : Le signal `clicked` envoie automatiquement l'état `True`/`False`
-③ **Réception** : Notre slot reçoit la donnée dans le paramètre `checked`
-④ **Adaptation** : L'interface s'adapte selon l'état reçu
+**Bouton basculant** : `setCheckable(True)` permet au bouton d'avoir deux états
+**Connexion avec données** : Le signal `clicked` envoie automatiquement l'état `True`/`False`
+**Réception** : Notre slot reçoit la donnée dans le paramètre `checked`
+**Adaptation** : L'interface s'adapte selon l'état reçu
 
 **💡 Point important :** Vous devez connaître le **type de données** que chaque signal envoie. La documentation Qt indique toujours ces informations.
 
@@ -417,8 +417,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 ```
 
-① **Widget de destination** : Le label affichera le texte
-② **Connexion magique** : `textChanged` envoie le texte directement à `setText`
+**Widget de destination** : Le label affichera le texte
+**Connexion magique** : `textChanged` envoie le texte directement à `setText`
 
 **🎯 Ce qui se passe :**
 - Vous tapez dans le champ de saisie
@@ -577,10 +577,10 @@ line_edit.setEchoMode(QLineEdit.EchoMode.Password)  # ③
 line_edit.setInputMask('000.000.000.000;_')  # ④
 ```
 
-① **Placeholder** : Texte d'aide affiché quand le champ est vide
-② **Longueur maximale** : Limite automatique du nombre de caractères
-③ **Mode d'écho** : `Normal`, `Password`, `NoEcho`, `PasswordEchoOnEdit`
-④ **Masque de saisie** : Format imposé (ici pour une adresse IPv4)
+**Placeholder** : Texte d'aide affiché quand le champ est vide
+**Longueur maximale** : Limite automatique du nombre de caractères
+**Mode d'écho** : `Normal`, `Password`, `NoEcho`, `PasswordEchoOnEdit`
+**Masque de saisie** : Format imposé (ici pour une adresse IPv4)
 
 #### 💡 **Exemple pratique : validation de saisie en temps réel**
 
@@ -627,7 +627,7 @@ class FormWindow(QMainWindow):
             self.feedback_label.setStyleSheet("color: orange;")
 ```
 
-① **Validation temps réel** : À chaque caractère, on vérifie et on donne un retour visuel
+**Validation temps réel** : À chaque caractère, on vérifie et on donne un retour visuel
 
 **🎯 Avantages de cette approche :**
 - **Feedback immédiat** : L'utilisateur sait tout de suite si sa saisie est correcte
@@ -655,8 +655,8 @@ layout.addWidget(self.email_input)
 layout.addWidget(self.feedback_label)
 ```
 
-① **Widget conteneur** : QWidget sert de "boîte" pour organiser d'autres widgets
-② **Layout associé** : Le layout gère l'arrangement spatial des widgets enfants
+**Widget conteneur** : QWidget sert de "boîte" pour organiser d'autres widgets
+**Layout associé** : Le layout gère l'arrangement spatial des widgets enfants
 
 #### 🔑 **Rôles de QWidget**
 
@@ -733,8 +733,8 @@ class MainWindow(QMainWindow):
         print(f"Données reçues : {data}")
 ```
 
-① **Layout sur QWidget** : Chaque QWidget peut avoir son propre layout
-② **Réutilisation** : Notre widget personnalisé est utilisé comme n'importe quel autre widget
+**Layout sur QWidget** : Chaque QWidget peut avoir son propre layout
+**Réutilisation** : Notre widget personnalisé est utilisé comme n'importe quel autre widget
 
 **🎯 Gardez QWidget à l'esprit** : vous le verrez partout dans Qt ! C'est la classe de base de tous les widgets visuels, et comprendre son rôle de conteneur est essentiel pour organiser des interfaces complexes.
 
@@ -759,8 +759,8 @@ combo.addItems(options)  # ①
 combo.setCurrentText("Option 2")  # ②
 ```
 
-① **Ajouter les choix** : `addItems()` prend une liste de chaînes
-② **Sélection initiale** : `setCurrentText()` définit l'option affichée au début
+**Ajouter les choix** : `addItems()` prend une liste de chaînes
+**Sélection initiale** : `setCurrentText()` définit l'option affichée au début
 
 #### 📊 **Le signal principal**
 
@@ -789,10 +789,10 @@ def handle_selection(self, selected_text: str) -> None:
 #### 🔧 **Utilisation de base**
 ```python
 checkbox = QCheckBox("Recevoir les notifications")
-checkbox.setChecked(True)  # ① Coché par défaut
+checkbox.setChecked(True)  # Coché par défaut
 ```
 
-① **État initial** : `setChecked(True/False)` définit si la case est cochée au départ
+**État initial** : `setChecked(True/False)` définit si la case est cochée au départ
 
 #### 📊 **Le signal essentiel**
 
@@ -808,7 +808,7 @@ def handle_notifications(self, enabled: bool) -> None:
     self.email_option.setEnabled(enabled)
 ```
 
-② **Cascade d'activation** : Une case peut activer/désactiver d'autres options
+**Cascade d'activation** : Une case peut activer/désactiver d'autres options
 
 ### 3.7 QPushButton et QLabel - Les compléments essentiels
 
@@ -821,7 +821,7 @@ button = QPushButton("Valider")
 button.clicked.connect(self.process_form)  # ①
 ```
 
-① **Signal principal** : `clicked` se déclenche au clic (avec ou sans données selon le bouton)
+**Signal principal** : `clicked` se déclenche au clic (avec ou sans données selon le bouton)
 
 **Variantes utiles :**
 - `button.setCheckable(True)` : Bouton à bascule on/off
@@ -834,12 +834,12 @@ Le label sert à **informer l'utilisateur** :
 
 ```python
 label = QLabel("Résultat du calcul")
-label.setText("Nouveau texte")  # ① Changer le contenu
-label.setWordWrap(True)  # ② Retour à la ligne automatique
+label.setText("Nouveau texte")  # Changer le contenu
+label.setWordWrap(True)  # Retour à la ligne automatique
 ```
 
-① **Mise à jour** : `setText()` change le contenu affiché
-② **Formatage** : Options pour améliorer l'affichage
+**Mise à jour** : `setText()` change le contenu affiché
+**Formatage** : Options pour améliorer l'affichage
 
 ### 3.8 Faire communiquer les widgets
 
@@ -870,9 +870,9 @@ def check_email_validity(self, email: str) -> None:
         self.status_label.setText("❌ Email requis")
 ```
 
-① **État initial** : Bouton désactivé au départ
-② **Surveillance** : Chaque caractère tapé déclenche la validation  
-③ **Réaction** : L'interface s'adapte automatiquement
+**État initial** : Bouton désactivé au départ
+**Surveillance** : Chaque caractère tapé déclenche la validation  
+**Réaction** : L'interface s'adapte automatiquement
 
 **🔑 Concept clé :** Les widgets peuvent se contrôler mutuellement pour créer une expérience utilisateur cohérente et intuitive.
 
@@ -1438,8 +1438,8 @@ class ModernWindow(QMainWindow):
         self.setStyleSheet(style)  # ②
 ```
 
-① **Organisation** : On sépare la création de l'interface de son style
-② **Application** : `setStyleSheet()` transforme instantanément l'apparence
+**Organisation** : On sépare la création de l'interface de son style
+**Application** : `setStyleSheet()` transforme instantanément l'apparence
 
 ### 9.3 Créer un système de thèmes
 
@@ -1516,8 +1516,8 @@ class ThemableWindow(QMainWindow):
         self.statusBar().showMessage(f"Thème {theme_name} appliqué", 2000)
 ```
 
-① **Menu intégré** : L'utilisateur peut changer de thème facilement
-② **Centralisation** : Les styles sont organisés dans une classe dédiée
+**Menu intégré** : L'utilisateur peut changer de thème facilement
+**Centralisation** : Les styles sont organisés dans une classe dédiée
 
 ### 9.4 CSS avancé : sélecteurs et états
 
@@ -1562,7 +1562,7 @@ danger_btn = QPushButton("Supprimer")
 danger_btn.setProperty("class", "danger")
 ```
 
-① **Classes CSS** : `setProperty("class", "nom")` permet d'appliquer des styles spécifiques
+**Classes CSS** : `setProperty("class", "nom")` permet d'appliquer des styles spécifiques
 
 **🔑 Points clés :**
 - Le CSS de Qt suit les mêmes règles que le CSS web
