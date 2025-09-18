@@ -3,6 +3,8 @@
 ## Objectifs pédagogiques
 
 À l'issue de ce chapitre, vous serez capable de :
+- Comprendre l'évolution historique des interfaces graphiques et le paradigme WIMP
+- Situer Qt dans le contexte historique des frameworks GUI
 - Comprendre ce qu'est Qt et le rôle du binding PyQt6
 - Distinguer PyQt6 de ses alternatives (PyQt5, PySide6)
 - Installer et configurer un environnement de développement PyQt6
@@ -18,9 +20,49 @@
 
 ## 1. Introduction à Qt et PyQt6
 
+### 1.0 Contexte historique des interfaces graphiques
+
+#### L'évolution des GUI : de 1960 à aujourd'hui
+
+Les **interfaces graphiques utilisateur (GUI)** ont une histoire riche qui remonte aux années 1960. Cette évolution nous aide à comprendre pourquoi des frameworks comme Qt sont si importants aujourd'hui.
+
+##### Les pionniers (1960-1980)
+- **1968** : Stanford NLS (oN-Line System) introduit la souris et le concept de fenêtres
+- **1973** : Xerox PARC développe le système Smalltalk, fondation des GUI modernes
+- **1979** : Premier système commercial avec GUI - la station de travail PERQ
+
+##### Le paradigme WIMP
+Ces premiers systèmes ont établi le paradigme **WIMP** (Windows, Icons, Menus, Pointing device) qui comprend :
+- **Fenêtres** : Zones d'affichage délimitées et mobiles
+- **Icônes** : Représentations graphiques d'objets ou d'actions
+- **Menus** : Listes d'options organisées
+- **Dispositif de pointage** : Souris pour l'interaction directe
+
+##### L'ère moderne (1980-2000)
+- **1983** : Apple Lisa introduit la barre de menus et les contrôles de fenêtre
+- **1984** : X Window System sur UNIX
+- **1985** : Première version de Windows
+- **1995** : Windows 95 démocratise les GUI
+
+> 💡 **Point clé** : Malgré 40 ans d'innovations (interfaces tactiles, réalité virtuelle), le paradigme WIMP reste dominant sur les ordinateurs de bureau. C'est dans ce contexte que Qt excelle !
+
+---
+
 ### 1.1 Qu'est-ce que Qt ?
 
 **Qt** est un framework de développement d'applications multiplateformes écrit en C++. Il permet de créer des interfaces graphiques natives qui s'exécutent sur Windows, macOS, Linux, et d'autres systèmes.
+
+#### L'histoire de Qt
+
+Qt a été créé en **1991** par **Eirik Chambe-Eng** et **Haavard Nord** en Norvège. Leur vision était de créer un framework qui permettrait de développer des applications GUI portables sans sacrifier les performances.
+
+##### Chronologie importante :
+- **1991** : Début du développement de Qt
+- **1994** : Fondation de **Trolltech** (première société Qt)
+- **1995** : Première version publique de Qt
+- **2008** : Rachat par Nokia
+- **2012** : Création de **The Qt Company**
+- **Aujourd'hui** : Qt continue d'évoluer avec un support mobile et IoT étendu
 
 #### Points forts de Qt :
 - **Multiplateforme** : "Write once, run anywhere"
@@ -87,6 +129,8 @@ Qt fonctionne avec une **boucle d'événements** qui :
 - Capture les événements système (clics, saisie clavier, etc.)
 - Les distribue aux widgets concernés
 - Traite les signaux/slots de manière asynchrone
+
+![Boucle d'événements](assets/event_loop.png)
 
 ⚠️ **Important** : Une opération longue dans le thread GUI bloquera l'interface !
 
