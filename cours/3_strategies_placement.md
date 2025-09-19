@@ -1107,55 +1107,6 @@ class BreakpointManager:
         return old_mode != new_mode
 ```
 
-### 8.5 Gestion de différentes résolutions
-
-```python
-class MultiResolutionDemo(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setWindowTitle("Support Multi-Résolution")
-        self.setup_ui()
-        self.adapt_to_screen()
-    
-    def adapt_to_screen(self) -> None:
-        """Adapte l'interface à la résolution d'écran."""
-        from PyQt6.QtGui import QGuiApplication
-        
-        screen = QGuiApplication.primaryScreen()
-        screen_size = screen.size()
-        dpi = screen.logicalDotsPerInch()
-        
-        # Ajuster selon la résolution
-        if screen_size.width() >= 1920:  # Haute résolution
-            self.setMinimumSize(800, 600)
-            font_size = 12
-        elif screen_size.width() >= 1366:  # Résolution standard
-            self.setMinimumSize(600, 450)
-            font_size = 10
-        else:  # Petite résolution
-            self.setMinimumSize(400, 300)
-            font_size = 9
-        
-        # Ajuster la taille de police
-        font = self.font()
-        font.setPointSize(font_size)
-        self.setFont(font)
-        
-        # Adapter l'espacement selon le DPI
-        spacing = max(5, int(dpi / 96 * 5))
-        self.layout().setSpacing(spacing)
-    
-    def setup_ui(self) -> None:
-        layout = QGridLayout()
-        self.setLayout(layout)
-        
-        # Interface qui s'adapte automatiquement
-        for i in range(3):
-            for j in range(3):
-                button = QPushButton(f"Btn {i*3+j+1}")
-                layout.addWidget(button, i, j)
-```
-
 ---
 
 ## 9. Travaux pratiques
