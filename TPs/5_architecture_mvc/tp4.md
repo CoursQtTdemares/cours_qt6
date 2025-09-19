@@ -1,64 +1,63 @@
-# TP4 - Synchronisation multi-vues
+# TP4 - Persistance des données
 
 **Durée** : 30 minutes
 
-**Objectif** : Créer une application avec plusieurs vues synchronisées du même modèle et implémenter un système de notifications de changements.
+**Objectif** : Sauvegarder et charger les données automatiquement en JSON avec gestion d'erreurs et compteur temps réel.
 
-**Pré-requis** : TP1 à TP3 terminés, maîtrise des modèles/vues/délégués.
+**Pré-requis** : TP1, TP2 et TP3 terminés et fonctionnels.
 
-## 1) Application multi-vues
+## 1) Imports pour persistance
 
-- **Action** : Créez un projet `tp_sync_views` avec une fenêtre contenant 3 vues du même modèle de données.
-- **Piste** : `QTableView`, `QListView`, et `QTreeView` côte à côte partageant le même modèle.
-- **Validation** : Trois vues distinctes affichant les mêmes données.
+- **Action** : Ajoutez les imports `json` et `os` au début du fichier.
+- **Piste** : `import json, os` en haut du fichier.
+- **Validation** : Imports ajoutés sans erreur.
 
-## 2) Modèle de données unifié
+## 2) Sérialisation Book
 
-- **Action** : Créez un modèle de contacts avec nom, email, téléphone, groupe, photo.
-- **Indice** : Le modèle doit être compatible avec les 3 types de vues (table, liste, arbre).
-- **Validation** : Modèle fonctionnel dans les trois vues simultanément.
+- **Action** : Ajoutez `to_dict()` et `from_dict()` à la classe Book.
+- **Piste** : Convertir en dictionnaire avec title, author, is_read.
+- **Validation** : Méthodes de conversion JSON fonctionnelles.
 
-## 3) Synchronisation de sélection
+## 3) Sauvegarde JSON
 
-- **Action** : Implémentez la synchronisation des sélections entre les trois vues.
-- **Piste** : Connectez les signaux `selectionChanged` des `QSelectionModel` de chaque vue.
-- **Validation** : Sélectionner dans une vue met à jour les autres vues.
+- **Action** : Implémentez `save_to_json()` dans BookModel avec gestion d'erreurs.
+- **Piste** : Utilisez `json.dump()` avec `ensure_ascii=False`.
+- **Validation** : Fichier bibliotheque.json créé et lisible.
 
-## 4) Observateur de changements
+## 4) Chargement JSON
 
-- **Action** : Créez une classe `ModelObserver` qui surveille et log tous les changements du modèle.
-- **Indice** : Connectez aux signaux `dataChanged`, `rowsInserted`, `rowsRemoved` du modèle.
-- **Validation** : Log détaillé de toutes les modifications dans une zone de texte.
+- **Action** : Implémentez `load_from_json()` avec signaux `beginResetModel()`.
+- **Piste** : Utilisez `beginResetModel()` → chargement → `endResetModel()`.
+- **Validation** : Données rechargées automatiquement au démarrage.
 
-## 5) Panneau de statistiques
+## 5) Sauvegarde automatique
 
-- **Action** : Ajoutez un panneau affichant des statistiques en temps réel (nombre total, par groupe, etc.).
-- **Piste** : Mettez à jour les statistiques à chaque modification du modèle.
-- **Validation** : Statistiques actualisées automatiquement lors des changements.
+- **Action** : Ajoutez `self.save_to_json()` à la fin de add_book, remove_book et mark_as_read.
+- **Piste** : Ligne finale de chaque méthode de modification.
+- **Validation** : Sauvegarde automatique à chaque modification.
 
-## 6) Vue filtrée indépendante
+## 6) Chargement au démarrage
 
-- **Action** : Ajoutez une 4e vue avec un `QSortFilterProxyModel` filtrant par groupe.
-- **Indice** : Cette vue montre seulement un sous-ensemble mais reste synchronisée.
-- **Validation** : Vue filtrée mise à jour quand le modèle source change.
+- **Action** : Appelez `load_from_json()` dans __init__ de LibraryMainWindow.
+- **Piste** : Après création du modèle : `self.book_model.load_from_json()`.
+- **Validation** : Application restore les données précédentes.
 
-## 7) Notifications système
+## 7) Compteur de livres
 
-- **Action** : Implémentez un système de notifications pour les actions importantes (ajout, suppression).
-- **Piste** : Utilisez `QMessageBox` ou `QSystemTrayIcon` pour notifier les changements.
-- **Validation** : Notifications visuelles des modifications importantes.
+- **Action** : Ajoutez un QLabel affichant "📊 X livres (Y lus, Z non lus)".
+- **Piste** : `self.count_label = QLabel()` et méthode `update_count()`.
+- **Validation** : Statistiques visibles en temps réel.
 
-## 8) Historique des modifications
+## 8) Mise à jour du compteur
 
-- **Action** : Maintenez un historique des modifications avec possibilité d'annuler (Undo).
-- **Indice** : Stockez les états précédents et permettez la restauration.
-- **Validation** : Fonction Undo opérationnelle sur les dernières modifications.
+- **Action** : Appelez `update_count()` après chaque modification (ajout/suppression/statut).
+- **Piste** : Ajoutez l'appel dans toutes les méthodes de la fenêtre qui modifient.
+- **Validation** : Compteur mis à jour automatiquement.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Synchronisation réseau** : Simulez la synchronisation avec un serveur distant (timer + changements aléatoires).
-- **Conflit de modifications** : Gérez les conflits quand plusieurs utilisateurs modifient les mêmes données.
-- **Vue temps réel** : Ajoutez une vue graphique (graphique en barres) mise à jour en temps réel.
-- **Sauvegarde automatique** : Sauvegardez automatiquement à chaque modification avec horodatage.
+- **Sauvegarde manuelle** : Ajoutez menu "Fichier > Sauvegarder".
+- **Backup automatique** : Créez des copies de sauvegarde horodatées.
+- **Import/Export** : Permettez d'importer/exporter la bibliothèque.

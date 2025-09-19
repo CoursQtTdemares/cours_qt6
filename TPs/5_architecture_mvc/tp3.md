@@ -1,63 +1,63 @@
-# TP3 - Délégués d'édition avancés
+# TP3 - Enrichissement visuel avec les rôles
 
 **Durée** : 30 minutes
 
-**Objectif** : Créer des délégués personnalisés pour différents types de données avec validation et contraintes d'édition.
+**Objectif** : Utiliser les rôles pour améliorer l'affichage avec auteur, statut de lecture, couleurs et icônes.
 
-**Pré-requis** : TP1 et TP2 terminés, notions de délégués de base.
+**Pré-requis** : TP1 et TP2 terminés et fonctionnels.
 
-## 1) Projet de gestion d'inventaire
+## 1) Extension de la classe Book
 
-- **Action** : Créez un projet `tp_inventory_delegates` avec un modèle d'articles (nom, prix, quantité, catégorie, date).
-- **Validation** : Modèle de données varié prêt pour des délégués spécialisés.
+- **Action** : Ajoutez `author` et `is_read` (booléen) à la classe Book.
+- **Piste** : `def __init__(self, title: str, author: str = "Auteur inconnu"): ...`
+- **Validation** : Classe Book étendue avec auteur et statut de lecture.
 
-## 2) Délégué de prix avec validation
+## 2) Données initiales enrichies
 
-- **Action** : Créez un `PriceDelegate` pour la colonne prix avec `QDoubleSpinBox` et contraintes.
-- **Piste** : Prix minimum 0.01€, maximum 9999.99€, 2 décimales, suffixe "€".
-- **Validation** : Édition du prix avec spinbox contraints et formatage.
+- **Action** : Mettez à jour les 5 livres avec auteur et statut dans `BookModel`.
+- **Piste** : `Book("Le Petit Prince", "Antoine de Saint-Exupéry")`.
+- **Validation** : Liste initiale avec auteurs définis.
 
-## 3) Délégué de catégorie avec combo
+## 3) DisplayRole enrichi
 
-- **Action** : Implémentez un `CategoryDelegate` avec `QComboBox` contenant des catégories prédéfinies.
-- **Indice** : Liste : Électronique, Vêtements, Alimentaire, Maison, Sport.
-- **Validation** : Sélection de catégorie via liste déroulante uniquement.
+- **Action** : Modifiez `data()` pour afficher "Titre par Auteur" avec `match/case`.
+- **Piste** : `match role: case Qt.ItemDataRole.DisplayRole: return f"{book.title} par {book.author}"`.
+- **Validation** : Format "Titre par Auteur" affiché pour chaque livre.
 
-## 4) Délégué de quantité avec slider
+## 4) ForegroundRole pour les couleurs
 
-- **Action** : Créez un `QuantityDelegate` utilisant `QSlider` pour des quantités de 0 à 100.
-- **Piste** : Affichez la valeur numérique à côté du slider en temps réel.
-- **Validation** : Édition intuitive des quantités avec slider visuel.
+- **Action** : Ajoutez couleur grise pour livres lus, noire pour non lus.
+- **Piste** : Utilisez `QColor(128, 128, 128)` pour le gris.
+- **Validation** : Différenciation visuelle par couleur selon statut.
 
-## 5) Délégué de date avec calendrier
+## 5) FontRole pour la typographie
 
-- **Action** : Implémentez un `DateDelegate` avec `QDateEdit` et popup calendrier.
-- **Indice** : Contrainte : pas de date future, format français DD/MM/YYYY.
-- **Validation** : Sélection de date via calendrier avec validation.
+- **Action** : Livres non lus en gras, livres lus en police normale.
+- **Piste** : `font.setBold(True)` selon `book.is_read`.
+- **Validation** : Police différente selon le statut de lecture.
 
-## 6) Délégué conditionnel
+## 6) DecorationRole pour les icônes
 
-- **Action** : Créez un délégué qui change selon la catégorie (ex: électronique → garantie, alimentaire → DLC).
-- **Piste** : Vérifiez la valeur de la colonne catégorie pour choisir l'éditeur approprié.
-- **Validation** : Interface d'édition adaptée au contexte de la ligne.
+- **Action** : Affichez 📖 pour non lus, ✅ pour lus.
+- **Piste** : `case Qt.ItemDataRole.DecorationRole: return "✅" if book.is_read else "📖"`.
+- **Validation** : Icônes distinctes selon le statut.
 
-## 7) Validation croisée
+## 7) Bouton "Marquer comme lu"
 
-- **Action** : Implémentez une validation qui vérifie la cohérence entre colonnes (ex: prix/quantité).
-- **Indice** : Dans `setModelData()`, vérifiez les autres colonnes avant de valider.
-- **Validation** : Empêche la saisie de données incohérentes.
+- **Action** : Ajoutez bouton vert "📚 Marquer comme lu" à côté de supprimer.
+- **Piste** : Style CSS avec background-color: #27ae60.
+- **Validation** : Bouton vert visible avec style moderne.
 
-## 8) Feedback visuel de validation
+## 8) Méthode de changement de statut
 
-- **Action** : Colorez les cellules en rouge/vert selon la validité des données saisies.
-- **Piste** : Utilisez `setStyleSheet()` sur l'éditeur et le rôle `BackgroundRole` du modèle.
-- **Validation** : Retour visuel immédiat sur la validité des données.
+- **Action** : Implémentez `mark_as_read(row)` avec signal `dataChanged`.
+- **Piste** : `self.dataChanged.emit(index, index)` pour notifier.
+- **Validation** : Possibilité de marquer un livre comme lu avec mise à jour visuelle.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Délégué avec auto-complétion** : Ajoutez un `QLineEdit` avec auto-complétion pour les noms d'articles.
-- **Délégué image** : Créez un délégué permettant de sélectionner une image d'icône pour l'article.
-- **Validation en temps réel** : Affichez des messages d'erreur pendant la saisie, pas seulement à la fin.
-- **Délégué composite** : Créez un éditeur complexe combinant plusieurs widgets dans un même délégué.
+- **ToolTipRole** : Ajoutez des info-bulles avec détails du livre.
+- **BackgroundRole** : Colorez le fond selon la priorité des livres.
+- **Bouton toggle** : Permettez de basculer entre lu/non lu.

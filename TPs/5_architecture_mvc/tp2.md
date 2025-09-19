@@ -1,64 +1,63 @@
-# TP2 - Vue hiérarchique de projets
+# TP2 - Interactions et signaux
 
-**Durée** : 30 minutes  
+**Durée** : 30 minutes
 
-**Objectif** : Développer une structure arborescente pour organiser projets/tâches/sous-tâches en utilisant QTreeView avec un modèle personnalisé hiérarchique.
+**Objectif** : Ajouter les interactions utilisateur (ajout/suppression) en maîtrisant les signaux de notification.
 
-**Pré-requis** : TP1 terminé, compréhension des modèles de base.
+**Pré-requis** : TP1 terminé et fonctionnel.
 
-## 1) Architecture hiérarchique
+## 1) Zone de saisie
 
-- **Action** : Créez un projet `tp_project_tree` avec une classe `ProjectTreeModel` héritant de `QAbstractItemModel`.
-- **Piste** : Structure : Projets → Catégories → Tâches → Sous-tâches.
-- **Validation** : Modèle hiérarchique de base configuré.
+- **Action** : Ajoutez un `QLineEdit` et bouton "➕ Ajouter" avant la liste.
+- **Piste** : Utilisez un `QHBoxLayout` pour placer côte à côte.
+- **Validation** : Zone de saisie visible au-dessus de la liste.
 
-## 2) Classe de nœud Project/Task
+## 2) Méthode d'ajout dans le modèle
 
-- **Action** : Créez une classe `TreeItem` représentant un élément avec parent/enfants.
-- **Indice** : Chaque item a : données (nom, type, statut), parent, liste d'enfants, méthodes de navigation.
-- **Validation** : Structure de nœud fonctionnelle pour l'arbre.
+- **Action** : Implémentez `add_book(title)` dans `BookModel` avec les signaux.
+- **Piste** : `beginInsertRows()` → ajout → `endInsertRows()` (ordre crucial !).
+- **Validation** : Méthode d'ajout avec signaux corrects.
 
-## 3) Méthodes de navigation
+## 3) Connexion du bouton d'ajout
 
-- **Action** : Implémentez `index()`, `parent()`, `rowCount()`, `columnCount()` du modèle.
-- **Piste** : `index()` doit créer des index avec `createIndex(row, column, item)`.
-- **Validation** : Navigation dans l'arbre fonctionnelle (expand/collapse).
+- **Action** : Connectez le bouton et la touche Entrée à une méthode qui appelle le modèle.
+- **Piste** : `clicked.connect()` et `returnPressed.connect()`.
+- **Validation** : Possibilité d'ajouter des livres via bouton ou Entrée.
 
-## 4) Affichage des données
+## 4) Test de synchronisation
 
-- **Action** : Implémentez `data()` pour afficher icônes et texte selon le type d'élément.
-- **Indice** : Projets = 🗂️, Catégories = 📁, Tâches = ☐, Tâches terminées = ✅.
-- **Validation** : Arbre avec icônes différenciées par type d'élément.
+- **Action** : Testez l'ajout et vérifiez que la vue se met à jour automatiquement.
+- **Piste** : Ajoutez plusieurs livres et observez la mise à jour instantanée.
+- **Validation** : Nouveau livre apparaît instantanément sans code supplémentaire.
 
-## 5) Modification de structure
+## 5) Bouton de suppression
 
-- **Action** : Ajoutez des méthodes pour créer/supprimer des projets, catégories et tâches.
-- **Piste** : Utilisez `beginInsertRows()` et `endInsertRows()` pour notifier les changements.
-- **Validation** : Possibilité de modifier la structure de l'arbre dynamiquement.
+- **Action** : Ajoutez un bouton "🗑️ Supprimer sélectionné" avec style rouge.
+- **Piste** : Utilisez `setStyleSheet()` avec background-color: #e74c3c.
+- **Validation** : Bouton de suppression stylé visible sous la liste.
 
-## 6) Interface de gestion
+## 6) Méthode de suppression
 
-- **Action** : Créez une interface avec `QTreeView` et boutons contextuels selon la sélection.
-- **Indice** : Menu contextuel différent pour chaque niveau (projet/catégorie/tâche).
-- **Validation** : Interface adaptée au type d'élément sélectionné.
+- **Action** : Implémentez `remove_book(row)` dans le modèle avec signaux.
+- **Piste** : `beginRemoveRows()` → suppression → `endRemoveRows()`.
+- **Validation** : Méthode de suppression avec signaux corrects.
 
-## 7) Gestion des états
+## 7) Connexion suppression
 
-- **Action** : Implémentez le changement d'état des tâches (à faire → en cours → terminé) avec propagation.
-- **Piste** : Marquer un projet comme terminé si toutes ses tâches le sont.
-- **Validation** : États cohérents dans toute la hiérarchie.
+- **Action** : Connectez le bouton pour supprimer l'élément sélectionné.
+- **Piste** : Utilisez `selectedIndexes()` pour récupérer la sélection.
+- **Validation** : Possibilité de supprimer le livre sélectionné.
 
-## 8) Statistiques visuelles
+## 8) Test complet
 
-- **Action** : Affichez des statistiques par projet (nombre de tâches, pourcentage d'avancement).
-- **Indice** : Calculez et affichez dans une colonne dédiée ou un tooltip.
-- **Validation** : Informations de progression visibles pour chaque projet.
+- **Action** : Testez le cycle ajout/suppression complet.
+- **Piste** : Ajoutez 3 livres, sélectionnez-en un, supprimez-le, vérifiez la synchronisation.
+- **Validation** : Toutes les interactions fonctionnent avec synchronisation parfaite.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Glisser-déposer** : Permettez de réorganiser les éléments par drag&drop dans l'arbre.
-- **Recherche dans l'arbre** : Ajoutez une fonction de recherche qui développe et surligne les résultats.
-- **Export hiérarchique** : Exportez la structure complète en format XML ou JSON indenté.
-- **Vue Gantt simple** : Ajoutez une vue parallèle montrant les projets sous forme de diagramme de Gantt.
+- **Validation** : Empêchez l'ajout de livres avec titre vide.
+- **Raccourcis** : Ajoutez Suppr au clavier pour supprimer.
+- **Confirmation** : Demandez confirmation avant suppression.

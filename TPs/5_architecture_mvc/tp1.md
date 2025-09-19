@@ -1,63 +1,63 @@
-# TP1 - Modèle de gestion de tâches
+# TP1 - Modèle de base et première vue
 
 **Durée** : 30 minutes
 
-**Objectif** : Créer un modèle personnalisé pour une application de gestion de tâches, en implémentant l'ajout, suppression et modification de tâches avec priorités.
+**Objectif** : Créer les fondations d'un gestionnaire de bibliothèque avec un modèle minimal et affichage via QListView.
 
-**Pré-requis** : Chapitres 1-4 maîtrisés, notions de base sur l'architecture MVC.
+**Pré-requis** : Chapitres 1-4 maîtrisés, notions de base sur l'architecture Model-View.
 
-## 1) Structure du projet MVC
+## 1) Créer le projet
 
-- **Action** : Créez un projet `tp_task_manager` avec une architecture claire : dossiers `models/`, `views/`, `controllers/`.
-- **Validation** : Structure de projet organisée et PyQt6 installé.
+- **Action** : Créez un projet `library_manager` avec un fichier `main.py`.
+- **Piste** : Utilisez `uv init` puis `uv add PyQt6`.
+- **Validation** : Projet créé avec PyQt6 installé et importable.
 
-## 2) Modèle de données Task
+## 2) Classe Book simple
 
-- **Action** : Créez une classe `TaskModel` héritant de `QAbstractTableModel` pour gérer des tâches.
-- **Piste** : Une tâche contient : titre, description, priorité (1-5), statut (À faire/En cours/Terminé), date d'échéance.
-- **Validation** : Classe de base du modèle avec structure de données définie.
+- **Action** : Créez une classe `Book` avec un attribut `title` uniquement.
+- **Piste** : `def __init__(self, title: str): self.title = title`.
+- **Validation** : Classe Book définie et instanciable.
 
-## 3) Méthodes obligatoires du modèle
+## 3) Modèle BookModel de base
 
-- **Action** : Implémentez `rowCount()`, `columnCount()`, `data()` et `headerData()`.
-- **Indice** : `data()` doit gérer différents rôles : `DisplayRole`, `EditRole`, `BackgroundRole` pour les priorités.
-- **Validation** : Le modèle peut être affiché dans une vue basique.
+- **Action** : Créez `BookModel` héritant de `QAbstractListModel` avec 5 livres statiques.
+- **Piste** : Implémentez `rowCount()` et `data()` pour `DisplayRole` uniquement.
+- **Validation** : Modèle fonctionnel retournant le nombre et les titres des livres.
 
-## 4) Gestion des priorités visuelles
+## 4) Interface MainWindow
 
-- **Action** : Colorez les lignes selon la priorité (rouge = urgent, orange = haute, vert = basse).
-- **Piste** : Utilisez `Qt.ItemDataRole.BackgroundRole` dans `data()` avec `QColor`.
-- **Validation** : Les tâches s'affichent avec des couleurs de priorité.
+- **Action** : Créez `LibraryMainWindow` héritant de `QMainWindow` avec titre et taille 400x300.
+- **Piste** : `setWindowTitle()` et `setGeometry(100, 100, 400, 300)`.
+- **Validation** : Fenêtre principale configurée et affichable.
 
-## 5) Édition des données
+## 5) Vue avec QListView
 
-- **Action** : Implémentez `flags()` et `setData()` pour permettre l'édition directe dans la vue.
-- **Indice** : Validez les données (priorité entre 1-5, statut dans la liste autorisée).
-- **Validation** : Double-clic permet d'éditer les cellules avec validation.
+- **Action** : Ajoutez un `QListView` connecté au modèle avec `setModel()`.
+- **Piste** : `self.book_view = QListView()` puis `self.book_view.setModel(self.book_model)`.
+- **Validation** : Liste des 5 livres visible dans l'interface.
 
-## 6) Ajout et suppression de tâches
+## 6) Layout et titre
 
-- **Action** : Implémentez `insertRows()` et `removeRows()` pour gérer la structure dynamique.
-- **Piste** : N'oubliez pas `beginInsertRows()` et `endInsertRows()` pour notifier les vues.
-- **Validation** : Possibilité d'ajouter/supprimer des tâches programmatiquement.
+- **Action** : Organisez l'interface avec layout vertical et ajoutez un titre "📚 Ma Bibliothèque".
+- **Piste** : `QVBoxLayout` avec `QLabel` pour le titre et la liste view.
+- **Validation** : Interface propre avec titre et liste des livres.
 
-## 7) Interface de gestion
+## 7) Application complète
 
-- **Action** : Créez une vue avec `QTableView` et boutons pour ajouter, supprimer, marquer comme terminé.
-- **Indice** : Connectez les boutons à des méthodes qui modifient le modèle.
-- **Validation** : Interface fonctionnelle pour gérer les tâches.
+- **Action** : Créez la fonction `main()` avec boucle d'événements PyQt6.
+- **Piste** : `QApplication(sys.argv)`, `window.show()`, `sys.exit(app.exec())`.
+- **Validation** : Application lance et affiche la fenêtre avec les livres.
 
-## 8) Filtrage par statut
+## 8) Test de l'architecture
 
-- **Action** : Ajoutez un `QComboBox` pour filtrer les tâches par statut (Toutes, À faire, En cours, Terminées).
-- **Piste** : Utilisez `QSortFilterProxyModel` avec `setFilterKeyColumn()` et `setFilterFixedString()`.
-- **Validation** : Le filtrage fonctionne et met à jour la vue en temps réel.
+- **Action** : Modifiez temporairement la liste des livres et vérifiez la mise à jour automatique.
+- **Piste** : Ajoutez un livre dans `__init__` du modèle et observez l'affichage.
+- **Validation** : Compréhension de la connexion modèle-vue.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Tri avancé** : Activez le tri par colonnes avec des règles personnalisées (priorité > date > titre).
-- **Données persistantes** : Sauvegardez/chargez les tâches dans un fichier JSON.
-- **Validation métier** : Empêchez la création de tâches avec date d'échéance dans le passé.
-- **Sous-tâches** : Transformez en modèle hiérarchique supportant des sous-tâches.
+- **Style CSS** : Ajoutez des styles pour embellir le titre et la liste.
+- **Données dynamiques** : Ajoutez des livres via du code Python.
+- **Sélection** : Affichez le livre sélectionné dans la barre de statut.
