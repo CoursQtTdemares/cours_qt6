@@ -940,9 +940,9 @@ from PyQt6.QtGui import QAction, QKeySequence
 def setup_smart_interface(self) -> None:
     # ✅ UNE SEULE définition pour TOUTE l'interface
     self.save_action = QAction("&Sauvegarder", self) 
-    self.save_action.setShortcut("Ctrl+S")  # ②
-    self.save_action.setStatusTip("Sauvegarder le document")  # ③
-    self.save_action.triggered.connect(self.save_document)  # ④
+    self.save_action.setShortcut("Ctrl+S")
+    self.save_action.setStatusTip("Sauvegarder le document")
+    self.save_action.triggered.connect(self.save_document)
     
     # Maintenant on peut utiliser cette action PARTOUT :
     self.file_menu.addAction(self.save_action)  # Menu
@@ -981,9 +981,9 @@ class ActionDemoWindow(QMainWindow):
         self.create_actions() 
         
         # Ensuite on utilise ces actions partout
-        self.setup_menu_bar()  # ②
-        self.setup_tool_bar()  # ③
-        self.setup_status_bar()  # ④
+        self.setup_menu_bar()
+        self.setup_tool_bar()
+        self.setup_status_bar()
     
     def setup_central_widget(self) -> None:
         """Zone centrale simple pour la démonstration"""
@@ -1455,7 +1455,7 @@ class SimpleMenuWindow(QMainWindow):
     
     def create_actions(self) -> None:
         """Actions réutilisables"""
-        self.new_action = QAction("&Nouveau", self)  &N pour Alt+N
+        self.new_action = QAction("&Nouveau", self)  # pour Alt+N
         self.new_action.setShortcut("Ctrl+N")
         self.new_action.setStatusTip("Créer un nouveau document")
         self.new_action.triggered.connect(self.new_document)
@@ -1463,7 +1463,7 @@ class SimpleMenuWindow(QMainWindow):
         self.exit_action = QAction("&Quitter", self)
         self.exit_action.setShortcut("Ctrl+Q")
         self.exit_action.setStatusTip("Quitter l'application")
-        self.exit_action.triggered.connect(self.close)  Action système
+        self.exit_action.triggered.connect(self.close)  # Action système
     
     def create_menus(self) -> None:
         """Création de la structure des menus"""
@@ -2139,50 +2139,6 @@ class ThemableWindow(QMainWindow):
 
 **Menu intégré** : L'utilisateur peut changer de thème facilement
 **Centralisation** : Les styles sont organisés dans une classe dédiée
-
-### 9.4 CSS avancé : sélecteurs et états
-
-#### 🎯 **Cibler précisément les widgets**
-```python
-advanced_style = """
-/* Tous les boutons */
-QPushButton {
-    padding: 10px;
-}
-
-/* Boutons avec une classe CSS spécifique */
-QPushButton[class="primary"] {
-    background-color: #3498db;
-}
-
-QPushButton[class="danger"] {
-    background-color: #e74c3c;
-}
-
-/* États des widgets */
-QPushButton:hover {
-    transform: scale(1.05);
-}
-
-QPushButton:disabled {
-    background-color: #95a5a6;
-    color: #7f8c8d;
-}
-
-/* Widgets imbriqués */
-QGroupBox QPushButton {
-    margin: 5px;
-}
-"""
-
-# Utilisation avec des classes CSS
-primary_btn = QPushButton("Action principale")
-primary_btn.setProperty("class", "primary") 
-
-danger_btn = QPushButton("Supprimer")
-danger_btn.setProperty("class", "danger")
-```
-
 **Classes CSS** : `setProperty("class", "nom")` permet d'appliquer des styles spécifiques
 
 **🔑 Points clés :**
