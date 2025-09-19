@@ -742,6 +742,14 @@ main_layout.addLayout(content_layout, 3)   # 60% de la largeur
 main_layout.addLayout(tools_layout, 1)     # 20% de la largeur
 ```
 
+### 6.3 Optimisation des performances
+
+#### ⚡ **Bonnes pratiques techniques**
+- **Éviter les recalculs** : Définir les layouts une fois, les modifier rarement
+- **Gérer les updates** : Utiliser `setUpdatesEnabled(False)` pendant les modifications massives
+- **Économiser la mémoire** : Réutiliser les widgets plutôt que les recréer
+- **Optimiser les imbrications** : Préférer QGridLayout aux layouts trop imbriqués
+
 ---
 
 ## 7. Politiques de taille et espacement
