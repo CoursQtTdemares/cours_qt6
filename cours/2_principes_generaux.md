@@ -235,15 +235,15 @@ class MainWindow(QMainWindow):
         
         # Créer un bouton
         button = QPushButton("Appuyez sur moi !")
-        
+            
         # CONNEXION : signal 'clicked' -> slot 'handle_click'
-        button.clicked.connect(self.handle_click)  # ①
+        button.clicked.connect(self.handle_click) 
         
         self.setCentralWidget(button)
     
     def handle_click(self) -> None:
         """Slot personnalisé qui reçoit le signal clicked"""
-        print("🎯 Bouton cliqué !")  # ②
+        print("🎯 Bouton cliqué !") 
 
 app = QApplication(sys.argv)
 window = MainWindow()
@@ -271,16 +271,16 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Mon Application")
         
         # On garde une référence au bouton dans self
-        self.button = QPushButton("Appuyez sur moi !")  # ①
+        self.button = QPushButton("Appuyez sur moi !") 
         self.button.clicked.connect(self.handle_click)
         
         self.setCentralWidget(self.button)
     
     def handle_click(self) -> None:
         """Slot qui modifie l'interface"""
-        self.button.setText("Vous m'avez déjà cliqué !")  # ②
+        self.button.setText("Vous m'avez déjà cliqué !") 
         self.button.setEnabled(False)  # ③
-        self.setWindowTitle("Application utilisée")  # ④
+        self.setWindowTitle("Application utilisée") 
 ```
 
 **Référence importante** : On stocke le bouton dans `self.button` pour pouvoir le modifier plus tard
@@ -307,7 +307,7 @@ class MainWindow(QMainWindow):
         self.button.clicked.connect(self.handle_button_click)
         
         # Signal de la fenêtre elle-même
-        self.windowTitleChanged.connect(self.handle_title_change)  # ①
+        self.windowTitleChanged.connect(self.handle_title_change) 
         
         self.setCentralWidget(self.button)
     
@@ -319,15 +319,15 @@ class MainWindow(QMainWindow):
         titles = ["Première fois", "Deuxième fois", "Encore ?", "Stop !"]
         if self.click_count <= len(titles):
             new_title = titles[self.click_count - 1]
-            self.setWindowTitle(new_title)  # ②
+            self.setWindowTitle(new_title) 
     
     def handle_title_change(self, new_title: str) -> None:
         """Deuxième maillon : réagit au changement de titre"""
-        print(f"📝 Titre changé : {new_title}")  # ③
+        print(f"📝 Titre changé : {new_title}") 
         
         if new_title == "Stop !":
             self.button.setText("Fini !")
-            self.button.setEnabled(False)  # ④
+            self.button.setEnabled(False) 
 ```
 
 **Signal de fenêtre** : `windowTitleChanged` est émis quand le titre change
@@ -364,17 +364,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Bouton à bascule")
         
         self.button = QPushButton("Mode jour")
-        self.button.setCheckable(True)  # ①
+        self.button.setCheckable(True) 
         
         # Le signal clicked envoie l'état (True/False)
-        self.button.clicked.connect(self.handle_toggle)  # ②
+        self.button.clicked.connect(self.handle_toggle) 
         
         self.setCentralWidget(self.button)
     
-    def handle_toggle(self, checked: bool) -> None:  # ③
+    def handle_toggle(self, checked: bool) -> None: 
         """Slot qui reçoit l'état du bouton"""
         if checked:
-            self.button.setText("Mode nuit")  # ④
+            self.button.setText("Mode nuit") 
             self.setStyleSheet("background-color: #2c3e50; color: white;")
         else:
             self.button.setText("Mode jour")
@@ -401,11 +401,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Connexion directe")
         
         # Créer les widgets
-        self.label = QLabel("Tapez quelque chose...")  # ①
+        self.label = QLabel("Tapez quelque chose...") 
         self.input = QLineEdit()
         
         # Connexion DIRECTE : pas de fonction Python !
-        self.input.textChanged.connect(self.label.setText)  # ②
+        self.input.textChanged.connect(self.label.setText) 
         
         # Organisation dans un layout (voir chapitre suivant)
         layout = QVBoxLayout()
@@ -565,16 +565,16 @@ def validate_email(self) -> None:
 line_edit = QLineEdit()
 
 # Texte d'aide qui disparaît à la saisie
-line_edit.setPlaceholderText("Entrez votre email...")  # ①
+line_edit.setPlaceholderText("Entrez votre email...") 
 
 # Limite de caractères
-line_edit.setMaxLength(50)  # ②
+line_edit.setMaxLength(50) 
 
 # Mode d'affichage (normal, mot de passe, etc.)
-line_edit.setEchoMode(QLineEdit.EchoMode.Password)  # ③
+line_edit.setEchoMode(QLineEdit.EchoMode.Password) 
 
 # Masque de saisie pour validation automatique
-line_edit.setInputMask('000.000.000.000;_')  # ④
+line_edit.setInputMask('000.000.000.000;_') 
 ```
 
 **Placeholder** : Texte d'aide affiché quand le champ est vide
@@ -605,7 +605,7 @@ class FormWindow(QMainWindow):
         # Champ email avec validation
         self.email_input = QLineEdit()
         self.email_input.setPlaceholderText("votre.email@exemple.com")
-        self.email_input.textChanged.connect(self.validate_email_realtime)  # ①
+        self.email_input.textChanged.connect(self.validate_email_realtime) 
         
         # Label de feedback
         self.feedback_label = QLabel("Tapez votre email")
@@ -644,10 +644,10 @@ QWidget peut être utilisé comme **conteneur pour d'autres widgets**, combiné 
 
 ```python
 # Dans nos exemples précédents, nous utilisions souvent :
-central_widget = QWidget()  # ①
+central_widget = QWidget() 
 self.setCentralWidget(central_widget)
 
-layout = QVBoxLayout()  # ②
+layout = QVBoxLayout() 
 central_widget.setLayout(layout)
 
 # Puis nous ajoutions d'autres widgets au layout
@@ -690,7 +690,7 @@ class UserFormWidget(QWidget):
     def setup_ui(self) -> None:
         """Organisation des widgets dans un formulaire"""
         layout = QVBoxLayout()
-        self.setLayout(layout)  # ①
+        self.setLayout(layout) 
         
         # Widgets du formulaire
         self.name_input = QLineEdit()
@@ -721,7 +721,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         # Notre widget personnalisé devient le widget central
-        self.user_form = UserFormWidget()  # ②
+        self.user_form = UserFormWidget() 
         self.setCentralWidget(self.user_form)
         
         # Connexion du signal
@@ -753,10 +753,10 @@ combo = QComboBox()
 
 # Ajouter les options
 options = ["Option 1", "Option 2", "Option 3"]
-combo.addItems(options)  # ①
+combo.addItems(options) 
 
 # Définir la sélection par défaut  
-combo.setCurrentText("Option 2")  # ②
+combo.setCurrentText("Option 2") 
 ```
 
 **Ajouter les choix** : `addItems()` prend une liste de chaînes
@@ -804,7 +804,7 @@ notifications_cb = QCheckBox("Activer les notifications")
 notifications_cb.toggled.connect(self.handle_notifications)
 
 def handle_notifications(self, enabled: bool) -> None:
-    self.sound_option.setEnabled(enabled)  # ②
+    self.sound_option.setEnabled(enabled) 
     self.email_option.setEnabled(enabled)
 ```
 
@@ -818,7 +818,7 @@ Le bouton est le widget d'**action** par excellence :
 
 ```python
 button = QPushButton("Valider")
-button.clicked.connect(self.process_form)  # ①
+button.clicked.connect(self.process_form) 
 ```
 
 **Signal principal** : `clicked` se déclenche au clic (avec ou sans données selon le bouton)
@@ -853,16 +853,16 @@ def setup_form_validation(self) -> None:
     self.status_label = QLabel("Tapez votre email")
     
     # Le bouton n'est actif que si l'email est valide
-    self.submit_button.setEnabled(False)  # ①
+    self.submit_button.setEnabled(False) 
     
     # À chaque changement, on vérifie et on met à jour
-    self.email_input.textChanged.connect(self.check_email_validity)  # ②
+    self.email_input.textChanged.connect(self.check_email_validity) 
 
 def check_email_validity(self, email: str) -> None:
     """Valide l'email et active/désactive le bouton"""
     is_valid = "@" in email and "." in email and len(email) > 5
     
-    self.submit_button.setEnabled(is_valid)  # ③
+    self.submit_button.setEnabled(is_valid) 
     
     if is_valid:
         self.status_label.setText("✅ Email valide")
@@ -878,212 +878,623 @@ def check_email_validity(self, email: str) -> None:
 
 ---
 
-## 4. Barres de menus (QMenuBar)
+## 4. Les Actions Qt : le cœur de l'interface utilisateur
 
-### 4.1 Création d'une barre de menus
+### 4.1 Le problème de la duplication
+
+Avant de plonger dans les barres d'outils et les menus, nous devons comprendre un **problème fondamental** dans la création d'interfaces utilisateur : la **duplication**.
+
+Imaginez que vous voulez ajouter une fonction "Sauvegarder" dans votre application. Où cette fonction devrait-elle être accessible ?
+
+- **Dans le menu** "Fichier" → "Sauvegarder"
+- **Dans la barre d'outils** avec un bouton et une icône disquette
+- **Via un raccourci clavier** Ctrl+S
+- **Dans un menu contextuel** clic-droit → "Sauvegarder"
+
+#### 🚨 **L'approche naïve (à éviter)**
+
+Sans Qt, vous pourriez être tenté de créer chaque élément séparément :
 
 ```python
-    def setup_menu_bar(self) -> None:
-        """Configure la barre de menus"""
-        if (menubar := self.menuBar()) is None:
-            return
+# ❌ Duplication du code - MAUVAISE approche
+def setup_naive_interface(self) -> None:
+    # Menu
+    menu_save = self.file_menu.addAction("Sauvegarder")
+    menu_save.triggered.connect(self.save_document)
+    
+    # Barre d'outils
+    toolbar_save = QPushButton("Save")
+    toolbar_save.clicked.connect(self.save_document)
+    self.toolbar.addWidget(toolbar_save)
+    
+    # Raccourci clavier - code séparé !
+    shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
+    shortcut.activated.connect(self.save_document)
+```
 
-        if (file_menu := menubar.addMenu("&Fichier")) is None:
-            return
+**Problèmes de cette approche :**
+- **Code dupliqué** : Même fonction connectée 3 fois
+- **Maintenance difficile** : Changer le comportement = modifier 3 endroits
+- **Incohérence possible** : Risque d'oublier un élément
+- **Pas de synchronisation** : Comment désactiver "Sauvegarder" partout à la fois ?
 
+### 4.2 La solution Qt : QAction
+
+Qt résout ce problème avec **QAction** - un concept brillant qui représente une **action abstraite** de l'utilisateur.
+
+#### 🎯 **Qu'est-ce qu'une QAction ?**
+
+Une `QAction` est un **objet unique** qui définit :
+- **Le nom** de l'action ("Sauvegarder")
+- **L'icône** associée (💾)
+- **Le raccourci clavier** (Ctrl+S)
+- **Le message d'aide** ("Sauvegarder le document")
+- **La fonction à exécuter** (`save_document()`)
+- **L'état** (activé/désactivé, coché/décoché)
+
+#### ✅ **L'approche Qt (recommandée)**
+
+```python
+from PyQt6.QtGui import QAction, QKeySequence
+
+def setup_smart_interface(self) -> None:
+    # ✅ UNE SEULE définition pour TOUTE l'interface
+    self.save_action = QAction("&Sauvegarder", self) 
+    self.save_action.setShortcut("Ctrl+S")  # ②
+    self.save_action.setStatusTip("Sauvegarder le document")  # ③
+    self.save_action.triggered.connect(self.save_document)  # ④
+    
+    # Maintenant on peut utiliser cette action PARTOUT :
+    self.file_menu.addAction(self.save_action)  # Menu
+    self.toolbar.addAction(self.save_action)    # Barre d'outils
+    # Le raccourci est automatiquement géré !
+```
+
+**Parent requis** : Notez que nous passons `self` comme parent - QAction a besoin d'un objet parent
+**Raccourci intégré** : Le raccourci fonctionne même si l'action n'est affichée nulle part
+**Message d'aide** : Sera affiché dans la barre de statut automatiquement
+**Connexion unique** : Une seule connexion signal-slot pour toute l'interface
+
+### 4.3 Exemple pratique complet
+
+Voyons comment créer une application avec plusieurs actions synchronisées :
+
+```python
+import sys
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtWidgets import (
+    QApplication, QLabel, QMainWindow, 
+    QStatusBar, QToolBar, QVBoxLayout, QWidget
+)
+
+class ActionDemoWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Démonstration des Actions Qt")
+        self.setGeometry(100, 100, 800, 600)
+        
+        # Widget central simple
+        self.setup_central_widget()
+        
+        # Actions AVANT les menus et barres d'outils
+        self.create_actions() 
+        
+        # Ensuite on utilise ces actions partout
+        self.setup_menu_bar()  # ②
+        self.setup_tool_bar()  # ③
+        self.setup_status_bar()  # ④
+    
+    def setup_central_widget(self) -> None:
+        """Zone centrale simple pour la démonstration"""
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        
+        layout = QVBoxLayout()
+        central_widget.setLayout(layout)
+        
+        self.content_label = QLabel("Utilisez les menus, barres d'outils ou raccourcis !")
+        self.content_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.content_label)
+    
+    def create_actions(self) -> None:
+        """Création centralisée de toutes les actions"""
         # Action Nouveau
-        new_action = QAction("&Nouveau", self)
-        new_action.setShortcut("Ctrl+N")
-        new_action.setStatusTip("Créer un nouveau document")
-        new_action.triggered.connect(self.new_file)
-        file_menu.addAction(new_action)
-
+        self.new_action = QAction("&Nouveau", self)
+        self.new_action.setShortcut("Ctrl+N") 
+        self.new_action.setStatusTip("Créer un nouveau document")
+        self.new_action.triggered.connect(self.new_document)
+        
         # Action Ouvrir
-        open_action = QAction("&Ouvrir", self)
-        open_action.setShortcut("Ctrl+O")
-        open_action.setStatusTip("Ouvrir un document existant")
-        open_action.triggered.connect(self.open_file)
-        file_menu.addAction(open_action)
-
-        # Séparateur
+        self.open_action = QAction("&Ouvrir", self)
+        self.open_action.setShortcut("Ctrl+O")
+        self.open_action.setStatusTip("Ouvrir un document existant")
+        self.open_action.triggered.connect(self.open_document)
+        
+        # Action Sauvegarder
+        self.save_action = QAction("&Sauvegarder", self)
+        self.save_action.setShortcut("Ctrl+S")
+        self.save_action.setStatusTip("Sauvegarder le document")
+        self.save_action.triggered.connect(self.save_document)
+        
+        # État initial : désactiver Sauvegarder
+        self.save_action.setEnabled(False) 
+    
+    def setup_menu_bar(self) -> None:
+        """Les menus utilisent nos actions prédéfinies"""
+        menubar = self.menuBar()
+        
+        file_menu = menubar.addMenu("&Fichier")
+        file_menu.addAction(self.new_action)  
+        file_menu.addAction(self.open_action) 
         file_menu.addSeparator()
+        file_menu.addAction(self.save_action) 
+    
+    def setup_tool_bar(self) -> None:
+        """La barre d'outils utilise les mêmes actions"""
+        toolbar = self.addToolBar("Principal")
+        
+        toolbar.addAction(self.new_action)  
+        toolbar.addAction(self.open_action) 
+        toolbar.addSeparator()
+        toolbar.addAction(self.save_action) 
+    
+    def setup_status_bar(self) -> None:
+        """Barre de statut pour voir les messages d'aide"""
+        self.setStatusBar(QStatusBar(self))
+        self.statusBar().showMessage("Prêt")
+    
+    # Gestionnaires d'actions
+    def new_document(self) -> None:
+        """Créer un nouveau document"""
+        self.content_label.setText("📄 Nouveau document créé")
+        self.save_action.setEnabled(True) 
+        self.statusBar().showMessage("Nouveau document créé", 2000)
+    
+    def open_document(self) -> None:
+        """Ouvrir un document"""
+        self.content_label.setText("📂 Document ouvert")
+        self.save_action.setEnabled(True) 
+        self.statusBar().showMessage("Document ouvert", 2000)
+    
+    def save_document(self) -> None:
+        """Sauvegarder le document"""
+        self.content_label.setText("💾 Document sauvegardé")
+        self.statusBar().showMessage("Document sauvegardé avec succès", 2000)
 
-        # Action Quitter
-        exit_action = QAction("&Quitter", self)
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.setStatusTip("Quitter l'application")
-        exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
+def main() -> int:
+    app = QApplication(sys.argv)
+    window = ActionDemoWindow()
+    window.show()
+    return app.exec()
 
-    def new_file(self) -> None:
-        """Gestionnaire pour nouveau fichier"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage("Nouveau fichier créé", 2000)
-
-    def open_file(self) -> None:
-        """Gestionnaire pour ouvrir fichier"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage("Ouverture d'un fichier...", 2000)
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### 4.2 Menus hiérarchiques et actions avancées
+**Raccourcis automatiques** : Ctrl+N, Ctrl+O, Ctrl+S fonctionnent automatiquement
+**État synchronisé** : Désactiver `save_action` la désactive partout
+**Réutilisation totale** : Même action dans menu ET barre d'outils
+**Messages d'aide** : Passer la souris sur les éléments affiche les conseils
+**Synchronisation magique** : Activer la sauvegarde après "nouveau" ou "ouvrir"
 
-```python
-    def setup_advanced_menus(self) -> None:
-        """Exemples de menus avancés"""
-        if (menubar := self.menuBar()) is None:
-            return
+### 4.4 Avantages des QAction
 
-        # Menu Édition avec sous-menus
-        if (edit_menu := menubar.addMenu("&Édition")) is None:
-            return
+#### 🎯 **Centralisation**
+- **Une définition** → utilisable partout
+- **Une modification** → effet global
+- **Cohérence garantie** → même comportement partout
 
-        if (insert_menu := edit_menu.addMenu("&Insérer")) is None:
-            return
+#### 🔄 **Synchronisation automatique**
+- Désactiver une action → tous les éléments se désactivent
+- Changer le texte → mise à jour partout
+- État (coché/décoché) → synchronisé automatiquement
 
-        if (image_menu := insert_menu.addAction("Image")) is None:
-            return
+#### 🚀 **Productivité**
+- **Moins de code** → moins d'erreurs
+- **Maintenance facile** → un seul endroit à modifier
+- **Fonctionnalités avancées** → raccourcis, icônes, groupes d'actions
 
-        if (table_menu := insert_menu.addAction("Tableau")) is None:
-            return
+#### 💡 **Extensibilité**
+- Ajouter l'action à de nouveaux endroits → une ligne de code
+- Créer des menus contextuels → réutiliser les actions existantes
+- Thèmes et styles → automatiquement appliqués
 
-        # Sous-menu "Insérer"
-        image_menu.triggered.connect(self.insert_image)
-        table_menu.triggered.connect(self.insert_table)
-
-        # Action avec case à cocher
-        word_wrap_action = QAction("Retour à la &ligne", self)
-        word_wrap_action.setCheckable(True)
-        word_wrap_action.setChecked(True)
-        word_wrap_action.toggled.connect(self.toggle_word_wrap)
-        edit_menu.addAction(word_wrap_action)
-
-        # Actions groupées (radio buttons)
-        if (view_menu := menubar.addMenu("&Affichage")) is None:
-            return
-
-        view_group = QActionGroup(self)
-
-        list_view = QAction("Vue &Liste", self)
-        list_view.setCheckable(True)
-        list_view.setChecked(True)
-        view_group.addAction(list_view)
-
-        icon_view = QAction("Vue &Icônes", self)
-        icon_view.setCheckable(True)
-        view_group.addAction(icon_view)
-
-        view_menu.addAction(list_view)
-        view_menu.addAction(icon_view)
-
-        view_group.triggered.connect(self.change_view_mode)
-
-    def toggle_word_wrap(self, checked: bool) -> None:
-        """Gestionnaire pour retour à la ligne"""
-        mode = "activé" if checked else "désactivé"
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage(f"Retour à la ligne {mode}", 2000)
-
-    def change_view_mode(self, action: QAction) -> None:
-        """Gestionnaire pour changement de vue"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage(f"Mode d'affichage : {action.text()}", 2000)
-
-    def insert_image(self) -> None:
-        """Gestionnaire pour insérer une image"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage("Insération d'une image...", 2000)
-
-    def insert_table(self) -> None:
-        """Gestionnaire pour insérer un tableau"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage("Insération d'un tableau...", 2000)
-```
+**🔑 Concept fondamental :** Les QAction sont la **fondation** de toute interface Qt professionnelle. Maîtrisez-les et vos interfaces seront cohérentes, maintenables et extensibles !
 
 ---
 
 ## 5. Barres d'outils (QToolBar)
 
-### 5.1 Création d'une barre d'outils basique
+### 5.1 Pourquoi utiliser des barres d'outils ?
+
+Les **barres d'outils** sont l'un des éléments d'interface les plus courants dans les applications de bureau. Elles offrent un **accès rapide** aux fonctions les plus fréquemment utilisées.
+
+#### 🎯 **Rôle des barres d'outils**
+- **Accès immédiat** : Fonctions courantes en un clic
+- **Efficacité** : Plus rapide que naviguer dans les menus
+- **Visibilité** : Les actions importantes sont toujours visibles
+- **Personnalisation** : L'utilisateur peut souvent les déplacer ou cacher
+
+#### 📊 **Barres d'outils vs Menus**
+
+| **Barres d'outils** | **Menus** |
+|-------------------|---------|
+| Actions **fréquentes** | **Toutes** les actions |
+| Accès **immédiat** | Accès **organisé** |
+| **Icônes** principales | **Texte** principal |
+| Espace **limité** | Espace **extensible** |
+
+### 5.2 Créer une barre d'outils simple
+
+Commençons par créer une barre d'outils basique. Dans Qt, les barres d'outils sont créées avec la classe `QToolBar`.
 
 ```python
-    def setup_tool_bar(self) -> None:
-        """Configure la barre d'outils"""
-        if (toolbar := self.addToolBar("Principal")) is None:
-            return
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QToolBar
+import sys
 
-        toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+class SimpleToolbarWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Ma première barre d'outils")
+        self.setGeometry(100, 100, 600, 400)
+        
+        # Widget central simple
+        self.label = QLabel("Cliquez sur un bouton de la barre d'outils")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setCentralWidget(self.label)
+        
+        # Créer la barre d'outils
+        self.create_toolbar() 
+    
+    def create_toolbar(self) -> None:
+        """Création d'une barre d'outils basique"""
+        toolbar = QToolBar("Ma barre d'outils") 
+        self.addToolBar(toolbar) 
+        
+        # Pour l'instant, elle est vide mais visible
+        # Regardez en haut de la fenêtre !
 
-        # Action Nouveau avec icône
-        new_action = QAction("Nouveau", self)
-        new_action.setIcon(QIcon("icons/new.png"))  # Remplacer par vraie icône
-        new_action.triggered.connect(self.new_file)
-        toolbar.addAction(new_action)
+def main() -> int:
+    app = QApplication(sys.argv)
+    window = SimpleToolbarWindow()
+    window.show()
+    return app.exec()
 
-        # Action Ouvrir
-        open_action = QAction("Ouvrir", self)
-        open_action.setIcon(QIcon("icons/open.png"))
-        open_action.triggered.connect(self.open_file)
-        toolbar.addAction(open_action)
-
-        # Séparateur dans la toolbar
-        toolbar.addSeparator()
-
-        # Action Sauvegarder
-        save_action = QAction("Sauvegarder", self)
-        save_action.setIcon(QIcon("icons/save.png"))
-        save_action.triggered.connect(self.save_file)
-        toolbar.addAction(save_action)
-
-    def save_file(self) -> None:
-        """Gestionnaire pour sauvegarder"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage("Fichier sauvegardé", 2000)
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### 5.2 Barres d'outils multiples et personnalisées
+**Méthode simple** : On crée et ajoute la barre d'outils à la fenêtre
+**Nom de la barre** : "Ma barre d'outils" apparaîtra si on fait clic-droit
+**Ajout automatique** : Qt place la barre d'outils en haut automatiquement
+
+**💡 Astuce :** Faites un clic-droit sur la barre d'outils pour voir le menu contextuel qui permet de la cacher !
+
+### 5.3 Ajouter des actions à la barre d'outils
+
+Maintenant, rendons notre barre d'outils utile en y ajoutant des **actions** (nos QAction de la section précédente) :
 
 ```python
-    def setup_multiple_toolbars(self) -> None:
-        """Création de plusieurs barres d'outils"""
-        # Barre d'outils principale
-        if (main_toolbar := self.addToolBar("Principal")) is None:
-            return
+from PyQt6.QtGui import QAction
 
-        main_toolbar.addAction("Nouveau")
-        main_toolbar.addAction("Ouvrir")
-        main_toolbar.addAction("Sauvegarder")
+class ToolbarWithActionsWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Barre d'outils avec actions")
+        self.setGeometry(100, 100, 600, 400)
+        
+        # Widget central
+        self.label = QLabel("Utilisez les boutons de la barre d'outils")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setCentralWidget(self.label)
+        
+        # D'abord créer les actions, puis la barre d'outils
+        self.create_actions()
+        self.create_toolbar()
+    
+    def create_actions(self) -> None:
+        """Créer nos actions réutilisables"""
+        self.hello_action = QAction("Dire Bonjour", self)
+        self.hello_action.setStatusTip("Affiche un message de salutation")
+        self.hello_action.triggered.connect(self.say_hello) 
+        
+        self.goodbye_action = QAction("Dire Au revoir", self)
+        self.goodbye_action.setStatusTip("Affiche un message d'adieu")
+        self.goodbye_action.triggered.connect(self.say_goodbye) 
+    
+    def create_toolbar(self) -> None:
+        """Ajouter nos actions à la barre d'outils"""
+        toolbar = QToolBar("Actions")
+        self.addToolBar(toolbar)
+        
+        # Ajouter nos actions à la barre d'outils
+        toolbar.addAction(self.hello_action)   
+        toolbar.addAction(self.goodbye_action) 
 
-        # Barre d'outils de formatage
-        if (format_toolbar := self.addToolBar("Formatage")) is None:
-            return
-
-        format_toolbar.addAction("Gras")
-        format_toolbar.addAction("Italique")
-        format_toolbar.addAction("Souligné")
-
-        # Widget personnalisé dans la toolbar
-        if (search_toolbar := self.addToolBar("Recherche")) is None:
-            return
-
-        search_field = QLineEdit()
-        search_field.setPlaceholderText("Rechercher...")
-        search_field.setMaximumWidth(200)
-        search_toolbar.addWidget(search_field)
-
-        search_button = QPushButton("Rechercher")
-        search_button.clicked.connect(lambda: self.search(search_field.text()))
-        search_toolbar.addWidget(search_button)
-
-    def search(self, text: str) -> None:
-        """Gestionnaire de recherche"""
-        if (status_bar := self.statusBar()) is not None:
-            status_bar.showMessage(f"Recherche : {text}", 2000)
+        # Ajouter un séparateur visuel
+        toolbar.addSeparator() 
+    
+    # Gestionnaires d'actions
+    def say_hello(self) -> None:
+        """Réaction au bouton Bonjour"""
+        self.label.setText("👋 Bonjour ! Comment allez-vous ?")
+    
+    def say_goodbye(self) -> None:
+        """Réaction au bouton Au revoir"""
+        self.label.setText("👋 Au revoir ! À bientôt !")
 ```
+
+**Actions d'abord** : On crée les actions avant de les utiliser
+**Connexion** : Chaque action est connectée à sa fonction
+**Ajout facile** : `toolbar.addAction()` ajoute l'action comme bouton
+**Séparateur** : `addSeparator()` crée une ligne de séparation visuelle
+
+### 5.4 Actions basculantes (checkable)
+
+Certaines actions ne sont pas juste des "clics" mais des **états** qu'on peut activer/désactiver. Voici comment créer des boutons à bascule :
+
+```python
+def create_toggle_actions(self) -> None:
+    """Actions avec état on/off"""
+    # Action basculante
+    self.night_mode_action = QAction("Mode Nuit", self)
+    self.night_mode_action.setCheckable(True) 
+    self.night_mode_action.setChecked(False)  
+    self.night_mode_action.toggled.connect(self.toggle_night_mode) 
+
+def create_toolbar_with_toggles(self) -> None:
+    """Barre d'outils avec boutons basculants"""
+    toolbar = QToolBar("Modes")
+    self.addToolBar(toolbar)
+    
+    toolbar.addAction(self.night_mode_action)
+
+def toggle_night_mode(self, enabled: bool) -> None:
+    """Basculer entre mode jour/nuit"""
+    if enabled:
+        self.setStyleSheet("background-color: #2c3e50; color: #ecf0f1;")
+        self.label.setText("🌙 Mode nuit activé")
+    else:
+        self.setStyleSheet("")  # Style par défaut
+        self.label.setText("☀️ Mode jour activé")
+```
+
+**Action basculante** : `setCheckable(True)` permet l'état on/off
+**État initial** : `setChecked(False)` définit l'état de départ
+**Signal spécial** : `toggled` reçoit l'état True/False
+
+### 5.5 Ajouter des icônes
+
+Les icônes rendent les barres d'outils plus **professionnelles** et **intuitives**. Voici comment en ajouter :
+
+```python
+from PyQt6.QtGui import QIcon
+
+def create_actions_with_icons(self) -> None:
+    """Actions avec icônes"""
+    # Action Nouveau avec icône
+    self.new_action = QAction("Nouveau", self)
+    # Utilisation d'icônes du système (disponibles partout)
+    self.new_action.setIcon(self.style().standardIcon(
+        self.style().StandardPixmap.SP_FileIcon)) 
+    self.new_action.triggered.connect(self.new_document)
+    
+    # Action Sauvegarder
+    self.save_action = QAction("Sauvegarder", self)
+    self.save_action.setIcon(self.style().standardIcon(
+        self.style().StandardPixmap.SP_DialogSaveButton)) 
+    self.save_action.triggered.connect(self.save_document)
+
+def configure_toolbar_appearance(self) -> None:
+    """Configurer l'apparence de la barre d'outils"""
+    toolbar = QToolBar("Fichier")
+    self.addToolBar(toolbar)
+    
+    # Style des boutons : icône + texte sous l'icône
+    toolbar.setToolButtonStyle(
+        Qt.ToolButtonStyle.ToolButtonTextUnderIcon) 
+    
+    # Taille des icônes
+    from PyQt6.QtCore import QSize
+    toolbar.setIconSize(QSize(24, 24)) 
+    
+    # Ajouter nos actions avec icônes
+    toolbar.addAction(self.new_action)
+    toolbar.addAction(self.save_action)
+```
+
+**Icônes système** : `standardIcon()` utilise les icônes de l'OS
+**Style des boutons** : Texte sous, à côté, ou seulement icône
+**Taille personnalisée** : `setIconSize()` pour ajuster la taille
+
+#### 📊 **Options de style des boutons**
+
+| Style | Description | Quand utiliser |
+|-------|-------------|----------------|
+| `ToolButtonIconOnly` | Icône seulement | Espace limité, icônes évidentes |
+| `ToolButtonTextOnly` | Texte seulement | Pas d'icônes disponibles |
+| `ToolButtonTextBesideIcon` | Texte à côté | Barre large, clarté importante |
+| `ToolButtonTextUnderIcon` | Texte en dessous | Style moderne, vertical |
+| `ToolButtonFollowStyle` | Suit l'OS | Cohérence système (recommandé) |
+
+### 5.6 Barres d'outils multiples et spécialisées
+
+Pour des applications complexes, vous pouvez créer **plusieurs barres d'outils** spécialisées :
+
+```python
+def create_multiple_toolbars(self) -> None:
+    """Plusieurs barres d'outils organisées par fonction"""
+    # Barre d'outils Fichier
+    file_toolbar = QToolBar("Fichier")
+    self.addToolBar(file_toolbar)
+    file_toolbar.addAction(self.new_action)
+    file_toolbar.addAction(self.open_action)
+    file_toolbar.addAction(self.save_action)
+    
+    # Barre d'outils Édition
+    edit_toolbar = QToolBar("Édition")
+    self.addToolBar(edit_toolbar) 
+    edit_toolbar.addAction(self.copy_action)
+    edit_toolbar.addAction(self.paste_action)
+    
+    # Barre d'outils avec widgets personnalisés
+    search_toolbar = QToolBar("Recherche")
+    self.addToolBar(search_toolbar)
+    
+    # Ajouter un widget QLineEdit directement
+    from PyQt6.QtWidgets import QLineEdit, QPushButton
+    search_field = QLineEdit()
+    search_field.setPlaceholderText("Rechercher...")
+    search_field.setMaximumWidth(200) 
+    search_toolbar.addWidget(search_field) 
+    
+    search_button = QPushButton("🔍")
+    search_button.clicked.connect(lambda: self.search(search_field.text()))
+    search_toolbar.addWidget(search_button) 
+```
+
+**Ajout séquentiel** : Chaque `addToolBar()` ajoute sous la précédente
+**Taille contrôlée** : `setMaximumWidth()` évite que le champ soit trop large
+**Widgets normaux** : `addWidget()` peut ajouter n'importe quel widget
+**Capture de texte** : Lambda pour passer le texte du champ à la fonction
+
+### 5.7 Gestion avancée des barres d'outils
+
+#### 🔧 **Contrôler la position et l'apparence**
+
+```python
+def setup_advanced_toolbar(self) -> None:
+    """Configuration avancée des barres d'outils"""
+    toolbar = QToolBar("Avancée")
+    
+    # Position spécifique
+    self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, toolbar) 
+    
+    # Interdire le déplacement
+    toolbar.setMovable(False) 
+    
+    # Interdire le flottement (détachement)
+    toolbar.setFloatable(False) 
+    
+    # Style uniforme
+    toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+```
+
+**Position forcée** : Gauche, droite, haut, bas avec `ToolBarArea`
+**Immobilisation** : `setMovable(False)` fixe la barre
+**Pas de détachement** : `setFloatable(False)` empêche la fenêtre flottante
+
+### 5.8 Bonnes pratiques pour les barres d'outils
+
+#### ✅ **Recommandations**
+- **Actions fréquentes seulement** : Pas plus de 8-10 boutons par barre
+- **Groupement logique** : Utilisez des séparateurs pour grouper
+- **Icônes cohérentes** : Même style et taille pour toute l'application
+- **Ordre conventionnel** : Nouveau, Ouvrir, Sauvegarder (comme Office)
+
+#### ❌ **À éviter**
+- **Trop de boutons** : Surcharge cognitive
+- **Actions rares** : Les réserver aux menus
+- **Icônes floues** : Utilisez des icônes nettes et appropriées
+- **Incohérence** : Mélanger styles et tailles d'icônes
+
+**🔑 Concept clé :** Les barres d'outils sont des **raccourcis visuels**. Elles doivent rendre l'application plus rapide à utiliser, pas plus complexe !
 
 ---
 
-## 6. Barre de statut (QStatusBar)
+## 6. Barres de menus (QMenuBar)
+
+### 6.1 Pourquoi des menus ?
+
+Les **menus** sont un autre élément standard des interfaces utilisateur. Ils constituent la **navigation principale** de votre application et permettent d'accéder à **toutes** les fonctionnalités disponibles.
+
+#### 🎯 **Rôle des menus**
+- **Accès exhaustif** : Toutes les fonctions de l'application sont accessibles
+- **Organisation logique** : Regroupement par catégorie (Fichier, Édition, Aide...)
+- **Découvrabilité** : L'utilisateur peut explorer les fonctionnalités
+- **Standards établis** : Les utilisateurs savent où chercher quoi
+
+#### 📊 **Comparaison Menus vs Barres d'outils**
+
+Les menus et barres d'outils sont **complémentaires** :
+
+| **Menus** | **Barres d'outils** |
+|-----------|-------------------|
+| **Toutes** les fonctions | Actions **fréquentes** |
+| Accès **organisé** | Accès **immédiat** |
+| **Texte** descriptif | **Icônes** visuelles |
+| Toujours **accessibles** | Parfois **cachées** |
+
+### 6.2 Créer une barre de menus simple
+
+La barre de menus est automatiquement disponible dans `QMainWindow`. Voyons comment l'utiliser avec nos **QAction** :
+
+```python
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow
+import sys
+
+class SimpleMenuWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Ma première barre de menus")
+        self.setGeometry(100, 100, 600, 400)
+        
+        # Widget central simple
+        self.label = QLabel("Utilisez les menus pour tester les actions")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setCentralWidget(self.label)
+        
+        # Créer les actions d'abord
+        self.create_actions()
+        
+        # Puis créer les menus
+        self.create_menus()
+    
+    def create_actions(self) -> None:
+        """Actions réutilisables"""
+        self.new_action = QAction("&Nouveau", self)  &N pour Alt+N
+        self.new_action.setShortcut("Ctrl+N")
+        self.new_action.setStatusTip("Créer un nouveau document")
+        self.new_action.triggered.connect(self.new_document)
+        
+        self.exit_action = QAction("&Quitter", self)
+        self.exit_action.setShortcut("Ctrl+Q")
+        self.exit_action.setStatusTip("Quitter l'application")
+        self.exit_action.triggered.connect(self.close)  Action système
+    
+    def create_menus(self) -> None:
+        """Création de la structure des menus"""
+        # Récupérer la barre de menus
+        menubar = self.menuBar() 
+        
+        # Créer le menu Fichier
+        file_menu = menubar.addMenu("&Fichier")  
+
+        # Ajouter nos actions au menu
+        file_menu.addAction(self.new_action) 
+        file_menu.addSeparator() 
+        file_menu.addAction(self.exit_action)
+    
+    def new_document(self) -> None:
+        """Gestionnaire pour nouveau document"""
+        self.label.setText("📄 Nouveau document créé via le menu !")
+```
+
+**Mnémoniques** : `&Fichier` crée le raccourci Alt+F pour ouvrir le menu
+**Action système** : `self.close` ferme automatiquement la fenêtre
+**Récupération** : `menuBar()` donne accès à la barre de menus
+**Ajout de menu** : `addMenu()` crée un nouveau menu déroulant
+**Réutilisation** : Nos actions sont ajoutées au menu comme dans les barres d'outils
+**Séparateur** : `addSeparator()` crée une ligne de séparation visuelle
+
+**🔑 Concept important :** Les mêmes QAction que nous avons créées pour les barres d'outils peuvent être **directement réutilisées** dans les menus !
+
+---
+
+## 7. Barre de statut (QStatusBar)
 
 ### 6.1 Utilisation basique
 
@@ -1237,40 +1648,250 @@ def check_email_validity(self, email: str) -> None:
 
 ## 8. Interconnexion des éléments d'interface
 
-### 8.1 Synchronisation entre menus et barres d'outils
+### 8.1 Le pouvoir de la synchronisation
+
+Maintenant que nous maîtrisons les **QAction**, voyons leur véritable puissance : créer des interfaces **parfaitement synchronisées** où tous les éléments travaillent ensemble harmonieusement.
+
+#### 🎯 **Objectif : Interface cohérente**
+
+Imaginez une application où :
+- **Menu** "Fichier" → "Sauvegarder" est grisé quand rien à sauvegarder
+- **Bouton** de la barre d'outils est également grisé automatiquement  
+- **Raccourci** Ctrl+S ne fonctionne que quand approprié
+- **Titre** de la fenêtre indique s'il y a des modifications
+- **Barre de statut** donne un feedback instantané
+
+**Sans QAction**, vous devriez gérer chaque élément séparément. **Avec QAction**, tout est automatiquement synchronisé !
+
+### 8.2 Exemple complet : Éditeur de texte synchronisé
+
+Voici un exemple qui montre la synchronisation complète de tous les éléments d'interface :
 
 ```python
-def create_synchronized_actions(self) -> None:
-    """Crée des actions synchronisées entre menus et barres d'outils"""
-    # Action partagée
-    self.save_action = QAction("Sauvegarder", self)
-    self.save_action.setShortcut("Ctrl+S")
-    self.save_action.setIcon(QIcon("icons/save.png"))
-    self.save_action.setStatusTip("Sauvegarder le document")
-    self.save_action.triggered.connect(self.save_document)
-    
-    # Ajouter à la fois au menu et à la barre d'outils
-    file_menu = self.menuBar().addMenu("Fichier")
-    file_menu.addAction(self.save_action)
-    
-    toolbar = self.addToolBar("Principal")
-    toolbar.addAction(self.save_action)
-    
-    # État initial
-    self.save_action.setEnabled(False)  # Désactivé au début
+import sys
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QPlainTextEdit, 
+    QStatusBar, QToolBar, QMessageBox
+)
 
-def document_modified(self) -> None:
-    """Appelé quand le document est modifié"""
-    self.save_action.setEnabled(True)
-    self.setWindowTitle("Mon Application* - Document modifié")
+class SynchronizedEditor(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Éditeur Synchronisé")
+        self.setGeometry(100, 100, 800, 600)
+        
+        # État du document
+        self.document_modified = False  # ①
+        self.current_file = None
+        
+        # Interface
+        self.setup_editor()        # ②
+        self.create_actions()      # ③
+        self.setup_menus()         # ④
+        self.setup_toolbar()       # ⑤
+        self.setup_status_bar()    # ⑥
+        
+        # Synchronisation automatique
+        self.connect_signals()     # ⑦
+    
+    def setup_editor(self) -> None:
+        """Zone d'édition principale"""
+        self.editor = QPlainTextEdit()
+        self.editor.setPlaceholderText("Tapez votre texte ici...")
+        self.setCentralWidget(self.editor)
+    
+    def create_actions(self) -> None:
+        """Actions centralisées pour toute l'interface"""
+        # Action Nouveau
+        self.new_action = QAction("&Nouveau", self)
+        self.new_action.setShortcut("Ctrl+N")
+        self.new_action.setStatusTip("Créer un nouveau document")
+        self.new_action.setIcon(self.style().standardIcon(
+            self.style().StandardPixmap.SP_FileIcon))
+        self.new_action.triggered.connect(self.new_document)
+        
+        # Action Sauvegarder
+        self.save_action = QAction("&Sauvegarder", self)
+        self.save_action.setShortcut("Ctrl+S")
+        self.save_action.setStatusTip("Sauvegarder le document")
+        self.save_action.setIcon(self.style().standardIcon(
+            self.style().StandardPixmap.SP_DialogSaveButton))
+        self.save_action.setEnabled(False)  # ⑧ Désactivé au début
+        self.save_action.triggered.connect(self.save_document)
+        
+        # Action Annuler
+        self.undo_action = QAction("&Annuler", self)
+        self.undo_action.setShortcut("Ctrl+Z")
+        self.undo_action.setStatusTip("Annuler la dernière action")
+        self.undo_action.setEnabled(False)  # ⑨
+        self.undo_action.triggered.connect(self.editor.undo)
+    
+    def setup_menus(self) -> None:
+        """Menus utilisant nos actions"""
+        menubar = self.menuBar()
+        
+        # Menu Fichier
+        file_menu = menubar.addMenu("&Fichier")
+        file_menu.addAction(self.new_action)   # ⑩
+        file_menu.addSeparator()
+        file_menu.addAction(self.save_action)  # ⑪
+        
+        # Menu Édition
+        edit_menu = menubar.addMenu("&Édition")
+        edit_menu.addAction(self.undo_action)  # ⑫
+    
+    def setup_toolbar(self) -> None:
+        """Barre d'outils avec les MÊMES actions"""
+        toolbar = self.addToolBar("Principal")
+        toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        
+        toolbar.addAction(self.new_action)   # ⑬
+        toolbar.addAction(self.save_action)  # ⑭
+        toolbar.addSeparator()
+        toolbar.addAction(self.undo_action)  # ⑮
+    
+    def setup_status_bar(self) -> None:
+        """Barre de statut pour feedback"""
+        self.setStatusBar(QStatusBar(self))
+        self.statusBar().showMessage("Prêt")
+    
+    def connect_signals(self) -> None:
+        """Connexions pour synchronisation automatique"""
+        # Détecter les modifications du texte
+        self.editor.textChanged.connect(self.on_text_changed)  # ⑯
+        
+        # Synchroniser l'état "Annuler" avec l'éditeur
+        self.editor.undoAvailable.connect(self.undo_action.setEnabled)  # ⑰
+    
+    # Gestionnaires synchronisés
+    def on_text_changed(self) -> None:
+        """Appelé à chaque modification du texte"""
+        if not self.document_modified:
+            self.document_modified = True
+            self.save_action.setEnabled(True)  # ⑱ Active partout !
+            self.update_window_title()         # ⑲
+            self.statusBar().showMessage("Document modifié")
+    
+    def new_document(self) -> None:
+        """Créer nouveau document"""
+        if self.document_modified:
+            # Demander confirmation si modifications non sauvées
+            reply = QMessageBox.question(
+                self, "Nouveau document",
+                "Des modifications non sauvées seront perdues. Continuer ?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            if reply == QMessageBox.StandardButton.No:
+                return
+        
+        self.editor.clear()
+        self.current_file = None
+        self.document_modified = False
+        self.save_action.setEnabled(False)  # ⑳ Désactive partout !
+        self.update_window_title()
+        self.statusBar().showMessage("Nouveau document créé")
+    
+    def save_document(self) -> None:
+        """Sauvegarder le document"""
+        # Ici vous ajouteriez la logique de sauvegarde réelle
+        self.document_modified = False
+        self.save_action.setEnabled(False)  # ㉑ Désactive partout !
+        self.update_window_title()
+        self.statusBar().showMessage("Document sauvegardé", 2000)
+    
+    def update_window_title(self) -> None:
+        """Met à jour le titre de la fenêtre"""
+        title = "Éditeur Synchronisé"
+        if self.current_file:
+            title += f" - {self.current_file}"
+        if self.document_modified:
+            title += " *"  # ㉒ Astérisque pour modifications
+        self.setWindowTitle(title)
 
-def save_document(self) -> None:
-    """Sauvegarde le document"""
-    # Logique de sauvegarde...
-    self.save_action.setEnabled(False)
-    self.setWindowTitle("Mon Application")
-    self.statusBar().showMessage("Document sauvegardé", 2000)
+def main() -> int:
+    app = QApplication(sys.argv)
+    window = SynchronizedEditor()
+    window.show()
+    return app.exec()
+
+if __name__ == "__main__":
+    sys.exit(main())
 ```
+
+**État centralisé** : `document_modified` contrôle l'état global
+**Interface cohérente** : Éditeur + menus + barre d'outils + titre
+**Actions réutilisées** : Même action dans menu ET barre d'outils
+**Désactivation initiale** : Sauvegarder et Annuler désactivés au départ
+**Réutilisation totale** : Une action définie, utilisée partout
+**Synchronisation** : textChanged active la sauvegarde partout
+**Connexion directe** : undoAvailable contrôle directement l'action
+**Activation globale** : setEnabled(True) active dans menu ET barre d'outils
+**Feedback visuel** : Titre mis à jour automatiquement
+**Désactivation globale** : Après sauvegarde, désactivé partout
+**Convention** : L'astérisque (*) indique les modifications non sauvées
+
+### 8.3 Les bénéfices de la synchronisation
+
+#### ✅ **Avantages pour le développeur**
+- **Code centralisé** : Une seule logique pour toute l'interface
+- **Maintenance simplifiée** : Modifier un endroit = effet global
+- **Cohérence garantie** : Impossible d'oublier un élément
+- **Débuggage facile** : Une seule fonction à vérifier
+
+#### ✅ **Avantages pour l'utilisateur**
+- **Interface prévisible** : Même état partout
+- **Feedback cohérent** : Informations synchronisées
+- **Expérience fluide** : Pas de boutons "morts" ou incohérents
+- **Confiance** : L'application semble "bien conçue"
+
+### 8.4 Patterns de synchronisation avancés
+
+#### 🔄 **Actions interdépendantes**
+
+Certaines actions dépendent de l'état d'autres :
+
+```python
+def setup_dependent_actions(self) -> None:
+    """Actions qui dépendent les unes des autres"""
+    # Copier nécessite une sélection
+    self.copy_action = QAction("Copier", self)
+    self.copy_action.setEnabled(False)
+    
+    # Coller nécessite du contenu dans le presse-papier
+    self.paste_action = QAction("Coller", self)
+    self.paste_action.setEnabled(False)
+    
+    # Surveiller la sélection
+    self.editor.selectionChanged.connect(self.update_selection_actions)  # ①
+    
+    # Surveiller le presse-papier
+    from PyQt6.QtWidgets import QApplication
+    clipboard = QApplication.clipboard()
+    clipboard.dataChanged.connect(self.update_clipboard_actions)  # ②
+
+def update_selection_actions(self) -> None:
+    """Active/désactive selon la sélection"""
+    has_selection = bool(self.editor.textCursor().hasSelection())
+    self.copy_action.setEnabled(has_selection)  # ③
+
+def update_clipboard_actions(self) -> None:
+    """Active/désactive selon le presse-papier"""
+    from PyQt6.QtWidgets import QApplication
+    clipboard = QApplication.clipboard()
+    has_text = bool(clipboard.text())
+    self.paste_action.setEnabled(has_text)  # ④
+```
+
+**Surveillance sélection** : selectionChanged détecte quand du texte est sélectionné
+**Surveillance presse-papier** : dataChanged détecte les changements du presse-papier
+**Activation conditionnelle** : Copier actif seulement si sélection
+**État du système** : Coller actif seulement si le presse-papier contient du texte
+
+**🔑 Principe fondamental :** Une interface bien conçue donne à l'utilisateur des **indices visuels constants** sur ce qui est possible ou non. Les QAction permettent de maintenir cette cohérence automatiquement !
+
+---
 
 ### 8.2 Communication entre composants
 
@@ -1491,7 +2112,7 @@ class ThemableWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_ui()
-        self.setup_theme_menu()  # ①
+        self.setup_theme_menu() 
         self.apply_theme("light")  # Thème par défaut
     
     def setup_theme_menu(self) -> None:
@@ -1508,7 +2129,7 @@ class ThemableWindow(QMainWindow):
     def apply_theme(self, theme_name: str) -> None:
         """Applique le thème choisi"""
         if theme_name == "light":
-            style = ThemeManager.get_light_theme()  # ②
+            style = ThemeManager.get_light_theme() 
         else:
             style = ThemeManager.get_dark_theme()
         
@@ -1556,7 +2177,7 @@ QGroupBox QPushButton {
 
 # Utilisation avec des classes CSS
 primary_btn = QPushButton("Action principale")
-primary_btn.setProperty("class", "primary")  # ①
+primary_btn.setProperty("class", "primary") 
 
 danger_btn = QPushButton("Supprimer")
 danger_btn.setProperty("class", "danger")
