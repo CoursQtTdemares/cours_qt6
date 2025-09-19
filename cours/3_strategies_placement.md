@@ -578,9 +578,7 @@ def create_calculator_layout(self) -> QGridLayout:
 
 ---
 
-## 5. Layouts imbriqués et techniques avancées
-
-### 5.1 Combinaison de layouts
+## 5. Layouts imbriqués
 
 ```python
 from PyQt6.QtWidgets import (
@@ -680,93 +678,6 @@ class NestedLayoutDemo(QWidget):
         widget.setMaximumWidth(120)
         widget.setStyleSheet("background-color: #f8f9fa; border-left: 1px solid #dee2e6;")
         return widget
-```
-
-### 5.2 Layouts conditionnels et dynamiques
-
-```python
-class DynamicLayoutDemo(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setWindowTitle("Layouts Dynamiques")
-        self.setup_ui()
-    
-    def setup_ui(self) -> None:
-        self.main_layout = QVBoxLayout()
-        self.setLayout(self.main_layout)
-        
-        # Contrôles pour modifier le layout
-        controls_layout = QHBoxLayout()
-        
-        self.layout_combo = QComboBox()
-        self.layout_combo.addItems(["Vertical", "Horizontal", "Grille"])
-        self.layout_combo.currentTextChanged.connect(self.change_layout)
-        controls_layout.addWidget(QLabel("Type de layout:"))
-        controls_layout.addWidget(self.layout_combo)
-        
-        add_button = QPushButton("Ajouter widget")
-        add_button.clicked.connect(self.add_widget)
-        controls_layout.addWidget(add_button)
-        
-        remove_button = QPushButton("Supprimer widget")
-        remove_button.clicked.connect(self.remove_widget)
-        controls_layout.addWidget(remove_button)
-        
-        self.main_layout.addLayout(controls_layout)
-        
-        # Zone de contenu dynamique
-        self.content_widget = QWidget()
-        self.main_layout.addWidget(self.content_widget)
-        
-        self.widgets_list: list[QPushButton] = []
-        self.change_layout("Vertical")  # Layout initial
-    
-    def change_layout(self, layout_type: str) -> None:
-        """Change le type de layout dynamiquement."""
-        # Supprimer l'ancien layout
-        if self.content_widget.layout():
-            QWidget().setLayout(self.content_widget.layout())
-        
-        # Créer le nouveau layout
-        if layout_type == "Vertical":
-            new_layout = QVBoxLayout()
-        elif layout_type == "Horizontal":
-            new_layout = QHBoxLayout()
-        else:  # Grille
-            new_layout = QGridLayout()
-        
-        self.content_widget.setLayout(new_layout)
-        
-        # Ré-ajouter tous les widgets
-        self.reorganize_widgets()
-    
-    def add_widget(self) -> None:
-        """Ajoute un nouveau widget."""
-        widget_count = len(self.widgets_list)
-        button = QPushButton(f"Widget {widget_count + 1}")
-        self.widgets_list.append(button)
-        self.reorganize_widgets()
-    
-    def remove_widget(self) -> None:
-        """Supprime le dernier widget."""
-        if self.widgets_list:
-            widget = self.widgets_list.pop()
-            widget.setParent(None)
-            self.reorganize_widgets()
-    
-    def reorganize_widgets(self) -> None:
-        """Réorganise les widgets selon le layout actuel."""
-        layout = self.content_widget.layout()
-        
-        for widget in self.widgets_list:
-            if isinstance(layout, QVBoxLayout) or isinstance(layout, QHBoxLayout):
-                layout.addWidget(widget)
-            elif isinstance(layout, QGridLayout):
-                # Disposition en grille 3x3
-                index = self.widgets_list.index(widget)
-                row = index // 3
-                col = index % 3
-                layout.addWidget(widget, row, col)
 ```
 
 ---
