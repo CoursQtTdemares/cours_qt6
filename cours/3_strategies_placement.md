@@ -138,131 +138,9 @@ Les layouts offrent de nombreux bénéfices par rapport au positionnement manuel
 
 ---
 
-## 2. Composants d'interface de base
+## 2. Layout horizontal (QHBoxLayout)
 
-### 2.1 Widgets d'entrée essentiels
-
-```python
-from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import (
-    QCheckBox,
-    QComboBox,
-    QDateEdit,
-    QLabel,
-    QLineEdit,
-    QSpinBox,
-    QTextEdit,
-    QVBoxLayout,
-    QWidget,
-)
-
-
-class InputWidgetsDemo(QWidget):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setWindowTitle("Composants d'entrée")
-        self.setup_ui()
-
-    def setup_ui(self) -> None:
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-
-        # QLineEdit - Saisie de texte sur une ligne
-        layout.addWidget(QLabel("Nom d'utilisateur:"))
-        self.username_edit = QLineEdit()
-        self.username_edit.setPlaceholderText('Entrez votre nom')
-        self.username_edit.setMaxLength(50)
-        layout.addWidget(self.username_edit)
-
-        # QTextEdit - Saisie multiligne
-        layout.addWidget(QLabel('Description:'))
-        self.description_edit = QTextEdit()
-        self.description_edit.setMaximumHeight(100)
-        layout.addWidget(self.description_edit)
-
-        # QComboBox - Liste déroulante
-        layout.addWidget(QLabel('Pays:'))
-        self.country_combo = QComboBox()
-        self.country_combo.addItems(['France', 'Allemagne', 'Espagne', 'Italie'])
-        self.country_combo.setCurrentText('France')
-        layout.addWidget(self.country_combo)
-
-        # QSpinBox - Saisie de nombres entiers
-        layout.addWidget(QLabel('Âge:'))
-        self.age_spin = QSpinBox()
-        self.age_spin.setRange(0, 120)
-        self.age_spin.setValue(25)
-        self.age_spin.setSuffix(' ans')
-        layout.addWidget(self.age_spin)
-
-        # QCheckBox - Case à cocher
-        self.newsletter_check = QCheckBox("S'abonner à la newsletter")
-        self.newsletter_check.setChecked(True)
-        layout.addWidget(self.newsletter_check)
-
-        # QDateEdit - Sélection de date
-        layout.addWidget(QLabel('Date de naissance:'))
-        self.birth_date = QDateEdit()
-        self.birth_date.setDate(QDate.currentDate())
-        self.birth_date.setCalendarPopup(True)
-        layout.addWidget(self.birth_date)
-```
-
-### 2.2 Gestion des événements des widgets
-
-```python
-    def setup_connections(self) -> None:
-        """Configure les connexions signal/slot."""
-        # Réaction aux changements de texte
-        self.username_edit.textChanged.connect(self.on_username_changed)
-
-        # Validation à la fin de saisie
-        self.username_edit.editingFinished.connect(self.validate_username)
-
-        # Changement de sélection
-        self.country_combo.currentTextChanged.connect(self.on_country_changed)
-
-        # Changement de valeur numérique
-        self.age_spin.valueChanged.connect(self.on_age_changed)
-
-        # État des cases à cocher
-        self.newsletter_check.toggled.connect(self.on_newsletter_toggled)
-
-    def on_username_changed(self, text: str) -> None:
-        """Appelé à chaque caractère tapé."""
-        if len(text) < 3:
-            self.username_edit.setStyleSheet('border: 2px solid red;')
-        else:
-            self.username_edit.setStyleSheet('border: 2px solid green;')
-
-    def validate_username(self) -> None:
-        """Validation finale du nom d'utilisateur."""
-        username = self.username_edit.text().strip()
-        if not username:
-            QMessageBox.warning(self, 'Erreur', "Le nom d'utilisateur est requis")
-
-    def on_country_changed(self, country: str) -> None:
-        """Réaction au changement de pays."""
-        print(f'Pays sélectionné: {country}')
-
-    def on_age_changed(self, age: int) -> None:
-        """Réaction au changement d'âge."""
-        if age >= 18:
-            print('Utilisateur majeur')
-        else:
-            print('Utilisateur mineur')
-
-    def on_newsletter_toggled(self, checked: bool) -> None:
-        """Réaction au changement d'abonnement."""
-        status = 'abonné' if checked else 'désabonné'
-        print(f'Newsletter: {status}')
-```
-
----
-
-## 3. Layout horizontal (QHBoxLayout)
-
-### 3.1 Principe et cas d'usage
+### 2.1 Principe et cas d'usage
 
 Le `QHBoxLayout` organise les widgets **horizontalement**, de gauche à droite (ou de droite à gauche selon la locale). C'est l'un des layouts les plus utilisés pour créer des interfaces ergonomiques.
 
@@ -285,7 +163,7 @@ Le `QHBoxLayout` organise les widgets **horizontalement**, de gauche à droite (
 - **Marges** : Espace autour du layout entier
 - **Stretch** : Zones flexibles qui absorbent l'espace supplémentaire
 
-### 3.2 Utilisation basique
+### 2.2 Utilisation basique
 
 ```python
 from PyQt6.QtWidgets import (
@@ -348,7 +226,7 @@ class AdvancedHorizontalLayout(QWidget):
         layout.setSpacing(5)  # Espacement entre widgets
 ```
 
-### 3.2 Facteurs d'étirement et espacement
+### 2.3 Facteurs d'étirement et espacement
 
 ```python
 def demonstrate_stretch_factors(self) -> QHBoxLayout:
@@ -390,9 +268,9 @@ def demonstrate_spacing_control(self) -> QHBoxLayout:
 
 ---
 
-## 4. Layout vertical (QVBoxLayout)
+## 3. Layout vertical (QVBoxLayout)
 
-### 4.1 Principe et philosophie
+### 3.1 Principe et philosophie
 
 Le `QVBoxLayout` organise les widgets **verticalement**, de haut en bas. Il constitue la base de nombreuses interfaces utilisateur, particulièrement adaptées aux workflows séquentiels et à la présentation hiérarchique d'informations.
 
@@ -415,7 +293,7 @@ Le `QVBoxLayout` organise les widgets **verticalement**, de haut en bas. Il cons
 - **Zones extensibles** : Widgets qui peuvent grandir (QTextEdit, listes)
 - **Espacement intelligent** : Adaptation automatique selon le contenu
 
-### 4.2 Organisation verticale des widgets
+### 3.2 Organisation verticale des widgets
 
 ```python
 from PyQt6.QtWidgets import (
@@ -497,7 +375,7 @@ class ResponsiveVerticalLayout(QWidget):
         main_layout.addWidget(status_bar, 0)  # Taille fixe
 ```
 
-### 4.2 Alignement dans les layouts verticaux
+### 3.3 Alignement dans les layouts verticaux
 
 ```python
 from PyQt6.QtCore import Qt
@@ -529,9 +407,9 @@ def demonstrate_vertical_alignment(self) -> QVBoxLayout:
 
 ---
 
-## 5. Layout en grille (QGridLayout)
+## 4. Layout en grille (QGridLayout)
 
-### 5.1 Principe du layout en grille
+### 4.1 Principe du layout en grille
 
 Le `QGridLayout` est le plus flexible et puissant des layouts PyQt6. Il organise les widgets dans une **grille bidimensionnelle** (lignes × colonnes), similaire à un tableau HTML ou à une feuille de calcul.
 
@@ -560,7 +438,7 @@ Le `QGridLayout` est le plus flexible et puissant des layouts PyQt6. Il organise
 - **Taille minimale** : `setColumnMinimumWidth()`, `setRowMinimumHeight()`
 - **Fusion de cellules** : Widgets s'étendant sur plusieurs lignes/colonnes
 
-### 5.2 Organisation tabulaire
+### 4.2 Organisation tabulaire
 
 ```python
 from PyQt6.QtWidgets import (
@@ -655,7 +533,7 @@ class AdvancedGridLayout(QWidget):
         layout.setContentsMargins(15, 15, 15, 15)
 ```
 
-### 5.2 Techniques avancées de grille
+### 4.3 Techniques avancées de grille
 
 ```python
 from PyQt6.QtCore import Qt
@@ -700,9 +578,9 @@ def create_calculator_layout(self) -> QGridLayout:
 
 ---
 
-## 6. Layouts imbriqués et techniques avancées
+## 5. Layouts imbriqués et techniques avancées
 
-### 6.1 Combinaison de layouts
+### 5.1 Combinaison de layouts
 
 ```python
 from PyQt6.QtWidgets import (
@@ -804,7 +682,7 @@ class NestedLayoutDemo(QWidget):
         return widget
 ```
 
-### 6.2 Layouts conditionnels et dynamiques
+### 5.2 Layouts conditionnels et dynamiques
 
 ```python
 class DynamicLayoutDemo(QWidget):
@@ -893,9 +771,9 @@ class DynamicLayoutDemo(QWidget):
 
 ---
 
-## 7. Bonnes pratiques d'organisation d'interface
+## 6. Bonnes pratiques d'organisation d'interface
 
-### 7.1 Choisir le bon layout
+### 6.1 Choisir le bon layout
 
 Le choix du layout est crucial pour créer une interface intuitive et maintenable. Voici un guide de décision :
 
@@ -926,7 +804,7 @@ Combien de widgets à organiser ?
 | Interface de jeu/calculatrice | `QGridLayout` | Disposition régulière des boutons |
 | Dashboard | Layouts imbriqués | Zones fonctionnelles distinctes |
 
-### 7.2 Principes de design d'interface
+### 6.2 Principes de design d'interface
 
 #### 🎨 **Hiérarchie visuelle**
 - **Groupement logique** : Regrouper les éléments liés fonctionnellement
@@ -953,7 +831,7 @@ main_layout.addLayout(content_layout, 3)   # 60% de la largeur
 main_layout.addLayout(tools_layout, 1)     # 20% de la largeur
 ```
 
-### 7.3 Patterns d'organisation courants
+### 6.3 Patterns d'organisation courants
 
 #### 📱 **Pattern "Header-Content-Footer"**
 ```
@@ -991,7 +869,7 @@ main_layout.addLayout(tools_layout, 1)     # 20% de la largeur
 - **Usage** : Processus en étapes, configurations
 - **Implémentation** : QVBoxLayout avec navigation fixe
 
-### 7.4 Erreurs courantes à éviter
+### 6.4 Erreurs courantes à éviter
 
 #### ❌ **Piège 1 : Layouts trop imbriqués**
 ```python
@@ -1040,7 +918,7 @@ layout.addWidget(QPushButton("Annuler"))
 layout.addStretch()  # Absorbe l'espace supplémentaire
 ```
 
-### 7.5 Optimisation des performances
+### 6.5 Optimisation des performances
 
 #### ⚡ **Bonnes pratiques techniques**
 - **Éviter les recalculs** : Définir les layouts une fois, les modifier rarement
@@ -1050,9 +928,9 @@ layout.addStretch()  # Absorbe l'espace supplémentaire
 
 ---
 
-## 8. Politiques de taille et espacement
+## 7. Politiques de taille et espacement
 
-### 8.1 Politiques de taille des widgets
+### 7.1 Politiques de taille des widgets
 
 ```python
 from PyQt6.QtWidgets import QSizePolicy
@@ -1127,7 +1005,7 @@ def demonstrate_size_hints(self) -> QPushButton:
     return widget
 ```
 
-### 8.2 Gestion avancée de l'espacement
+### 7.2 Gestion avancée de l'espacement
 
 ```python
 class SpacingDemo(QWidget):
@@ -1190,9 +1068,9 @@ class SpacingDemo(QWidget):
 
 ---
 
-## 9. Interfaces adaptatives et responsivité
+## 8. Interfaces adaptatives et responsivité
 
-### 9.1 Principes des interfaces adaptatives
+### 8.1 Principes des interfaces adaptatives
 
 Une interface adaptative se réajuste automatiquement selon l'espace disponible et les contraintes d'affichage. En PyQt6, cette capacité est essentielle pour créer des applications robustes qui fonctionnent sur différents écrans et configurations.
 
@@ -1218,7 +1096,7 @@ Une interface adaptative se réajuste automatiquement selon l'espace disponible 
 | **Masquage progressif** | `setVisible()` conditionnel | Simplification pour petits écrans |
 | **Réorganisation** | Layouts multiples, `setLayout()` | Changement de structure |
 
-### 9.2 Implémentation d'interfaces adaptatives
+### 8.2 Implémentation d'interfaces adaptatives
 
 ```python
 class ResponsiveDemo(QWidget):
@@ -1307,7 +1185,7 @@ class ResponsiveDemo(QWidget):
         self.sidebar.setVisible(not self.sidebar.isVisible())
 ```
 
-### 9.3 Gestion avancée des résolutions et DPI
+### 8.3 Gestion avancée des résolutions et DPI
 
 La diversité des écrans modernes (des smartphones aux moniteurs 4K) impose une gestion intelligente des résolutions et densités de pixels.
 
@@ -1368,7 +1246,7 @@ def calculate_ui_scaling(width: int, height: int, dpi: float) -> dict:
     }
 ```
 
-### 9.4 Breakpoints et modes d'affichage
+### 8.4 Breakpoints et modes d'affichage
 
 #### 📱 **Définition des breakpoints**
 Les breakpoints définissent les seuils où l'interface change de mode d'affichage :
@@ -1405,7 +1283,7 @@ class BreakpointManager:
         return old_mode != new_mode
 ```
 
-### 9.5 Gestion de différentes résolutions
+### 8.5 Gestion de différentes résolutions
 
 ```python
 class MultiResolutionDemo(QWidget):
@@ -1456,7 +1334,7 @@ class MultiResolutionDemo(QWidget):
 
 ---
 
-## 10. Travaux pratiques
+## 9. Travaux pratiques
 
 ### 🚧 TP1 - Formulaire avec layouts de base
 **Durée** : 30 minutes
@@ -1480,7 +1358,7 @@ class MultiResolutionDemo(QWidget):
 
 ---
 
-## 11. Points clés à retenir
+## 10. Points clés à retenir
 
 ### ✅ Choix du layout approprié
 - **QHBoxLayout** : Organisation horizontale, barres d'outils, boutons
@@ -1506,7 +1384,7 @@ class MultiResolutionDemo(QWidget):
 
 ## Prochaine étape
 
-Dans le **Chapitre 4 - Traitement des événements**, nous découvrirons :
+Dans le **Chapitre 4 - Qt Designer**, nous découvrirons :
 - Le système d'événements Qt et la boucle d'événements
 - Le paradigme signaux/slots pour la communication entre objets
 - La gestion des événements clavier, souris et personnalisés
