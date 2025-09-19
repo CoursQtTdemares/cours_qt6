@@ -1683,18 +1683,18 @@ class SynchronizedEditor(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         
         # État du document
-        self.document_modified = False  # ①
+        self.document_modified = False
         self.current_file = None
         
         # Interface
-        self.setup_editor()        # ②
-        self.create_actions()      # ③
-        self.setup_menus()         # ④
-        self.setup_toolbar()       # ⑤
-        self.setup_status_bar()    # ⑥
+        self.setup_editor()       
+        self.create_actions()     
+        self.setup_menus()        
+        self.setup_toolbar()      
+        self.setup_status_bar()   
         
         # Synchronisation automatique
-        self.connect_signals()     # ⑦
+        self.connect_signals()    
     
     def setup_editor(self) -> None:
         """Zone d'édition principale"""
@@ -1718,14 +1718,14 @@ class SynchronizedEditor(QMainWindow):
         self.save_action.setStatusTip("Sauvegarder le document")
         self.save_action.setIcon(self.style().standardIcon(
             self.style().StandardPixmap.SP_DialogSaveButton))
-        self.save_action.setEnabled(False)  # ⑧ Désactivé au début
+        self.save_action.setEnabled(False) 
         self.save_action.triggered.connect(self.save_document)
         
         # Action Annuler
         self.undo_action = QAction("&Annuler", self)
         self.undo_action.setShortcut("Ctrl+Z")
         self.undo_action.setStatusTip("Annuler la dernière action")
-        self.undo_action.setEnabled(False)  # ⑨
+        self.undo_action.setEnabled(False) 
         self.undo_action.triggered.connect(self.editor.undo)
     
     def setup_menus(self) -> None:
@@ -1734,23 +1734,23 @@ class SynchronizedEditor(QMainWindow):
         
         # Menu Fichier
         file_menu = menubar.addMenu("&Fichier")
-        file_menu.addAction(self.new_action)   # ⑩
+        file_menu.addAction(self.new_action)  
         file_menu.addSeparator()
-        file_menu.addAction(self.save_action)  # ⑪
+        file_menu.addAction(self.save_action) 
         
         # Menu Édition
         edit_menu = menubar.addMenu("&Édition")
-        edit_menu.addAction(self.undo_action)  # ⑫
+        edit_menu.addAction(self.undo_action) 
     
     def setup_toolbar(self) -> None:
         """Barre d'outils avec les MÊMES actions"""
         toolbar = self.addToolBar("Principal")
         toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         
-        toolbar.addAction(self.new_action)   # ⑬
-        toolbar.addAction(self.save_action)  # ⑭
+        toolbar.addAction(self.new_action)  
+        toolbar.addAction(self.save_action) 
         toolbar.addSeparator()
-        toolbar.addAction(self.undo_action)  # ⑮
+        toolbar.addAction(self.undo_action) 
     
     def setup_status_bar(self) -> None:
         """Barre de statut pour feedback"""
@@ -1760,18 +1760,18 @@ class SynchronizedEditor(QMainWindow):
     def connect_signals(self) -> None:
         """Connexions pour synchronisation automatique"""
         # Détecter les modifications du texte
-        self.editor.textChanged.connect(self.on_text_changed)  # ⑯
+        self.editor.textChanged.connect(self.on_text_changed) 
         
         # Synchroniser l'état "Annuler" avec l'éditeur
-        self.editor.undoAvailable.connect(self.undo_action.setEnabled)  # ⑰
+        self.editor.undoAvailable.connect(self.undo_action.setEnabled) 
     
     # Gestionnaires synchronisés
     def on_text_changed(self) -> None:
         """Appelé à chaque modification du texte"""
         if not self.document_modified:
             self.document_modified = True
-            self.save_action.setEnabled(True)  # ⑱ Active partout !
-            self.update_window_title()         # ⑲
+            self.save_action.setEnabled(True)  # Active partout !
+            self.update_window_title()        
             self.statusBar().showMessage("Document modifié")
     
     def new_document(self) -> None:
@@ -1789,7 +1789,7 @@ class SynchronizedEditor(QMainWindow):
         self.editor.clear()
         self.current_file = None
         self.document_modified = False
-        self.save_action.setEnabled(False)  # ⑳ Désactive partout !
+        self.save_action.setEnabled(False)  # Désactive partout !
         self.update_window_title()
         self.statusBar().showMessage("Nouveau document créé")
     
@@ -1797,7 +1797,7 @@ class SynchronizedEditor(QMainWindow):
         """Sauvegarder le document"""
         # Ici vous ajouteriez la logique de sauvegarde réelle
         self.document_modified = False
-        self.save_action.setEnabled(False)  # ㉑ Désactive partout !
+        self.save_action.setEnabled(False)  # Désactive partout !
         self.update_window_title()
         self.statusBar().showMessage("Document sauvegardé", 2000)
     
@@ -1807,7 +1807,7 @@ class SynchronizedEditor(QMainWindow):
         if self.current_file:
             title += f" - {self.current_file}"
         if self.document_modified:
-            title += " *"  # ㉒ Astérisque pour modifications
+            title += " *"  # Astérisque pour modifications
         self.setWindowTitle(title)
 
 def main() -> int:
@@ -1864,24 +1864,24 @@ def setup_dependent_actions(self) -> None:
     self.paste_action.setEnabled(False)
     
     # Surveiller la sélection
-    self.editor.selectionChanged.connect(self.update_selection_actions)  # ①
+    self.editor.selectionChanged.connect(self.update_selection_actions) 
     
     # Surveiller le presse-papier
     from PyQt6.QtWidgets import QApplication
     clipboard = QApplication.clipboard()
-    clipboard.dataChanged.connect(self.update_clipboard_actions)  # ②
+    clipboard.dataChanged.connect(self.update_clipboard_actions) 
 
 def update_selection_actions(self) -> None:
     """Active/désactive selon la sélection"""
     has_selection = bool(self.editor.textCursor().hasSelection())
-    self.copy_action.setEnabled(has_selection)  # ③
+    self.copy_action.setEnabled(has_selection) 
 
 def update_clipboard_actions(self) -> None:
     """Active/désactive selon le presse-papier"""
     from PyQt6.QtWidgets import QApplication
     clipboard = QApplication.clipboard()
     has_text = bool(clipboard.text())
-    self.paste_action.setEnabled(has_text)  # ④
+    self.paste_action.setEnabled(has_text) 
 ```
 
 **Surveillance sélection** : selectionChanged détecte quand du texte est sélectionné
@@ -1995,7 +1995,7 @@ class ModernWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setup_ui()
-        self.apply_modern_style()  # ①
+        self.apply_modern_style() 
     
     def setup_ui(self) -> None:
         """Interface basique"""
@@ -2056,7 +2056,7 @@ class ModernWindow(QMainWindow):
             background-color: #21618c;
         }
         """
-        self.setStyleSheet(style)  # ②
+        self.setStyleSheet(style) 
 ```
 
 **Organisation** : On sépare la création de l'interface de son style

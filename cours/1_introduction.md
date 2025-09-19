@@ -1,4 +1,4 @@
-# Chapitre 1 : Concepts généraux - PyQt6
+# Chapitre 1 : Introduction - PyQt6
 
 ## Objectifs pédagogiques
 
