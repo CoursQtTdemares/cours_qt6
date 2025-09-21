@@ -56,31 +56,6 @@ L'architecture **Model-View** est un patron de conception qui sépare les donné
 
 **Le Controller existe toujours**, mais il est **intégré dans la View** ! C'est pourquoi Qt parle de **"Model-View"** plutôt que de **"Model-View-Controller"**.
 
-```python
-# Dans notre TodoMainWindow, on retrouve les responsabilités du Controller :
-class TodoMainWindow(QMainWindow):  # ← Voici notre Controller !
-    def add_todo(self) -> None:
-        """Controller : gère l'interaction 'ajouter'"""
-        text = self.todo_edit.text()           # Récupère l'input utilisateur
-        if text.strip():
-            self.model.add_todo(text)          # Modifie le Model
-            self.todo_edit.clear()             # Met à jour la View
-            self.save_data()                   # Déclenche la sauvegarde
-    
-    def delete_todo(self) -> None:
-        """Controller : gère l'interaction 'supprimer'"""
-        indexes = self.todo_view.selectedIndexes()  # Lit la sélection (View)
-        if indexes:
-            row = indexes[0].row()
-            self.model.remove_todo(row)              # Modifie le Model
-            self.todo_view.clearSelection()          # Met à jour la View
-```
-
-**Le Controller c'est donc** :
-- 🎮 **Votre classe principale** (ex: TodoMainWindow) qui orchestre les interactions
-- 🎮 **Les méthodes de callback** (add_todo, delete_todo, etc.)
-- 🎮 **La logique de coordination** entre Model et View
-
 ### 1.2 Avantages de cette architecture
 
 #### ✅ **Séparation des responsabilités**
