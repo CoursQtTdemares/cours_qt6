@@ -6,12 +6,13 @@
 - Organiser les widgets avec les layouts horizontaux, verticaux et en grille
 - Maîtriser les layouts imbriqués et les techniques avancées
 - Gérer les politiques de taille et l'espacement des widgets
+- Intégrer du contenu HTML riche dans vos interfaces PyQt6
 - Créer des interfaces adaptatives qui s'ajustent automatiquement
 - Appliquer les bonnes pratiques d'organisation d'interface
 
-## Durée estimée : 4h00
-- **Théorie** : 2h00
-- **Travaux pratiques** : 2h00
+## Durée estimée : 5h00
+- **Théorie** : 2h30
+- **Travaux pratiques** : 2h30
 
 ---
 
@@ -892,9 +893,171 @@ class SpacingDemo(QWidget):
 
 ---
 
-## 8. Interfaces adaptatives et responsivité
+## 8. HTML et contenu enrichi
 
-### 8.1 Principes des interfaces adaptatives
+### 8.1 Introduction au HTML dans PyQt6
+
+PyQt6 supporte l'affichage de contenu HTML pour créer des interfaces riches avec du texte formaté, des tableaux et des liens.
+
+#### 🎯 **Widgets supportant le HTML**
+- **QTextEdit** : Éditeur de texte avec support HTML complet
+- **QTextBrowser** : Affichage HTML optimisé (lecture seule)
+- **QLabel** : HTML simple (balises de base uniquement)
+
+### 8.2 Exemple simple sans CSS
+
+```python
+from PyQt6.QtWidgets import QTextEdit, QWidget, QVBoxLayout
+from PyQt6.QtCore import QDateTime
+
+
+class SimpleHtmlExample(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("HTML Simple")
+        self.setup_ui()
+    
+    def setup_ui(self) -> None:
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        
+        # Widget d'affichage HTML
+        text_edit = QTextEdit()
+        
+        # HTML simple sans CSS
+        simple_html = """
+        <h2>Rapport du Système</h2>
+        <p><strong>Date:</strong> """ + QDateTime.currentDateTime().toString() + """</p>
+        
+        <h3>État des Services</h3>
+        <ul>
+            <li><b>Base de données:</b> <font color="green">✓ Actif</font></li>
+            <li><b>API Web:</b> <font color="orange">⚠ Ralenti</font></li>
+            <li><b>Cache:</b> <font color="red">✗ Hors ligne</font></li>
+        </ul>
+        
+        <h3>Statistiques</h3>
+        <table border="1">
+            <tr>
+                <th>Métrique</th>
+                <th>Valeur</th>
+            </tr>
+            <tr>
+                <td>Utilisateurs connectés</td>
+                <td>1,234</td>
+            </tr>
+            <tr>
+                <td>Temps de réponse</td>
+                <td>2.3s</td>
+            </tr>
+        </table>
+        
+        <blockquote>
+        <em>Système opérationnel mais surveillance recommandée.</em>
+        </blockquote>
+        """
+        
+        text_edit.setHtml(simple_html)
+        layout.addWidget(text_edit)
+```
+
+### 8.3 Exemple avec styles CSS
+
+```python
+class StyledHtmlExample(QWidget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("HTML avec CSS")
+        self.setup_ui()
+    
+    def setup_ui(self) -> None:
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        
+        text_edit = QTextEdit()
+        
+        # HTML avec quelques styles CSS
+        styled_html = """
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 15px; }
+                .header { background-color: #3498db; color: white; padding: 12px; }
+                .status-ok { color: #27ae60; font-weight: bold; }
+                .status-warning { color: #f39c12; font-weight: bold; }
+                .status-error { color: #e74c3c; font-weight: bold; }
+                table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2>Dashboard Application</h2>
+                <p>Suivi en temps réel</p>
+            </div>
+            
+            <h3>Services Système</h3>
+            <ul>
+                <li>Serveur Web: <span class="status-ok">En ligne</span></li>
+                <li>Base de données: <span class="status-warning">Lent</span></li>
+                <li>API externe: <span class="status-error">Erreur</span></li>
+            </ul>
+            
+            <h3>Métriques</h3>
+            <table>
+                <tr><th>Composant</th><th>CPU %</th><th>Mémoire GB</th></tr>
+                <tr><td>Application</td><td>45%</td><td>2.1</td></tr>
+                <tr><td>Base de données</td><td>78%</td><td>4.7</td></tr>
+                <tr><td>Cache</td><td>12%</td><td>0.8</td></tr>
+            </table>
+        </body>
+        </html>
+        """
+        
+        text_edit.setHtml(styled_html)
+        layout.addWidget(text_edit)
+```
+
+### 8.4 Balises HTML essentielles
+
+| Balise | Usage | Exemple |
+|--------|-------|---------|
+| `<h1>` à `<h6>` | Titres | `<h2>Titre</h2>` |
+| `<p>` | Paragraphe | `<p>Texte</p>` |
+| `<b>`, `<strong>` | Gras | `<b>Important</b>` |
+| `<i>`, `<em>` | Italique | `<i>Accentué</i>` |
+| `<ul>`, `<ol>`, `<li>` | Listes | `<ul><li>Item</li></ul>` |
+| `<table>`, `<tr>`, `<td>`, `<th>` | Tableaux | `<table><tr><td>Cellule</td></tr></table>` |
+| `<font color="">` | Couleur | `<font color="red">Rouge</font>` |
+| `<blockquote>` | Citation | `<blockquote>Citation</blockquote>` |
+
+### 8.5 Méthodes utiles
+
+```python
+# Charger du HTML dans un widget
+widget = QTextEdit()
+widget.setHtml("<h2>Mon contenu HTML</h2>")
+
+# Ajouter du contenu HTML à la fin
+widget.append("<p>Nouveau contenu</p>")
+
+# Obtenir le HTML actuel
+html_content = widget.toHtml()
+
+# Effacer le contenu
+widget.clear()
+
+# Pour QLabel (HTML simple uniquement)
+label = QLabel()
+label.setText("<b>Texte en gras</b> et <i>italique</i>")
+```
+
+---
+
+## 9. Interfaces adaptatives et responsivité
+
+### 9.1 Principes des interfaces adaptatives
 
 Une interface adaptative se réajuste automatiquement selon l'espace disponible et les contraintes d'affichage. En PyQt6, cette capacité est essentielle pour créer des applications robustes qui fonctionnent sur différents écrans et configurations.
 
@@ -920,7 +1083,7 @@ Une interface adaptative se réajuste automatiquement selon l'espace disponible 
 | **Masquage progressif** | `setVisible()` conditionnel | Simplification pour petits écrans |
 | **Réorganisation** | Layouts multiples, `setLayout()` | Changement de structure |
 
-### 8.2 Implémentation d'interfaces adaptatives
+### 9.2 Implémentation d'interfaces adaptatives
 
 ```python
 class ResponsiveDemo(QWidget):
@@ -1009,7 +1172,7 @@ class ResponsiveDemo(QWidget):
         self.sidebar.setVisible(not self.sidebar.isVisible())
 ```
 
-### 8.3 Gestion avancée des résolutions et DPI
+### 9.3 Gestion avancée des résolutions et DPI
 
 La diversité des écrans modernes (des smartphones aux moniteurs 4K) impose une gestion intelligente des résolutions et densités de pixels.
 
@@ -1070,7 +1233,7 @@ def calculate_ui_scaling(width: int, height: int, dpi: float) -> dict:
     }
 ```
 
-### 8.4 Breakpoints et modes d'affichage
+### 9.4 Breakpoints et modes d'affichage
 
 #### 📱 **Définition des breakpoints**
 Les breakpoints définissent les seuils où l'interface change de mode d'affichage :
@@ -1109,7 +1272,7 @@ class BreakpointManager:
 
 ---
 
-## 9. Travaux pratiques
+## 10. Travaux pratiques
 
 ### 🚧 TP1 - Formulaire avec layouts de base
 **Durée** : 30 minutes
@@ -1133,7 +1296,7 @@ class BreakpointManager:
 
 ---
 
-## 10. Points clés à retenir
+## 11. Points clés à retenir
 
 ### ✅ Choix du layout approprié
 - **QHBoxLayout** : Organisation horizontale, barres d'outils, boutons
@@ -1159,7 +1322,7 @@ class BreakpointManager:
 
 ## Prochaine étape
 
-Dans le **Chapitre 4 - Qt Designer**, nous découvrirons :
+Dans le **Chapitre 4 - Système d'événements et signaux/slots**, nous découvrirons :
 - Le système d'événements Qt et la boucle d'événements
 - Le paradigme signaux/slots pour la communication entre objets
 - La gestion des événements clavier, souris et personnalisés
