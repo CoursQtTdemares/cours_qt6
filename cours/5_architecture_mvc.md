@@ -189,74 +189,64 @@ Notre Todo List comprendra :
 ### 2.2 Conception du modèle de données
 
 ```python
-from PyQt6.QtCore import QAbstractListModel, Qt
-from PyQt6.QtGui import QImage
 from typing import Any
-import json
-import os
+
+from PyQt6.QtCore import QAbstractListModel, QModelIndex, Qt
+from typing_extensions import override
+
 
 class TodoModel(QAbstractListModel):
     """Modèle pour gérer une liste de tâches"""
-    
-    def __init__(self, todos: list[tuple[bool, str]] = None) -> None:
+
+    def __init__(self, todos: list[tuple[bool, str]] | None = None) -> None:
         super().__init__()
         # Structure : [(status, text), (status, text), ...]
         # où status = True (terminé) ou False (à faire)
         self.todos = todos or []
-    
-    def rowCount(self, parent=None) -> int:
+
+    @override
+    def rowCount(self, parent: QModelIndex | None = None) -> int:
         """Retourne le nombre de tâches dans le modèle"""
         return len(self.todos)
-    
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole) -> Any:
+
+    @override
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         """Retourne les données pour un index et un rôle donnés"""
         if not index.isValid():
             return None
-        
+
         if index.row() >= len(self.todos):
             return None
-        
+
         status, text = self.todos[index.row()]
-        
+
         if role == Qt.ItemDataRole.DisplayRole:
             # Texte à afficher
-            return text
-        
-        elif role == Qt.ItemDataRole.DecorationRole:
-            # Icône pour les tâches terminées
-            if status:
-                # Retourner une icône de validation
-                return self._get_tick_icon()
-        
+            return text + "status: " + str(status)
+
         return None
-    
-    def _get_tick_icon(self) -> QImage:
-        """Crée une icône de validation simple"""
-        # Pour simplifier, on retourne None ici
-        # Dans un vrai projet, vous chargeriez une icône
-        return None
-    
+
     def add_todo(self, text: str) -> None:
         """Ajoute une nouvelle tâche"""
         if not text.strip():
             return
-        
+
         row = len(self.todos)
-        self.beginInsertRows(None, row, row)
+        self.beginInsertRows(QModelIndex(), row, row)
         self.todos.append((False, text.strip()))
         self.endInsertRows()
-    
+
     def remove_todo(self, row: int) -> None:
         """Supprime une tâche"""
         if 0 <= row < len(self.todos):
-            self.beginRemoveRows(None, row, row)
+            self.beginRemoveRows(QModelIndex(), row, row)
             del self.todos[row]
             self.endRemoveRows()
-    
+
     def mark_completed(self, row: int) -> None:
         """Marque une tâche comme terminée"""
         if 0 <= row < len(self.todos):
-            status, text = self.todos[row]
+            _, text = self.todos[row]
             self.todos[row] = (True, text)
             # Notifier que les données ont changé
             index = self.index(row, 0)
@@ -266,42 +256,54 @@ class TodoModel(QAbstractListModel):
 ### 2.3 Interface utilisateur de l'application
 
 ```python
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, 
-    QWidget, QListView, QLineEdit, QPushButton, QLabel
-)
+import json
 import sys
+
+from PyQt6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListView,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
+from src.model import TodoModel
+
 
 class TodoMainWindow(QMainWindow):
     """Fenêtre principale de l'application Todo"""
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Ma Todo List")
         self.setGeometry(100, 100, 400, 500)
-        
+
         # Créer le modèle
         self.model = TodoModel()
-        
+
         # Configurer l'interface
         self.setup_ui()
-        
+
         # Connecter les signaux
         self.connect_signals()
-        
+
         # Charger les données sauvegardées
         self.load_data()
-    
+
     def setup_ui(self) -> None:
         """Configure l'interface utilisateur"""
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         layout = QVBoxLayout()
         central_widget.setLayout(layout)
-        
+
         # Titre
-        title_label = QLabel("🗒️ Ma Todo List")
+        title_label = QLabel("Ma Todo List")
         title_label.setStyleSheet("""
             font-size: 18px;
             font-weight: bold;
@@ -309,15 +311,15 @@ class TodoMainWindow(QMainWindow):
             color: #2c3e50;
         """)
         layout.addWidget(title_label)
-        
+
         # Zone de saisie
         input_layout = QHBoxLayout()
-        
+
         self.todo_edit = QLineEdit()
         self.todo_edit.setPlaceholderText("Nouvelle tâche...")
         input_layout.addWidget(self.todo_edit)
-        
-        self.add_button = QPushButton("➕ Ajouter")
+
+        self.add_button = QPushButton("+ Ajouter")
         self.add_button.setStyleSheet("""
             QPushButton {
                 background-color: #3498db;
@@ -331,18 +333,18 @@ class TodoMainWindow(QMainWindow):
             }
         """)
         input_layout.addWidget(self.add_button)
-        
+
         layout.addLayout(input_layout)
-        
+
         # Liste des tâches
         self.todo_view = QListView()
         self.todo_view.setModel(self.model)  # 🔑 Connexion modèle-vue
         layout.addWidget(self.todo_view)
-        
+
         # Boutons d'action
         action_layout = QHBoxLayout()
-        
-        self.complete_button = QPushButton("✅ Terminer")
+
+        self.complete_button = QPushButton("Terminer")
         self.complete_button.setStyleSheet("""
             QPushButton {
                 background-color: #27ae60;
@@ -356,8 +358,8 @@ class TodoMainWindow(QMainWindow):
             }
         """)
         action_layout.addWidget(self.complete_button)
-        
-        self.delete_button = QPushButton("🗑️ Supprimer")
+
+        self.delete_button = QPushButton("Supprimer")
         self.delete_button.setStyleSheet("""
             QPushButton {
                 background-color: #e74c3c;
@@ -371,16 +373,16 @@ class TodoMainWindow(QMainWindow):
             }
         """)
         action_layout.addWidget(self.delete_button)
-        
+
         layout.addLayout(action_layout)
-    
+
     def connect_signals(self) -> None:
         """Connecte les signaux aux slots"""
         self.add_button.clicked.connect(self.add_todo)
         self.todo_edit.returnPressed.connect(self.add_todo)  # Entrée pour ajouter
         self.complete_button.clicked.connect(self.complete_todo)
         self.delete_button.clicked.connect(self.delete_todo)
-    
+
     def add_todo(self) -> None:
         """Ajoute une nouvelle tâche"""
         text = self.todo_edit.text()
@@ -388,7 +390,7 @@ class TodoMainWindow(QMainWindow):
             self.model.add_todo(text)
             self.todo_edit.clear()
             self.save_data()  # Sauvegarde automatique
-    
+
     def complete_todo(self) -> None:
         """Marque la tâche sélectionnée comme terminée"""
         indexes = self.todo_view.selectedIndexes()
@@ -397,7 +399,7 @@ class TodoMainWindow(QMainWindow):
             self.model.mark_completed(row)
             self.todo_view.clearSelection()
             self.save_data()
-    
+
     def delete_todo(self) -> None:
         """Supprime la tâche sélectionnée"""
         indexes = self.todo_view.selectedIndexes()
@@ -406,7 +408,7 @@ class TodoMainWindow(QMainWindow):
             self.model.remove_todo(row)
             self.todo_view.clearSelection()
             self.save_data()
-    
+
     def save_data(self) -> None:
         """Sauvegarde les données dans un fichier JSON"""
         try:
@@ -414,7 +416,7 @@ class TodoMainWindow(QMainWindow):
                 json.dump(self.model.todos, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"Erreur lors de la sauvegarde : {e}")
-    
+
     def load_data(self) -> None:
         """Charge les données depuis le fichier JSON"""
         try:
@@ -428,6 +430,7 @@ class TodoMainWindow(QMainWindow):
             pass
         except Exception as e:
             print(f"Erreur lors du chargement : {e}")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
