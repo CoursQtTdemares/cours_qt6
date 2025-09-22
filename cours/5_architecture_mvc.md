@@ -9,7 +9,7 @@
 - Créer des applications avec synchronisation automatique entre données et interface
 - Gérer les signaux de modification de modèles pour des mises à jour en temps réel
 - Implémenter la persistance de données dans une architecture Model-View
-- Construire des interfaces complexes avec QListView et QTableView
+- Construire des interfaces complexes avec QListView
 
 ## Durée estimée : 4h00
 - **Théorie** : 2h00
@@ -148,7 +148,7 @@ Qt propose plusieurs modèles prêts à l'emploi selon vos besoins. Choisir le b
 | **Besoin** | **Modèle recommandé** | **Quand l'utiliser** |
 |------------|----------------------|---------------------|
 | Liste simple de textes | `QStringListModel` | Affichage basique d'une liste de chaînes |
-| Liste complexe personnalisée | `QAbstractListModel` ✅ | Structures de données personnalisées |
+| Liste complexe personnalisée | `QAbstractListModel` | Structures de données personnalisées |
 | Tableau de données | `QAbstractTableModel` | Données en lignes/colonnes |
 | Modèle polyvalent | `QStandardItemModel` | Prototypage rapide, données hiérarchiques |
 | Fichiers/dossiers | `QFileSystemModel` | Explorer de fichiers |
