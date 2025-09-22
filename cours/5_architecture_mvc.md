@@ -427,7 +427,7 @@ class BadTodoApp(QMainWindow):
     def add_todo(self) -> None:
         text = self.input.text()
         if len(text.strip()) == 0:  # Validation dans l'UI !
-        return
+            return
         # Logique de sauvegarde dans l'UI !
         with open("todos.json", "w") as f:
             json.dump(self.todos, f)
@@ -478,7 +478,6 @@ my_app/
         ├── __init__.py
         └── persistence.py           # Sauvegarde/chargement
 ```
-
 
 #### Conseils de performance
 
