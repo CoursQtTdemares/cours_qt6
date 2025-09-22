@@ -94,135 +94,104 @@ class GoodTodoApp:
 - Changement de vue sans modification du modèle
 - Tests unitaires facilités (modèle indépendant de l'interface)
 
-### 1.3 Le fonctionnement en pratique
+### 1.3 Premier exemple pratique
+
+Pour illustrer la simplicité de l'architecture Model-View, commençons par l'exemple le plus basique possible :
 
 ```python
-from PyQt6.QtCore import QAbstractListModel, Qt
-from PyQt6.QtWidgets import QApplication, QListView, QMainWindow, QVBoxLayout, QWidget
 import sys
-from typing import Any
+from PyQt6.QtCore import QStringListModel
+from PyQt6.QtWidgets import QApplication, QListView, QMainWindow
 
-class SimpleModel(QAbstractListModel):
-    """Modèle simple pour démonstration"""
-    
-    def __init__(self, data: list[str] = None) -> None:
-        super().__init__()
-        self._data = data or []
-    
-    def rowCount(self, parent=None) -> int:
-        """Nombre d'éléments dans le modèle"""
-        return len(self._data)
-    
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole) -> Any:
-        """Données à afficher pour un index donné"""
-        if role == Qt.ItemDataRole.DisplayRole:
-            return self._data[index.row()]
-        return None
-    
-    def add_item(self, text: str) -> None:
-        """Ajoute un élément au modèle"""
-        row = len(self._data)
-        self.beginInsertRows(None, row, row)  # Notification de début
-        self._data.append(text)
-        self.endInsertRows()                  # Notification de fin
-        # La vue se met à jour automatiquement !
-
-class ModelViewDemo(QMainWindow):
-    """Démonstration de l'architecture Model-View"""
+class SimpleListApp(QMainWindow):
+    """Application basique avec une liste de textes"""
     
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Architecture Model-View")
-        self.setGeometry(100, 100, 400, 300)
-        self.setup_ui()
-    
-    def setup_ui(self) -> None:
-        """Configure l'interface"""
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        self.setWindowTitle("Exemple Model-View simple")
+        self.setGeometry(100, 100, 300, 400)
         
-        layout = QVBoxLayout()
-        central_widget.setLayout(layout)
+        # Données : simple liste de chaînes
+        fruits = ["Pomme", "Banane", "Orange", "Fraise", "Kiwi"]
         
-        # Créer le modèle avec des données initiales
-        initial_data = ["Premier élément", "Deuxième élément", "Troisième élément"]
-        self.model = SimpleModel(initial_data)
+        # Créer le modèle avec les données
+        self.model = QStringListModel(fruits)
         
         # Créer la vue et la connecter au modèle
         self.list_view = QListView()
-        self.list_view.setModel(self.model)  # 🔑 Connexion magique !
+        self.list_view.setModel(self.model)  # 🔑 Connexion automatique !
         
-        layout.addWidget(self.list_view)
-        
-        # Démonstration : ajouter un élément après 2 secondes
-        from PyQt6.QtCore import QTimer
-        QTimer.singleShot(2000, lambda: self.model.add_item("Nouvel élément !"))
+        # Définir la vue comme widget central
+        self.setCentralWidget(self.list_view)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ModelViewDemo()
+    window = SimpleListApp()
     window.show()
     sys.exit(app.exec())
 ```
 
 **🔑 Points clés de cet exemple :**
-- Le modèle gère les données (`self._data`)
-- La vue affiche automatiquement les données du modèle
-- `setModel()` établit la connexion entre modèle et vue
-- Les signaux `beginInsertRows()` / `endInsertRows()` notifient automatiquement la vue
-- Aucune logique de mise à jour manuelle dans la vue !
+- **Simplicité maximale** : 3 lignes pour connecter modèle et vue
+- **Aucune méthode à surcharger** : `QStringListModel` gère tout automatiquement
+- **Séparation immédiate** : Les données sont dans le modèle, l'affichage dans la vue
+- **Connexion magique** : `setModel()` établit toute la communication automatiquement
 
 ---
 
-## 2. Créer une application Todo List complète
+## 2. Choisir et utiliser les modèles Qt
 
-Pour bien comprendre l'architecture Model-View, nous allons construire une **application de gestion de tâches** (Todo List) complète. Cette application illustrera parfaitement la séparation entre les données et leur présentation.
+Qt propose plusieurs modèles prêts à l'emploi selon vos besoins. Choisir le bon modèle dès le départ vous fera gagner beaucoup de temps.
 
-### 2.1 Architecture de l'application
+### 2.1 Les modèles disponibles dans Qt
 
-Notre Todo List comprendra :
-- **Modèle** : `TodoModel` héritant de `QAbstractListModel`
-- **Vue** : `QListView` pour afficher la liste des tâches
-- **Interface** : Boutons pour ajouter, supprimer et marquer comme terminé
-- **Persistance** : Sauvegarde automatique des données
+| **Besoin** | **Modèle recommandé** | **Quand l'utiliser** |
+|------------|----------------------|---------------------|
+| Liste simple de textes | `QStringListModel` | Affichage basique d'une liste de chaînes |
+| Liste complexe personnalisée | `QAbstractListModel` ✅ | Structures de données personnalisées |
+| Tableau de données | `QAbstractTableModel` | Données en lignes/colonnes |
+| Modèle polyvalent | `QStandardItemModel` | Prototypage rapide, données hiérarchiques |
+| Fichiers/dossiers | `QFileSystemModel` | Explorer de fichiers |
+| Base de données | `QSqlTableModel` | Accès direct aux tables SQL |
+| Structure d'arbre | `QAbstractItemModel` | Données hiérarchiques complexes |
 
-### 2.2 Conception du modèle de données
+**🎯 Règle générale** : Commencez toujours par le modèle le plus simple qui répond à vos besoins, puis évoluez si nécessaire.
+
+### 2.2 Exemple avancé : QAbstractListModel
+
+Quand vous avez besoin de structures de données personnalisées, `QAbstractListModel` est votre allié. Créons une Todo List avec statut :
 
 ```python
 from typing import Any
-
 from PyQt6.QtCore import QAbstractListModel, QModelIndex, Qt
 from typing_extensions import override
 
-
 class TodoModel(QAbstractListModel):
-    """Modèle pour gérer une liste de tâches"""
+    """Modèle pour gérer une liste de tâches avec statut"""
 
     def __init__(self, todos: list[tuple[bool, str]] | None = None) -> None:
         super().__init__()
-        # Structure : [(status, text), (status, text), ...]
-        # où status = True (terminé) ou False (à faire)
-        self.todos = todos or []
+        # Structure : [(terminé, texte), (terminé, texte), ...]
+        # où terminé = True (fait) ou False (à faire)
+        self._todos = todos or []
 
     @override
     def rowCount(self, parent: QModelIndex | None = None) -> int:
-        """Retourne le nombre de tâches dans le modèle"""
-        return len(self.todos)
+        """🔴 OBLIGATOIRE : Nombre d'éléments dans la liste"""
+        return len(self._todos)
 
     @override
     def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        """Retourne les données pour un index et un rôle donnés"""
-        if not index.isValid():
+        """🔴 OBLIGATOIRE : Données à afficher pour un élément"""
+        if not index.isValid() or index.row() >= len(self._todos):
             return None
 
-        if index.row() >= len(self.todos):
-            return None
-
-        status, text = self.todos[index.row()]
+        is_done, text = self._todos[index.row()]
 
         if role == Qt.ItemDataRole.DisplayRole:
-            # Texte à afficher
-            return text + "status: " + str(status)
+            # Texte à afficher : préfixe selon le statut
+            prefix = "✅" if is_done else "📝"
+            return f"{prefix} {text}"
 
         return None
 
@@ -231,68 +200,79 @@ class TodoModel(QAbstractListModel):
         if not text.strip():
             return
 
-        row = len(self.todos)
+        row = len(self._todos)
+        
+        # 🚨 CRUCIAL : Notifier AVANT modification
         self.beginInsertRows(QModelIndex(), row, row)
-        self.todos.append((False, text.strip()))
+        
+        # Modification des données
+        self._todos.append((False, text.strip()))
+        
+        # 🚨 CRUCIAL : Notifier APRÈS modification
         self.endInsertRows()
+        # → La vue se met à jour automatiquement !
+
+    def toggle_done(self, row: int) -> None:
+        """Bascule le statut d'une tâche"""
+        if 0 <= row < len(self._todos):
+            is_done, text = self._todos[row]
+            self._todos[row] = (not is_done, text)
+            
+            # Notifier que cette ligne a changé
+            index = self.index(row, 0)
+            self.dataChanged.emit(index, index)
 
     def remove_todo(self, row: int) -> None:
         """Supprime une tâche"""
-        if 0 <= row < len(self.todos):
+        if 0 <= row < len(self._todos):
+            # 🚨 CRUCIAL : Notifier AVANT suppression
             self.beginRemoveRows(QModelIndex(), row, row)
-            del self.todos[row]
+            
+            # Suppression des données
+            del self._todos[row]
+            
+            # 🚨 CRUCIAL : Notifier APRÈS suppression
             self.endRemoveRows()
-
-    def mark_completed(self, row: int) -> None:
-        """Marque une tâche comme terminée"""
-        if 0 <= row < len(self.todos):
-            _, text = self.todos[row]
-            self.todos[row] = (True, text)
-            # Notifier que les données ont changé
-            index = self.index(row, 0)
-            self.dataChanged.emit(index, index)
 ```
 
-### 2.3 Interface utilisateur de l'application
+**🎯 Méthodes obligatoires pour QAbstractListModel** :
+- `rowCount()` : Indique combien d'éléments il y a
+- `data()` : Fournit les données à afficher pour chaque élément
+
+**🚨 Signaux cruciaux** :
+- `beginInsertRows()` / `endInsertRows()` : Pour les ajouts
+- `beginRemoveRows()` / `endRemoveRows()` : Pour les suppressions  
+- `dataChanged.emit()` : Pour les modifications
+
+### 2.3 Connecter le modèle à l'interface
+
+Maintenant, créons une interface simple pour utiliser notre modèle :
 
 ```python
-import json
 import sys
-
 from PyQt6.QtWidgets import (
-    QApplication,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListView,
-    QMainWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
+    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
+    QWidget, QLineEdit, QPushButton, QListView
 )
 
-from src.model import TodoModel
-
-
-class TodoMainWindow(QMainWindow):
-    """Fenêtre principale de l'application Todo"""
+class TodoApp(QMainWindow):
+    """Application Todo List complète"""
 
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Ma Todo List")
         self.setGeometry(100, 100, 400, 500)
 
-        # Créer le modèle
-        self.model = TodoModel()
-
-        # Configurer l'interface
+        # Créer le modèle avec quelques tâches d'exemple
+        initial_todos = [
+            (False, "Acheter du lait"),
+            (True, "Finir le projet"),
+            (False, "Appeler maman")
+        ]
+        self.model = TodoModel(initial_todos)
+        
         self.setup_ui()
-
-        # Connecter les signaux
         self.connect_signals()
-
-        # Charger les données sauvegardées
-        self.load_data()
 
     def setup_ui(self) -> None:
         """Configure l'interface utilisateur"""
@@ -302,628 +282,214 @@ class TodoMainWindow(QMainWindow):
         layout = QVBoxLayout()
         central_widget.setLayout(layout)
 
-        # Titre
-        title_label = QLabel("Ma Todo List")
-        title_label.setStyleSheet("""
-            font-size: 18px;
-            font-weight: bold;
-            padding: 10px;
-            color: #2c3e50;
-        """)
-        layout.addWidget(title_label)
-
         # Zone de saisie
         input_layout = QHBoxLayout()
 
-        self.todo_edit = QLineEdit()
-        self.todo_edit.setPlaceholderText("Nouvelle tâche...")
-        input_layout.addWidget(self.todo_edit)
-
-        self.add_button = QPushButton("+ Ajouter")
-        self.add_button.setStyleSheet("""
-            QPushButton {
-                background-color: #3498db;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-            }
-            QPushButton:hover {
-                background-color: #2980b9;
-            }
-        """)
+        self.todo_input = QLineEdit()
+        self.todo_input.setPlaceholderText("Nouvelle tâche...")
+        input_layout.addWidget(self.todo_input)
+        
+        self.add_button = QPushButton("Ajouter")
         input_layout.addWidget(self.add_button)
 
         layout.addLayout(input_layout)
 
         # Liste des tâches
-        self.todo_view = QListView()
-        self.todo_view.setModel(self.model)  # 🔑 Connexion modèle-vue
-        layout.addWidget(self.todo_view)
+        self.list_view = QListView()
+        self.list_view.setModel(self.model)  # 🔑 Connexion magique !
+        layout.addWidget(self.list_view)
 
         # Boutons d'action
         action_layout = QHBoxLayout()
 
-        self.complete_button = QPushButton("Terminer")
-        self.complete_button.setStyleSheet("""
-            QPushButton {
-                background-color: #27ae60;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-            }
-            QPushButton:hover {
-                background-color: #229954;
-            }
-        """)
-        action_layout.addWidget(self.complete_button)
+        self.toggle_button = QPushButton("Basculer statut")
+        action_layout.addWidget(self.toggle_button)
 
         self.delete_button = QPushButton("Supprimer")
-        self.delete_button.setStyleSheet("""
-            QPushButton {
-                background-color: #e74c3c;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-            }
-            QPushButton:hover {
-                background-color: #c0392b;
-            }
-        """)
         action_layout.addWidget(self.delete_button)
 
         layout.addLayout(action_layout)
 
     def connect_signals(self) -> None:
-        """Connecte les signaux aux slots"""
+        """Connecte les signaux aux actions"""
         self.add_button.clicked.connect(self.add_todo)
-        self.todo_edit.returnPressed.connect(self.add_todo)  # Entrée pour ajouter
-        self.complete_button.clicked.connect(self.complete_todo)
+        self.todo_input.returnPressed.connect(self.add_todo)  # Entrée pour ajouter
+        self.toggle_button.clicked.connect(self.toggle_todo)
         self.delete_button.clicked.connect(self.delete_todo)
 
     def add_todo(self) -> None:
         """Ajoute une nouvelle tâche"""
-        text = self.todo_edit.text()
+        text = self.todo_input.text()
         if text.strip():
             self.model.add_todo(text)
-            self.todo_edit.clear()
-            self.save_data()  # Sauvegarde automatique
-
-    def complete_todo(self) -> None:
-        """Marque la tâche sélectionnée comme terminée"""
-        indexes = self.todo_view.selectedIndexes()
+            self.todo_input.clear()
+    
+    def toggle_todo(self) -> None:
+        """Bascule le statut de la tâche sélectionnée"""
+        indexes = self.list_view.selectedIndexes()
         if indexes:
             row = indexes[0].row()
-            self.model.mark_completed(row)
-            self.todo_view.clearSelection()
-            self.save_data()
+            self.model.toggle_done(row)
 
     def delete_todo(self) -> None:
         """Supprime la tâche sélectionnée"""
-        indexes = self.todo_view.selectedIndexes()
+        indexes = self.list_view.selectedIndexes()
         if indexes:
             row = indexes[0].row()
             self.model.remove_todo(row)
-            self.todo_view.clearSelection()
-            self.save_data()
-
-    def save_data(self) -> None:
-        """Sauvegarde les données dans un fichier JSON"""
-        try:
-            with open("todos.json", "w", encoding="utf-8") as f:
-                json.dump(self.model.todos, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f"Erreur lors de la sauvegarde : {e}")
-
-    def load_data(self) -> None:
-        """Charge les données depuis le fichier JSON"""
-        try:
-            with open("todos.json", "r", encoding="utf-8") as f:
-                todos = json.load(f)
-                # Recréer le modèle avec les données chargées
-                self.model = TodoModel(todos)
-                self.todo_view.setModel(self.model)
-        except FileNotFoundError:
-            # Fichier n'existe pas encore, ce n'est pas un problème
-            pass
-        except Exception as e:
-            print(f"Erreur lors du chargement : {e}")
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = TodoMainWindow()
+    window = TodoApp()
     window.show()
     sys.exit(app.exec())
 ```
 
-### 2.4 Points clés de l'implémentation
+### 2.4 Enrichir l'affichage avec les rôles
 
-#### 🎯 **Séparation claire des responsabilités**
-- **TodoModel** : Gère uniquement les données et leur logique (ajout, suppression, modification)
-- **TodoMainWindow** : Gère uniquement l'interface et les interactions utilisateur
-- **Aucun mélange** : La vue ne modifie jamais directement les données
-
-#### 🔄 **Synchronisation automatique**
-- Modifier le modèle → La vue se met à jour instantanément
-- `beginInsertRows()` / `endInsertRows()` → Notification automatique d'ajout
-- `dataChanged.emit()` → Notification automatique de modification
-- Aucun code de synchronisation manuelle nécessaire
-
-#### 💾 **Persistance des données**
-- Sauvegarde automatique à chaque modification
-- Format JSON simple et lisible
-- Rechargement automatique au démarrage
-- Gestion d'erreurs robuste
-
-#### 🎨 **Interface moderne**
-- Styles CSS intégrés pour une apparence professionnelle
-- Raccourcis clavier (Entrée pour ajouter)
-- Feedback visuel immédiat
-
----
-
-## 3. Comprendre les rôles et signaux des modèles
-
-### 3.1 Signaux de notification du modèle
-
-Les signaux sont le mécanisme par lequel le modèle informe les vues que les données ont changé. **Comprendre et utiliser correctement ces signaux est crucial** pour une synchronisation parfaite.
-
-#### 🔔 **Signaux essentiels**
+La méthode `data()` peut retourner différents types d'informations selon le **rôle** demandé. Améliorons notre Todo List :
 
 ```python
-class ModelSignalsDemo(QAbstractListModel):
-    """Démonstration des signaux de modèle"""
-    
-    def __init__(self) -> None:
-        super().__init__()
-        self._data = []
-    
-    def add_item(self, item: str) -> None:
-        """Ajouter un élément - Signal d'insertion"""
-        row = len(self._data)
-        
-        # 🚨 OBLIGATOIRE : Notifier AVANT la modification
-        self.beginInsertRows(None, row, row)
-        
-        # Modification des données
-        self._data.append(item)
-        
-        # 🚨 OBLIGATOIRE : Notifier APRÈS la modification
-        self.endInsertRows()
-        # → La vue se met à jour automatiquement !
-    
-    def remove_item(self, row: int) -> bool:
-        """Supprimer un élément - Signal de suppression"""
-        if 0 <= row < len(self._data):
-            
-            # 🚨 OBLIGATOIRE : Notifier AVANT la suppression
-            self.beginRemoveRows(None, row, row)
-            
-            # Suppression des données
-            del self._data[row]
-            
-            # 🚨 OBLIGATOIRE : Notifier APRÈS la suppression
-            self.endRemoveRows()
-            return True
-        return False
-    
-    def modify_item(self, row: int, new_value: str) -> bool:
-        """Modifier un élément - Signal de changement"""
-        if 0 <= row < len(self._data):
-            
-            # Modification des données
-            self._data[row] = new_value
-            
-            # 🚨 OBLIGATOIRE : Notifier le changement
-            index = self.index(row, 0)
-            self.dataChanged.emit(index, index)
-            # → Seule cette cellule se met à jour !
-            return True
-        return False
-    
-    def clear_all(self) -> None:
-        """Vider le modèle - Signal de réinitialisation"""
-        
-        # 🚨 OBLIGATOIRE : Notifier AVANT la réinitialisation
-        self.beginResetModel()
-        
-        # Vider les données
-        self._data.clear()
-        
-        # 🚨 OBLIGATOIRE : Notifier APRÈS la réinitialisation
-        self.endResetModel()
-        # → Toute la vue se recharge !
-```
-
-#### ⚠️ **Erreurs courantes à éviter**
-
-```python
-# ❌ ERREUR : Oublier les signaux
-def add_item_wrong(self, item: str) -> None:
-    self._data.append(item)
-    # La vue ne se met PAS à jour !
-
-# ❌ ERREUR : Ordre incorrect des signaux
-def add_item_wrong_order(self, item: str) -> None:
-    self._data.append(item)        # Modification AVANT notification
-    self.beginInsertRows(None, len(self._data)-1, len(self._data)-1)
-    self.endInsertRows()
-    # Comportement imprévisible !
-
-# ❌ ERREUR : Signaux non appariés
-def add_item_unmatched(self, item: str) -> None:
-    self.beginInsertRows(None, 0, 0)
-    self._data.append(item)
-    # Oubli de endInsertRows() → Blocage de la vue !
-
-# ✅ CORRECT : Ordre et appariement corrects
-def add_item_correct(self, item: str) -> None:
-    row = len(self._data)
-    self.beginInsertRows(None, row, row)  # 1. Notification AVANT
-    self._data.append(item)               # 2. Modification
-    self.endInsertRows()                  # 3. Notification APRÈS
-```
-
-#### 🎯 **Optimisation des signaux**
-
-```python
-def update_multiple_items(self, updates: list[tuple[int, str]]) -> None:
-    """Mise à jour optimisée de plusieurs éléments"""
-    
-    if not updates:
-        return
-    
-    # Trier les mises à jour par index
-    updates.sort(key=lambda x: x[0])
-    
-    # Grouper les mises à jour consécutives
-    ranges = []
-    start_row = updates[0][0]
-    end_row = start_row
-    
-    for i, (row, value) in enumerate(updates):
-        if i > 0 and row != end_row + 1:
-            # Fin d'une série consécutive
-            ranges.append((start_row, end_row))
-            start_row = row
-        end_row = row
-        self._data[row] = value
-    
-    ranges.append((start_row, end_row))
-    
-    # Émettre un signal pour chaque série consécutive
-    for start, end in ranges:
-        start_index = self.index(start, 0)
-        end_index = self.index(end, 0)
-        self.dataChanged.emit(start_index, end_index)
-```
-
-### 3.2 Méthodes obligatoires vs optionnelles
-
-#### 🔴 **Méthodes OBLIGATOIRES pour QAbstractListModel**
-
-```python
-class MinimalListModel(QAbstractListModel):
-    """Modèle minimal fonctionnel"""
-    
-    def __init__(self, data: list[Any] = None) -> None:
-        super().__init__()
-        self._data = data or []
-    
-    def rowCount(self, parent=None) -> int:
-        """🔴 OBLIGATOIRE : Nombre d'éléments"""
-        return len(self._data)
-    
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole) -> Any:
-        """🔴 OBLIGATOIRE : Données pour affichage"""
-        if role == Qt.ItemDataRole.DisplayRole and index.isValid():
-            return self._data[index.row()]
-        return None
-```
-
-#### 🟡 **Méthodes OPTIONNELLES mais utiles**
-
-```python
-class ExtendedListModel(MinimalListModel):
-    """Modèle étendu avec fonctionnalités supplémentaires"""
-    
-    def flags(self, index) -> Qt.ItemFlag:
-        """🟡 OPTIONNEL : Propriétés des éléments"""
-        if index.isValid():
-            return (Qt.ItemFlag.ItemIsEnabled | 
-                   Qt.ItemFlag.ItemIsSelectable |
-                   Qt.ItemFlag.ItemIsEditable)  # Éditable
-        return Qt.ItemFlag.NoItemFlags
-    
-    def setData(self, index, value, role=Qt.ItemDataRole.EditRole) -> bool:
-        """🟡 OPTIONNEL : Permettre l'édition"""
-        if role == Qt.ItemDataRole.EditRole and index.isValid():
-            self._data[index.row()] = value
-            self.dataChanged.emit(index, index)
-            return True
-        return False
-    
-    def insertRows(self, row: int, count: int, parent=None) -> bool:
-        """🟡 OPTIONNEL : Permettre l'ajout via la vue"""
-        self.beginInsertRows(parent or None, row, row + count - 1)
-        for i in range(count):
-            self._data.insert(row + i, "Nouvel élément")
-        self.endInsertRows()
-        return True
-    
-    def removeRows(self, row: int, count: int, parent=None) -> bool:
-        """🟡 OPTIONNEL : Permettre la suppression via la vue"""
-        if row < 0 or row + count > len(self._data):
-            return False
-        
-        self.beginRemoveRows(parent or None, row, row + count - 1)
-        for i in range(count):
-            del self._data[row]
-        self.endRemoveRows()
-        return True
-```
-
----
-
-## 4. Données tabulaires avec QTableView
-
-`QTableView` est parfait pour afficher des données sous forme de tableau (lignes × colonnes), similaire à Excel. Cette vue utilise `QAbstractTableModel` comme base pour les modèles personnalisés.
-
-### 4.1 Modèle de base pour QTableView
-
-```python
-from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTableView
-from typing import Any
-import sys
-
-class SimpleTableModel(QAbstractTableModel):
-    """Modèle simple pour données tabulaires"""
-    
-    def __init__(self, data: list[list[Any]] = None) -> None:
-        super().__init__()
-        # Structure : [[ligne1_col1, ligne1_col2, ...], [ligne2_col1, ligne2_col2, ...], ...]
-        self._data = data or []
-    
-    def rowCount(self, parent=None) -> int:
-        """🔴 OBLIGATOIRE : Nombre de lignes"""
-        return len(self._data)
-    
-    def columnCount(self, parent=None) -> int:
-        """🔴 OBLIGATOIRE : Nombre de colonnes"""
-        if self._data:
-            return len(self._data[0])  # Utilise la première ligne pour déterminer le nombre de colonnes
-        return 0
-    
-    def data(self, index: QModelIndex, role: Qt.ItemDataRole = Qt.ItemDataRole.DisplayRole) -> Any:
-        """🔴 OBLIGATOIRE : Données pour une cellule"""
-        if not index.isValid():
-            return None
-        
-
-        match role:
-            case Qt.ItemDataRole.DisplayRole:
-                # index.row() → ligne, index.column() → colonne
-                return self._data[index.row()][index.column()]
-            case _:
-                return None
-
-class TableViewDemo(QMainWindow):
-    """Démonstration simple de QTableView"""
-    
-    def __init__(self) -> None:
-        super().__init__()
-        self.setWindowTitle("QTableView - Données tabulaires")
-        self.setGeometry(100, 100, 600, 400)
-        
-        # Données d'exemple
-        sample_data = [
-            [4, 1, 3, 3, 7],
-            [9, 1, 5, 3, 8],
-            [2, 1, 5, 3, 9],
-            [6, 2, 7, 4, 6],
-            [1, 8, 9, 2, 5]
-        ]
-        
-        # Créer le modèle et la vue
-        self.model = SimpleTableModel(sample_data)
-        self.table = QTableView()
-        self.table.setModel(self.model)
-        
-        self.setCentralWidget(self.table)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = TableViewDemo()
-    window.show()
-    sys.exit(app.exec())
-```
-
-### 4.2 Modèle avancé avec en-têtes et formatage
-
-```python
-from PyQt6.QtCore import QModelIndex, Qt
 from PyQt6.QtGui import QColor, QFont
-from typing import Any
 
-class AdvancedTableModel(QAbstractTableModel):
-    """Modèle de tableau avancé avec en-têtes et formatage"""
+class EnhancedTodoModel(TodoModel):
+    """Modèle Todo avec affichage enrichi"""
     
-    def __init__(self, data: list[dict[str, Any]] = None, headers: list[str] = None) -> None:
-        super().__init__()
-        self._data = data or []
-        self._headers = headers or []
-    
-    def rowCount(self, parent=None) -> int:
-        return len(self._data)
-    
-    def columnCount(self, parent=None) -> int:
-        return len(self._headers)
-    
-    def data(self, index: QModelIndex, role: Qt.ItemDataRole = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= len(self._data):
+    @override
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+        """Données enrichies avec couleurs et formatage"""
+        if not index.isValid() or index.row() >= len(self._todos):
             return None
-        
-        row_data = self._data[index.row()]
-        column_key = self._headers[index.column()]
-        value = row_data.get(column_key, '')
-        
+
+        is_done, text = self._todos[index.row()]
 
         match role:
             case Qt.ItemDataRole.DisplayRole:
-                # Formatage spécial pour certains types
-                if isinstance(value, float):
-                    return f"{value:.2f}"
-                return str(value)
+                # Texte à afficher
+                prefix = "✅" if is_done else "📝"
+                return f"{prefix} {text}"
             
-            case Qt.ItemDataRole.BackgroundRole:
-                # Couleur de fond conditionnelle
-                if column_key == 'score' and isinstance(value, (int, float)):
-                    if value >= 8:
-                        return QColor(200, 255, 200)  # Vert clair pour les bonnes notes
-                    elif value < 5:
-                        return QColor(255, 200, 200)  # Rouge clair pour les mauvaises notes
-            
-            case Qt.ItemDataRole.TextAlignmentRole:
-                # Alignement selon le type de données
-                if isinstance(value, (int, float)):
-                    return Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-                return Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+            case Qt.ItemDataRole.ForegroundRole:
+                # Couleur du texte
+                if is_done:
+                    return QColor(128, 128, 128)  # Gris pour les tâches terminées
+                return QColor(0, 0, 0)  # Noir pour les tâches à faire
             
             case Qt.ItemDataRole.FontRole:
-                # Police spéciale pour certaines valeurs
-                if column_key == 'nom' and isinstance(value, str):
-                    font = QFont()
-                    font.setBold(True)
-                    return font
-            
-            case _:
-                return None
-    
-    def headerData(self, section: int, orientation: Qt.Orientation, 
-                   role: Qt.ItemDataRole = Qt.ItemDataRole.DisplayRole) -> Any:
-        """Définit les en-têtes de colonnes et lignes"""
-
-        match role:
-            case Qt.ItemDataRole.DisplayRole:
-                if orientation == Qt.Orientation.Horizontal:
-                    # En-têtes de colonnes
-                    if section < len(self._headers):
-                        return self._headers[section].title()
-                else:
-                    # En-têtes de lignes (numérotation)
-                    return str(section + 1)
-            
-            case Qt.ItemDataRole.FontRole if orientation == Qt.Orientation.Horizontal:
-                # Police des en-têtes (avec guard condition)
+                # Style de police
                 font = QFont()
-                font.setBold(True)
+                if is_done:
+                    font.setStrikeOut(True)  # Barré pour les tâches terminées
+                else:
+                    font.setBold(True)  # Gras pour les tâches à faire
                 return font
             
+            case Qt.ItemDataRole.BackgroundRole:
+                # Couleur de fond
+                if is_done:
+                    return QColor(240, 255, 240)  # Vert très clair
+                return QColor(255, 250, 240)  # Jaune très clair
+            
             case _:
                 return None
-    
-    def add_row(self, row_data: dict[str, Any]) -> None:
-        """Ajoute une ligne de données"""
-        row = len(self._data)
-        self.beginInsertRows(None, row, row)
-        self._data.append(row_data)
-        self.endInsertRows()
-    
-    def remove_row(self, row: int) -> bool:
-        """Supprime une ligne"""
-        if 0 <= row < len(self._data):
-            self.beginRemoveRows(None, row, row)
-            del self._data[row]
-            self.endRemoveRows()
-            return True
-        return False
-
-class StudentGradesApp(QMainWindow):
-    """Application de gestion de notes d'étudiants"""
-    
-    def __init__(self) -> None:
-        super().__init__()
-        self.setWindowTitle("Gestion des Notes - QTableView Avancé")
-        self.setGeometry(100, 100, 700, 500)
-        self.setup_ui()
-    
-    def setup_ui(self) -> None:
-        # Données d'exemple
-        students_data = [
-            {'nom': 'Alice', 'prenom': 'Dupont', 'age': 20, 'score': 8.5, 'mention': 'Bien'},
-            {'nom': 'Bob', 'prenom': 'Martin', 'age': 19, 'score': 6.2, 'mention': 'Assez Bien'},
-            {'nom': 'Charlie', 'prenom': 'Durand', 'age': 21, 'score': 9.1, 'mention': 'Très Bien'},
-            {'nom': 'Diana', 'prenom': 'Garcia', 'age': 20, 'score': 4.8, 'mention': 'Insuffisant'},
-            {'nom': 'Eve', 'prenom': 'Laurent', 'age': 22, 'score': 7.3, 'mention': 'Bien'}
-        ]
-        
-        headers = ['nom', 'prenom', 'age', 'score', 'mention']
-        
-        # Créer le modèle
-        self.model = AdvancedTableModel(students_data, headers)
-        
-        # Créer et configurer la vue
-        self.table = QTableView()
-        self.table.setModel(self.model)
-        
-        # Configuration de la vue
-        self.table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
-        self.table.setAlternatingRowColors(True)
-        self.table.setSortingEnabled(True)
-        
-        # Ajuster la largeur des colonnes
-        self.table.resizeColumnsToContents()
-        
-        self.setCentralWidget(self.table)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = StudentGradesApp()
-    window.show()
-    sys.exit(app.exec())
 ```
 
-### 4.3 Points clés pour QTableView
+**🎨 Rôles d'affichage principaux** :
+- `DisplayRole` : Texte affiché
+- `ForegroundRole` : Couleur du texte
+- `BackgroundRole` : Couleur de fond
+- `FontRole` : Style de police (gras, italique, etc.)
+- `DecorationRole` : Icône à afficher
 
-#### 🎯 **Différences avec QListView**
-- **Deux dimensions** : `index.row()` ET `index.column()`
-- **Méthode supplémentaire** : `columnCount()` obligatoire
-- **En-têtes** : `headerData()` pour nommer les colonnes/lignes
-- **Navigation** : L'utilisateur peut naviguer avec les flèches dans toutes les directions
+### 2.5 Bonnes pratiques et conseils
 
-#### 🔧 **Configuration typique de la vue**
+#### Les erreurs à éviter absolument
+
+#### ❌ **Oublier les signaux de notification**
 ```python
-def configure_table_view(self, table: QTableView) -> None:
-    """Configuration recommandée pour QTableView"""
-    # Sélection par lignes entières
-    table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
-    
-    # Alternance de couleurs pour faciliter la lecture
-    table.setAlternatingRowColors(True)
-    
-    # Permettre le tri en cliquant sur les en-têtes
-    table.setSortingEnabled(True)
-    
-    # Ajuster automatiquement la largeur des colonnes
-    table.resizeColumnsToContents()
-    
-    # Étirer la dernière colonne pour remplir l'espace
-    table.horizontalHeader().setStretchLastSection(True)
+# ❌ ERREUR : Modification sans notification
+def add_todo_wrong(self, text: str) -> None:
+    self._todos.append((False, text))
+    # La vue ne se met PAS à jour !
+
+# ✅ CORRECT : Toujours notifier les changements
+def add_todo_correct(self, text: str) -> None:
+    row = len(self._todos)
+    self.beginInsertRows(QModelIndex(), row, row)  # AVANT
+    self._todos.append((False, text))              # MODIFICATION
+    self.endInsertRows()                           # APRÈS
 ```
 
-#### 📊 **Cas d'usage typiques**
-- **Données de base de données** : Affichage de tables SQL
-- **Feuilles de calcul simples** : Alternative à Excel pour des données structurées
-- **Tableaux de bord** : Présentation de métriques et statistiques
-- **Gestion de listes** : Inventaire, contacts, commandes, etc.
+#### ❌ **Mélanger logique métier et interface**
+```python
+# ❌ ERREUR : Logique dans l'interface
+class BadTodoApp(QMainWindow):
+    def add_todo(self) -> None:
+        text = self.input.text()
+        if len(text.strip()) == 0:  # Validation dans l'UI !
+        return
+        # Logique de sauvegarde dans l'UI !
+        with open("todos.json", "w") as f:
+            json.dump(self.todos, f)
+
+# ✅ CORRECT : Logique dans le modèle
+class GoodTodoApp(QMainWindow):
+    def add_todo(self) -> None:
+        text = self.input.text()
+        self.model.add_todo(text)  # Le modèle gère tout
+```
+
+#### Conseils pour bien démarrer
+
+#### 🎯 **Choisir le bon modèle**
+1. **Liste de textes simples** → `QStringListModel`
+2. **Données personnalisées** → `QAbstractListModel`
+3. **Besoin de prototyper rapidement** → `QStandardItemModel`
+4. **En cas de doute** → Commencez simple et évoluez !
+
+#### 🔧 **Structure de code recommandée**
+```
+my_app/
+├── main.py              # Point d'entrée
+├── assets/              # Ressources (images, icônes)
+│   ├── images/
+│   └── icons/
+├── src/
+    ├── domain/          # Logique métier pure
+    ├── models/          # Modèles Qt (QAbstractListModel, etc.)
+    │   ├── __init__.py
+    │   └── book_model.py
+    ├── ui/
+    │   ├── __init__.py
+    │   ├── forms/       # Fichiers Qt Designer (.ui)
+    │   │   └── main_window.ui
+    │   ├── views/       # Classes Python des vues
+    │   │   ├── __init__.py
+    │   │   ├── generated/           # Fichiers compilés depuis .ui
+    │   │   │   ├── __init__.py
+    │   │   │   └── main_window_ui.py
+    │   │   └── main_window.py       # Classe finale avec logique
+    │   ├── widgets/     # Widgets personnalisés
+    │   │   ├── __init__.py
+    │   │   └── book_widget.py
+    │   └── styles/
+    │       └── app_style.qss        # Styles CSS/QSS
+    └── utils/
+        ├── __init__.py
+        └── persistence.py           # Sauvegarde/chargement
+```
+
+
+#### Conseils de performance
+
+#### ⚡ **Pour de gros volumes de données**
+- Utilisez `beginResetModel()` / `endResetModel()` pour les changements massifs
+- Groupez les modifications avec `dataChanged.emit(top_left, bottom_right)`
+- Évitez les calculs complexes dans `data()` - précalculez si possible
 
 ---
 
-## 5. Travaux pratiques
+## 3. Travaux pratiques
 
 Les 4 TPs forment **une seule application** qui évolue progressivement : un **gestionnaire de bibliothèque personnelle**. Chaque TP ajoute des fonctionnalités en suivant la progression du cours.
 
@@ -966,7 +532,7 @@ Les 4 TPs forment **une seule application** qui évolue progressivement : un **g
 
 **Concepts abordés** : Rôles d'affichage, formatage conditionnel, `match/case`
 
-### 🚧 TP4 - Persistance des données
+### 🚧 TP4 - Persistance des données *(optionnel)*
 **Durée** : 30 minutes
 **Objectif** : Sauvegarder et charger les données
 
@@ -981,31 +547,28 @@ Les 4 TPs forment **une seule application** qui évolue progressivement : un **g
 
 ---
 
-## 6. Points clés à retenir
+## 4. Points clés à retenir
+
+### ✅ Choisir le bon modèle
+- **QStringListModel** : Pour les listes simples de textes
+- **QAbstractListModel** : Pour les structures de données personnalisées
+- **Autres** : Voir le livre pyqt6 pour les autres structures.
+- **Principe** : Commencer simple et évoluer selon les besoins
+
+### ✅ Méthodes essentielles
+- **`rowCount()`** : Nombre d'éléments (obligatoire)
+- **`data()`** : Données à afficher avec support des rôles (obligatoire)
+- **Signaux** : `beginInsertRows()` / `endInsertRows()` pour les modifications
 
 ### ✅ Architecture Model-View
-- **Séparation stricte** entre données (modèle) et présentation (vue)
-- **Synchronisation automatique** via les signaux Qt
-- **Réutilisabilité** : un modèle peut alimenter plusieurs vues
-- **Maintenabilité** améliorée grâce au découplage
-
-### ✅ Implémentation de modèles
-- **Méthodes obligatoires** : `rowCount()`, `data()` (+ `columnCount()` pour tables)
-- **Signaux cruciaux** : `beginInsertRows()` / `endInsertRows()`, `dataChanged`
-- **Rôles multiples** : DisplayRole, BackgroundRole, FontRole, etc.
-- **Ordre critique** : notification AVANT modification, puis modification, puis notification APRÈS
-
-### ✅ Gestion des vues
-- **QListView** : Parfait pour des listes simples et stylées
-- **QTableView** : Idéal pour des données tabulaires complexes
-- **Configuration** : Sélection, tri, couleurs alternées, redimensionnement
-- **Interaction** : Gestion des sélections et des signaux de la vue
+- **Séparation stricte** : Le modèle gère les données, la vue gère l'affichage
+- **Connexion simple** : `view.setModel(model)` suffit pour tout connecter
+- **Synchronisation automatique** : Pas de code de mise à jour manuelle
 
 ### ✅ Bonnes pratiques
-- **Validation des données** dans le modèle, pas dans la vue
-- **Gestion d'erreurs** robuste lors des modifications
-- **Optimisation** : grouper les signaux pour les modifications multiples
-- **Persistance** : sauvegarder automatiquement les modifications importantes
+- **Ne jamais oublier** les signaux de notification
+- **Séparer clairement** logique métier et interface utilisateur
+- **Structurer le code** en modules séparés (models/, views/, etc.)
 
 ---
 
