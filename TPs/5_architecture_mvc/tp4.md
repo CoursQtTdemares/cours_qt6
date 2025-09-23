@@ -2,57 +2,45 @@
 
 **Durée** : 30 minutes
 
-**Objectif** : Sauvegarder et charger les données automatiquement en JSON avec gestion d'erreurs et compteur temps réel.
+**Objectif** : Sauvegarder et charger les données automatiquement en JSON avec une architecture modulaire et gestion d'erreurs.
 
 **Pré-requis** : TP1, TP2 et TP3 terminés et fonctionnels.
 
-## 1) Imports pour persistance
+## 1) Fichier de données initial
 
-- **Action** : Ajoutez les imports `json` et `os` au début du fichier.
-- **Piste** : `import json, os` en haut du fichier.
-- **Validation** : Imports ajoutés sans erreur.
+- **Action** : Créez un fichier `database.json` à la racine avec quelques livres de test.
+- **Piste** : Format JSON avec title, author, is_read pour chaque livre.
+- **Validation** : Fichier JSON valide avec 2-3 livres d'exemple.
 
-## 2) Sérialisation Book
+## 2) Configuration du chemin
+
+- **Action** : Ajoutez une constante pour le chemin du fichier dans vos constantes.
+- **Piste** : `DATABASE_JSON_FILE_PATH = WORKSPACE_DIR / "database.json"`.
+- **Validation** : Constante définie et accessible.
+
+## 3) Sérialisation Book
 
 - **Action** : Ajoutez `to_dict()` et `from_dict()` à la classe Book.
 - **Piste** : Convertir en dictionnaire avec title, author, is_read.
 - **Validation** : Méthodes de conversion JSON fonctionnelles.
 
-## 3) Sauvegarde JSON
+## 4) Module database
 
-- **Action** : Implémentez `save_to_json()` dans BookModel avec gestion d'erreurs.
-- **Piste** : Utilisez `json.dump()` avec `ensure_ascii=False`.
-- **Validation** : Fichier bibliotheque.json créé et lisible.
+- **Action** : Créez un module `database.py` avec fonctions `load()` et `save()`.
+- **Piste** : `load()` retourne `list[Book]`, `save()` prend `list[Book]`.
+- **Validation** : Module séparé avec responsabilités claires.
 
-## 4) Chargement JSON
+## 5) Chargement au démarrage
 
-- **Action** : Implémentez `load_from_json()` avec signaux `beginResetModel()`.
-- **Piste** : Utilisez `beginResetModel()` → chargement → `endResetModel()`.
-- **Validation** : Données rechargées automatiquement au démarrage.
+- **Action** : Chargez les données dans le constructeur de LibraryMainWindow.
+- **Piste** : `books = database.load()` puis `self.model = BookModel(books)`.
+- **Validation** : Application démarre avec les données du fichier JSON.
 
-## 5) Sauvegarde automatique
+## 6) Sauvegarde après actions
 
-- **Action** : Ajoutez `self.save_to_json()` à la fin de add_book, remove_book et mark_as_read.
-- **Piste** : Ligne finale de chaque méthode de modification.
-- **Validation** : Sauvegarde automatique à chaque modification.
-
-## 6) Chargement au démarrage
-
-- **Action** : Appelez `load_from_json()` dans __init__ de LibraryMainWindow.
-- **Piste** : Après création du modèle : `self.book_model.load_from_json()`.
-- **Validation** : Application restore les données précédentes.
-
-## 7) Compteur de livres
-
-- **Action** : Ajoutez un QLabel affichant "📊 X livres (Y lus, Z non lus)".
-- **Piste** : `self.count_label = QLabel()` et méthode `update_count()`.
-- **Validation** : Statistiques visibles en temps réel.
-
-## 8) Mise à jour du compteur
-
-- **Action** : Appelez `update_count()` après chaque modification (ajout/suppression/statut).
-- **Piste** : Ajoutez l'appel dans toutes les méthodes de la fenêtre qui modifient.
-- **Validation** : Compteur mis à jour automatiquement.
+- **Action** : Ajoutez `database.save(self.model.books)` après chaque modification.
+- **Piste** : Dans delete_book, mark_as_read, add_book de la vue.
+- **Validation** : Sauvegarde automatique à chaque changement.
 
 ---
 

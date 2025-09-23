@@ -36,19 +36,13 @@
 - **Piste** : `font.setBold(True)` selon `book.is_read`.
 - **Validation** : Police différente selon le statut de lecture.
 
-## 6) DecorationRole pour les icônes
+## 6) Bouton "Marquer comme lu"
 
-- **Action** : Affichez 📖 pour non lus, ✅ pour lus.
-- **Piste** : `case Qt.ItemDataRole.DecorationRole: return "✅" if book.is_read else "📖"`.
-- **Validation** : Icônes distinctes selon le statut.
-
-## 7) Bouton "Marquer comme lu"
-
-- **Action** : Ajoutez bouton vert "📚 Marquer comme lu" à côté de supprimer.
+- **Action** : Ajoutez bouton vert "Marquer comme lu" à côté de supprimer.
 - **Piste** : Style CSS avec background-color: #27ae60.
 - **Validation** : Bouton vert visible avec style moderne.
 
-## 8) Méthode de changement de statut
+## 7) Méthode de changement de statut
 
 - **Action** : Implémentez `mark_as_read(row)` avec signal `dataChanged`.
 - **Piste** : `self.dataChanged.emit(index, index)` pour notifier.

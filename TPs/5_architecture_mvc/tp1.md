@@ -38,7 +38,7 @@
 
 ## 6) Layout et titre
 
-- **Action** : Organisez l'interface avec layout vertical et ajoutez un titre "📚 Ma Bibliothèque".
+- **Action** : Organisez l'interface avec layout vertical et ajoutez un titre "Ma Bibliothèque".
 - **Piste** : `QVBoxLayout` avec `QLabel` pour le titre et la liste view.
 - **Validation** : Interface propre avec titre et liste des livres.
 

@@ -176,8 +176,13 @@ class TodoModel(QAbstractListModel):
         self._todos = todos or []
 
     @override
-    def rowCount(self, parent: QModelIndex | None = None) -> int:
+    def columnCount(self, parent: QModelIndex | None = None) -> int:
         """🔴 OBLIGATOIRE : Nombre d'éléments dans la liste"""
+        return 1
+
+    @override
+    def rowCount(self, parent: QModelIndex | None = None) -> int:
+        """🔴 OBLIGATOIRE : Nombre de colonnes dans la liste"""
         return len(self._todos)
 
     @override
@@ -317,6 +322,8 @@ class TodoApp(QMainWindow):
         self.toggle_button.clicked.connect(self.toggle_todo)
         self.delete_button.clicked.connect(self.delete_todo)
 
+        self.list_view.doubleClicked.connect(self.toggle_todo)
+
     def add_todo(self) -> None:
         """Ajoute une nouvelle tâche"""
         text = self.todo_input.text()
@@ -351,6 +358,7 @@ La méthode `data()` peut retourner différents types d'informations selon le **
 
 ```python
 from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtCore import Qt
 
 class EnhancedTodoModel(TodoModel):
     """Modèle Todo avec affichage enrichi"""
@@ -371,9 +379,7 @@ class EnhancedTodoModel(TodoModel):
             
             case Qt.ItemDataRole.ForegroundRole:
                 # Couleur du texte
-                if is_done:
-                    return QColor(128, 128, 128)  # Gris pour les tâches terminées
-                return QColor(0, 0, 0)  # Noir pour les tâches à faire
+                return QColor(Qt.GlobalColor.green if is_done else Qt.GlobalColor.red)
             
             case Qt.ItemDataRole.FontRole:
                 # Style de police
