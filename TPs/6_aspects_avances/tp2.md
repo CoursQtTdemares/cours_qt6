@@ -1,51 +1,51 @@
-# TP2 - Graphiques météo personnalisés
+# TP2 - Graphiques personnalisés avec les données
 
 **Durée** : 30 minutes
 
-**Objectif** : Découvrir QPainter pour créer un graphique de températures simple.
+**Objectif** : Utiliser QPainter pour tracer un graphique simple avec 3 points de température et 2 segments.
 
 **Pré-requis** : TP1 terminé et fonctionnel.
 
-## 1) Classe WeatherChartWidget
+## 1) Créer la classe ChartWidget
 
-- **Action** : Créez `WeatherChartWidget` héritant de `QWidget` avec données de températures.
-- **Piste** : `self.temperatures = [15, 18, 22, 20, 17]` et `self.hours = ["8h", "10h", "12h", "14h", "16h"]`.
+- **Action** : Créez `ChartWidget` héritant de `QWidget` avec 3 températures fixes en données d'exemple.
+- **Piste** : `self.temperatures = [20, 25, 22]` et `self.cities = ["Paris", "Lyon", "Marseille"]`.
 - **Validation** : Widget personnalisé avec données d'exemple.
 
-## 2) Méthode paintEvent basique
+## 2) Méthode paintEvent de base
 
-- **Action** : Implémentez `paintEvent()` qui dessine un fond coloré avec QPainter.
+- **Action** : Implémentez `paintEvent()` qui dessine un fond bleu clair avec QPainter.
 - **Piste** : `painter = QPainter(self)`, `painter.fillRect(self.rect(), QColor(240, 248, 255))`.
-- **Validation** : Widget avec fond bleu clair.
+- **Validation** : Widget avec fond coloré.
 
-## 3) Calcul des points de la courbe
+## 3) Calcul des 3 points
 
-- **Action** : Convertissez les températures en coordonnées écran dans une liste de points.
-- **Piste** : Boucle sur temperatures, calculez x et y avec des formules simples.
-- **Validation** : Liste de QPointF calculée correctement.
+- **Action** : Convertissez les 3 températures en coordonnées écran avec des positions fixes simples.
+- **Piste** : Point 1 à (100, y1), Point 2 à (200, y2), Point 3 à (300, y3) où y dépend de la température.
+- **Validation** : 3 QPointF calculés correctement.
 
-## 4) Dessin de la courbe
+## 4) Dessin des 2 segments
 
-- **Action** : Tracez des lignes entre les points et dessinez des cercles sur chaque point.
-- **Piste** : `painter.drawLine(points[i], points[i+1])` et `painter.drawEllipse(point, 6, 6)`.
-- **Validation** : Courbe de température visible avec points marqués.
+- **Action** : Tracez 2 lignes reliant Point1→Point2 et Point2→Point3.
+- **Piste** : `painter.setPen(QPen(QColor(255, 0, 0), 3))`, `painter.drawLine(point1, point2)`.
+- **Validation** : 2 segments rouges visibles entre les 3 points.
 
-## 5) Ajout des étiquettes
+## 5) Dessin des 3 points
 
-- **Action** : Affichez les heures sous le graphique avec `drawText()`.
-- **Piste** : Boucle sur hours, `painter.drawText(x, y+20, hour)`.
-- **Validation** : Heures affichées sous chaque point.
+- **Action** : Dessinez 3 cercles bleus sur les positions des températures.
+- **Piste** : `painter.setPen(QPen(QColor(0, 0, 255), 2))`, `painter.drawEllipse(point, 8, 8)`.
+- **Validation** : 3 points bleus visibles aux intersections.
 
-## 6) Intégration dans MDI
+## 6) Intégration dans l'application du TP1
 
-- **Action** : Remplacez le contenu de la sous-fenêtre "Graphiques" par votre widget.
-- **Piste** : Dans `create_chart_view()`, utilisez `WeatherChartWidget()` au lieu de QLabel.
-- **Validation** : Graphique météo affiché dans l'application MDI.
+- **Action** : Ajoutez le ChartWidget à l'application du TP1 et mettez à jour les données reçues.
+- **Piste** : Layout vertical avec bouton, texte et graphique. Méthode `update_chart(temperatures)`.
+- **Validation** : Application complète avec téléchargements et graphique qui se met à jour.
 
 ---
 
 ## Exercices supplémentaires
 
+- **Étiquettes** : Affichez les noms des villes sous chaque point.
 - **Couleurs** : Utilisez des couleurs différentes selon la température.
-- **Grille** : Ajoutez une grille de fond au graphique.
-- **Titre** : Ajoutez un titre "Températures du jour" en haut.
+- **Animation** : Animez l'apparition des points lors de la réception des données.

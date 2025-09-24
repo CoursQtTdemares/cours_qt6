@@ -1,51 +1,51 @@
-# TP1 - Interface MDI météo de base
+# TP1 - Téléchargement asynchrone de données
 
 **Durée** : 30 minutes
 
-**Objectif** : Découvrir l'architecture MDI avec QMdiArea et créer une application météo simple.
+**Objectif** : Découvrir les threads avec QRunnable pour récupérer des données météo en parallèle.
 
 **Pré-requis** : Chapitres 1-5 maîtrisés.
 
 ## 1) Créer le projet et fenêtre principale
 
-- **Action** : Créez un projet `weather_mdi_app` avec `WeatherMainWindow` héritant de `QMainWindow`.
-- **Piste** : `uv init` puis `uv add PyQt6`. Ajoutez `QMdiArea` comme widget central.
-- **Validation** : Fenêtre principale avec zone MDI vide.
+- **Action** : Créez un projet `weather_threads_app` avec `WeatherMainWindow` héritant de `QMainWindow`.
+- **Piste** : `uv init` puis `uv add PyQt6`. Ajoutez un `QPushButton` "Télécharger" et un `QTextEdit` pour afficher les résultats.
+- **Validation** : Fenêtre avec bouton et zone de texte.
 
-## 2) Première sous-fenêtre "Météo actuelle"
+## 2) Classes WorkerSignals et WeatherWorker
 
-- **Action** : Créez une méthode `create_current_view()` qui ajoute une sous-fenêtre avec QLabel.
-- **Piste** : `sub_window = QMdiSubWindow()`, `sub_window.setWidget(QLabel("Météo : 22°C"))`, `self.mdi_area.addSubWindow(sub_window)`.
-- **Validation** : Sous-fenêtre visible avec texte météo.
+- **Action** : Créez `WorkerSignals` avec signal `data_received` et `WeatherWorker` héritant de `QRunnable`.
+- **Piste** : `data_received = pyqtSignal(str, int)` pour (ville, température). Worker avec `city` en paramètre.
+- **Validation** : Classes de base créées avec signaux définis.
 
-## 3) Deuxième sous-fenêtre "Prévisions"
+## 3) Méthode run() de simulation
 
-- **Action** : Créez `create_forecast_view()` avec QTextEdit contenant les prévisions de 3 jours.
-- **Piste** : QTextEdit en lecture seule avec texte "Demain: 24°C\nAprès-demain: 20°C\n...".
-- **Validation** : Deuxième sous-fenêtre avec prévisions affichées.
+- **Action** : Implémentez `run()` qui simule un téléchargement avec `time.sleep(2)` et température aléatoire.
+- **Piste** : `time.sleep(2)`, `temp = random.randint(15, 25)`, émet les données avec le signal.
+- **Validation** : Worker qui simule un délai et génère des données.
 
-## 4) Menu Fenêtre avec dispositions
+## 4) QThreadPool et lancement des workers
 
-- **Action** : Ajoutez un menu "Fenêtre" avec actions "Cascade" et "Mosaïque".
-- **Piste** : `window_menu = menubar.addMenu("Fenêtre")` puis `self.mdi_area.cascadeSubWindows()`.
-- **Validation** : Menu fonctionnel qui réorganise les fenêtres.
+- **Action** : Ajoutez `QThreadPool` dans MainWindow et méthode qui lance 3 workers pour Paris, Lyon, Marseille.
+- **Piste** : `self.thread_pool = QThreadPool()`, créer 3 workers dans une boucle, connecter les signaux.
+- **Validation** : Pool de threads qui lance 3 téléchargements en parallèle.
 
-## 5) Configuration automatique
+## 5) Affichage des résultats
 
-- **Action** : Créez les 2 sous-fenêtres automatiquement au démarrage en cascade.
-- **Piste** : Appelez les méthodes dans `__init__()` puis `self.mdi_area.cascadeSubWindows()`.
-- **Validation** : Application démarre avec 2 fenêtres organisées.
+- **Action** : Connectez le signal `data_received` pour afficher les données dans le QTextEdit.
+- **Piste** : Méthode `on_data_received()` qui fait `self.text_edit.append(f"{city}: {temp}°C")`.
+- **Validation** : Données des workers s'affichent progressivement dans l'interface.
 
-## 6) Application complète
+## 6) Connexion du bouton et test
 
-- **Action** : Finalisez avec fonction `main()` et testez toutes les fonctionnalités MDI.
-- **Piste** : Boucle d'événements classique. Testez la fermeture, redimensionnement des sous-fenêtres.
-- **Validation** : Application MDI complète et interactive.
+- **Action** : Connectez le bouton au lancement des téléchargements et testez l'application complète.
+- **Piste** : `self.download_button.clicked.connect(self.start_downloads)`. Interface reste réactive pendant les téléchargements.
+- **Validation** : Application fonctionnelle, bouton lance 3 téléchargements, résultats apparaissent progressivement.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Troisième fenêtre** : Ajoutez "Graphiques" pour le TP2.
-- **Icônes** : Ajoutez des icônes ☀️ 📊 aux sous-fenêtres.
-- **Menu Fichier** : Ajoutez "Quitter" dans un menu Fichier.
+- **Indicateur** : Affichez "Téléchargement..." pendant les opérations.
+- **Plus de villes** : Ajoutez Nice, Toulouse.
+- **Gestion d'erreur** : Simulez parfois une erreur avec try/except.

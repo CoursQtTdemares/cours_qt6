@@ -1,51 +1,51 @@
-# TP3 - Téléchargement asynchrone de données
+# TP3 - Internationalisation *(optionnel)*
 
 **Durée** : 30 minutes
 
-**Objectif** : Découvrir les threads avec QRunnable pour simuler des téléchargements météo.
+**Objectif** : Ajouter le support multilingue à l'application météo des TP1 et TP2.
 
 **Pré-requis** : TP1 et TP2 terminés et fonctionnels.
 
-## 1) Classe WorkerSignals et WeatherWorker
+## 1) Marquage des textes avec tr()
 
-- **Action** : Créez `WorkerSignals` avec signal `data_received` et `WeatherWorker` héritant de `QRunnable`.
-- **Piste** : `data_received = pyqtSignal(str, int)` pour (ville, température). Worker avec `city` en paramètre.
-- **Validation** : Classes de base créées avec signaux définis.
+- **Action** : Remplacez les textes fixes par `self.tr()` dans l'application (bouton, titre, messages).
+- **Piste** : `setWindowTitle(self.tr("Application Météo"))`, bouton avec `self.tr("Télécharger")`.
+- **Validation** : Tous les textes utilisateur marqués avec `tr()`.
 
-## 2) Méthode run() de simulation
+## 2) Extraction et traduction
 
-- **Action** : Implémentez `run()` qui simule un téléchargement avec `time.sleep(2)` et données aléatoires.
-- **Piste** : `time.sleep(2)`, `temp = random.randint(15, 25)`, `self.signals.data_received.emit(self.city, temp)`.
-- **Validation** : Worker qui simule un délai et émet des données.
+- **Action** : Utilisez `pylupdate6` pour extraire les chaînes et créez les traductions françaises et anglaises.
+- **Piste** : `pylupdate6 *.py -ts translations/app_fr.ts app_en.ts`, éditez les fichiers .ts manuellement.
+- **Validation** : Fichiers de traduction créés et remplis.
 
-## 3) QThreadPool dans MainWindow
+## 3) Compilation des traductions
 
-- **Action** : Ajoutez `QThreadPool` dans la fenêtre principale et méthode pour lancer les workers.
-- **Piste** : `self.thread_pool = QThreadPool()`, méthode `download_weather()` qui crée et lance des workers.
-- **Validation** : Pool de threads initialisé et prêt à recevoir des tâches.
+- **Action** : Compilez les fichiers .ts en .qm avec `lrelease`.
+- **Piste** : `lrelease translations/app_fr.ts translations/app_en.ts` génère les .qm.
+- **Validation** : Fichiers .qm compilés disponibles.
 
-## 4) Nouvelle sous-fenêtre "Données temps réel"
+## 4) QTranslator dans l'application
 
-- **Action** : Créez `create_realtime_view()` avec QTextEdit pour afficher les données reçues.
-- **Piste** : QTextEdit en lecture seule, méthode `on_data_received()` qui fait `append()`.
-- **Validation** : Sous-fenêtre prête à recevoir les données des workers.
+- **Action** : Ajoutez `QTranslator` comme attribut et méthode `change_language()`.
+- **Piste** : `self.translator = QTranslator()`, méthode qui charge et installe le traducteur.
+- **Validation** : Traducteur prêt à charger des langues.
 
-## 5) Connexion des signaux
+## 5) Menu Langue
 
-- **Action** : Connectez le signal `data_received` à `on_data_received()` pour mettre à jour l'interface.
-- **Piste** : `worker.signals.data_received.connect(self.on_data_received)` avant `thread_pool.start()`.
-- **Validation** : Données des workers s'affichent dans l'interface.
+- **Action** : Ajoutez un menu "Langue" avec actions "Français" et "English".
+- **Piste** : `language_menu = menubar.addMenu(self.tr("Langue"))`, connectez aux méthodes de changement.
+- **Validation** : Menu Langue fonctionnel.
 
-## 6) Bouton de téléchargement
+## 6) Test du changement dynamique
 
-- **Action** : Ajoutez un bouton "🌍 Actualiser" qui lance 3 workers pour Paris, Lyon, Marseille.
-- **Piste** : Bouton dans la barre d'outils, méthode qui crée 3 workers en parallèle.
-- **Validation** : Données apparaissent progressivement, interface reste réactive.
+- **Action** : Testez le changement de langue en temps réel et ajoutez `retranslate_ui()`.
+- **Piste** : Méthode qui remet à jour bouton, titre, menu avec `setText(self.tr(...))`.
+- **Validation** : Changement de langue instantané dans toute l'interface, textes du graphique inclus.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Indicateur** : Affichez "Téléchargement..." pendant les opérations.
-- **Plus de villes** : Ajoutez Nice, Toulouse, Bordeaux.
-- **Gestion d'erreur** : Simulez parfois une erreur dans le worker.
+- **Persistance** : Sauvegardez la langue choisie avec `QSettings`.
+- **Espagnol** : Ajoutez une troisième langue.
+- **Formats** : Utilisez `QLocale` pour formater les températures selon la région (°C vs °F).
