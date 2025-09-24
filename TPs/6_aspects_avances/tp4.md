@@ -1,64 +1,51 @@
-# TP4 - Application multilingue
+# TP4 - Internationalisation *(optionnel)*
 
 **Durée** : 30 minutes
 
-**Objectif** : Internationaliser une application existante, créer les fichiers de traduction et les menus de langues.
+**Objectif** : Découvrir l'internationalisation pour supporter français et anglais.
 
-**Pré-requis** : TP1 à TP3 terminés, notions d'internationalisation.
+**Pré-requis** : TP1, TP2 et TP3 terminés et fonctionnels.
 
-## 1) Préparation de l'application
+## 1) Marquage des textes avec tr()
 
-- **Action** : Prenez une application existante (TP précédent) et préparez-la pour l'internationalisation.
-- **Piste** : Remplacez tous les strings par des appels `self.tr()` ou `QCoreApplication.translate()`.
-- **Validation** : Application avec strings externalisables identifiés et marqués.
+- **Action** : Remplacez les textes fixes par `self.tr()` dans la fenêtre principale et sous-fenêtres.
+- **Piste** : `setWindowTitle(self.tr("Application Météo"))`, menus, boutons, etc.
+- **Validation** : Tous les textes utilisateur marqués avec `tr()`.
 
-## 2) Configuration Qt Linguist
+## 2) Extraction et traduction
 
-- **Action** : Installez Qt Linguist et configurez le projet pour générer les fichiers .ts.
-- **Indice** : Créez un fichier .pro ou utilisez `pylupdate6` pour extraire les strings.
-- **Validation** : Fichiers .ts générés avec tous les strings à traduire.
+- **Action** : Utilisez `pylupdate6` pour extraire les chaînes et créez les traductions françaises.
+- **Piste** : `pylupdate6 *.py -ts translations/app_fr.ts`, éditez le fichier .ts manuellement.
+- **Validation** : Fichier de traduction français créé et rempli.
 
-## 3) Traductions en français et anglais
+## 3) Compilation des traductions
 
-- **Action** : Traduisez l'application en français et anglais avec Qt Linguist.
-- **Piste** : Ouvrez les fichiers .ts dans Linguist et complétez toutes les traductions.
-- **Validation** : Fichiers .ts complètement traduits et compilés en .qm.
+- **Action** : Compilez le fichier .ts en .qm avec `lrelease`.
+- **Piste** : `lrelease translations/app_fr.ts` génère `app_fr.qm`.
+- **Validation** : Fichier .qm compilé disponible.
 
-## 4) Gestionnaire de traductions
+## 4) QTranslator dans l'application
 
-- **Action** : Créez une classe `TranslationManager` pour gérer le chargement des traductions.
-- **Indice** : `QTranslator` avec méthodes pour charger/décharger les langues dynamiquement.
-- **Validation** : Changement de langue en temps réel dans l'application.
+- **Action** : Ajoutez `QTranslator` comme attribut et méthode `change_language()`.
+- **Piste** : `self.translator = QTranslator()`, méthode qui charge et installe le traducteur.
+- **Validation** : Traducteur prêt à charger des langues.
 
-## 5) Menu de sélection de langue
+## 5) Menu Langue
 
-- **Action** : Ajoutez un menu "Langue" avec drapeaux et sélection de la langue active.
-- **Piste** : Actions checkables avec icônes de drapeaux, une seule sélectionnée à la fois.
-- **Validation** : Menu permettant de changer la langue avec feedback visuel.
+- **Action** : Ajoutez un menu "Langue" avec actions "Français" et "English".
+- **Piste** : Connectez chaque action à `change_language("fr")` ou `change_language("en")`.
+- **Validation** : Menu Langue fonctionnel.
 
-## 6) Persistance de la langue
+## 6) Test du changement dynamique
 
-- **Action** : Sauvegardez le choix de langue et restaurez-le au redémarrage.
-- **Indice** : `QSettings` pour stocker la langue sélectionnée.
-- **Validation** : Application qui se lance dans la dernière langue sélectionnée.
-
-## 7) Adaptation culturelle
-
-- **Action** : Adaptez les formats de date, nombre et devise selon la langue.
-- **Piste** : `QLocale` pour les formats régionaux, adaptation automatique.
-- **Validation** : Affichage des données selon les conventions locales.
-
-## 8) Langue système par défaut
-
-- **Action** : Détectez automatiquement la langue du système au premier lancement.
-- **Indice** : `QLocale.system().name()` pour détecter la langue, fallback vers anglais.
-- **Validation** : Application qui se lance dans la langue du système si disponible.
+- **Action** : Testez le changement de langue en temps réel et ajoutez `retranslate_ui()`.
+- **Piste** : Méthode qui remet à jour tous les textes avec `setText(self.tr(...))`.
+- **Validation** : Changement de langue instantané dans toute l'interface.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Traduction contextuelle** : Implémentez des traductions différentes selon le contexte d'usage.
-- **Pluriels complexes** : Gérez les règles de pluriel spécifiques à chaque langue.
-- **Support RTL** : Ajoutez le support des langues droite-à-gauche (arabe, hébreu).
-- **Traduction collaborative** : Système permettant aux utilisateurs de contribuer aux traductions.
+- **Persistance** : Sauvegardez la langue choisie avec `QSettings`.
+- **Espagnol** : Ajoutez une troisième langue.
+- **Formats** : Utilisez `QLocale` pour formater les températures selon la région.

@@ -1,64 +1,51 @@
-# TP3 - Gestionnaire de fichiers avancé
+# TP3 - Téléchargement asynchrone de données
 
 **Durée** : 30 minutes
 
-**Objectif** : Créer un explorateur de fichiers avec threads et intégrer la gestion des styles et thèmes.
+**Objectif** : Découvrir les threads avec QRunnable pour simuler des téléchargements météo.
 
-**Pré-requis** : TP1 et TP2 terminés, notions de threading Qt.
+**Pré-requis** : TP1 et TP2 terminés et fonctionnels.
 
-## 1) Interface d'explorateur
+## 1) Classe WorkerSignals et WeatherWorker
 
-- **Action** : Créez un projet `tp_file_explorer` avec interface à deux panneaux : arbre + liste.
-- **Piste** : `QSplitter` horizontal avec `QTreeView` (dossiers) et `QListView` (fichiers).
-- **Validation** : Interface d'explorateur classique avec navigation fonctionnelle.
+- **Action** : Créez `WorkerSignals` avec signal `data_received` et `WeatherWorker` héritant de `QRunnable`.
+- **Piste** : `data_received = pyqtSignal(str, int)` pour (ville, température). Worker avec `city` en paramètre.
+- **Validation** : Classes de base créées avec signaux définis.
 
-## 2) Modèle de système de fichiers
+## 2) Méthode run() de simulation
 
-- **Action** : Utilisez `QFileSystemModel` pour afficher l'arborescence et les fichiers.
-- **Indice** : Configurez les filtres, colonnes visibles, et tri par défaut.
-- **Validation** : Navigation dans le système de fichiers avec métadonnées (taille, date).
+- **Action** : Implémentez `run()` qui simule un téléchargement avec `time.sleep(2)` et données aléatoires.
+- **Piste** : `time.sleep(2)`, `temp = random.randint(15, 25)`, `self.signals.data_received.emit(self.city, temp)`.
+- **Validation** : Worker qui simule un délai et émet des données.
 
-## 3) Prévisualisation de fichiers
+## 3) QThreadPool dans MainWindow
 
-- **Action** : Ajoutez un panneau de prévisualisation pour images et texte.
-- **Piste** : `QLabel` pour images, `QTextEdit` en lecture seule pour texte.
-- **Validation** : Prévisualisation automatique lors de la sélection de fichiers.
+- **Action** : Ajoutez `QThreadPool` dans la fenêtre principale et méthode pour lancer les workers.
+- **Piste** : `self.thread_pool = QThreadPool()`, méthode `download_weather()` qui crée et lance des workers.
+- **Validation** : Pool de threads initialisé et prêt à recevoir des tâches.
 
-## 4) Opérations sur fichiers en arrière-plan
+## 4) Nouvelle sous-fenêtre "Données temps réel"
 
-- **Action** : Implémentez copie, déplacement, suppression de fichiers avec `QThread`.
-- **Indice** : Classe `FileOperationWorker` héritant de `QThread` avec signaux de progression.
-- **Validation** : Opérations de fichiers non bloquantes avec barre de progression.
+- **Action** : Créez `create_realtime_view()` avec QTextEdit pour afficher les données reçues.
+- **Piste** : QTextEdit en lecture seule, méthode `on_data_received()` qui fait `append()`.
+- **Validation** : Sous-fenêtre prête à recevoir les données des workers.
 
-## 5) Recherche de fichiers threadée
+## 5) Connexion des signaux
 
-- **Action** : Ajoutez une fonction de recherche de fichiers par nom/contenu en arrière-plan.
-- **Piste** : Thread de recherche avec `QDirIterator` et signaux pour les résultats.
-- **Validation** : Recherche rapide et responsive avec résultats en temps réel.
+- **Action** : Connectez le signal `data_received` à `on_data_received()` pour mettre à jour l'interface.
+- **Piste** : `worker.signals.data_received.connect(self.on_data_received)` avant `thread_pool.start()`.
+- **Validation** : Données des workers s'affichent dans l'interface.
 
-## 6) Système de thèmes complet
+## 6) Bouton de téléchargement
 
-- **Action** : Implémentez un système de thèmes (clair, sombre, coloré) pour l'explorateur.
-- **Indice** : Classes CSS pour chaque thème, menu de sélection dynamique.
-- **Validation** : Changement de thème instantané affectant toute l'interface.
-
-## 7) Gestion des favoris et historique
-
-- **Action** : Ajoutez des favoris de dossiers et un historique de navigation.
-- **Piste** : Stockage avec `QSettings`, boutons de navigation précédent/suivant.
-- **Validation** : Navigation rapide vers dossiers favoris et historique fonctionnel.
-
-## 8) Plugins et extensions
-
-- **Action** : Préparez une architecture de plugins pour ajouter des prévisualisateurs.
-- **Indice** : Interface de plugin pour différents types de fichiers, chargement dynamique.
-- **Validation** : Architecture extensible permettant d'ajouter facilement de nouveaux types.
+- **Action** : Ajoutez un bouton "🌍 Actualiser" qui lance 3 workers pour Paris, Lyon, Marseille.
+- **Piste** : Bouton dans la barre d'outils, méthode qui crée 3 workers en parallèle.
+- **Validation** : Données apparaissent progressivement, interface reste réactive.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Synchronisation réseau** : Ajoutez la navigation sur serveurs FTP/SFTP.
-- **Compression intégrée** : Support de création/extraction d'archives ZIP.
-- **Comparaison de dossiers** : Outil de comparaison et synchronisation entre dossiers.
-- **Indexation** : Système d'indexation pour recherche ultra-rapide dans le contenu.
+- **Indicateur** : Affichez "Téléchargement..." pendant les opérations.
+- **Plus de villes** : Ajoutez Nice, Toulouse, Bordeaux.
+- **Gestion d'erreur** : Simulez parfois une erreur dans le worker.

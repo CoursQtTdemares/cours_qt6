@@ -1,15 +1,14 @@
-# Chapitre 7 : Aspects avancés
+# Chapitre 6 : Aspects avancés de Qt
 
 ## Objectifs pédagogiques
 
 À l'issue de ce chapitre, vous serez capable de :
-- Implémenter une architecture MDI (Multiple Document Interface) avec QMdiArea
-- Utiliser QPainter pour créer des graphiques 2D personnalisés
-- Gérer les styles et thèmes graphiques avec CSS avancé
-- Travailler avec les threads Qt (QThread) et les timers (QTimer)
-- Manipuler le système de fichiers avec QDir et QFile
-- Internationaliser une application avec QTranslator
-- Appliquer les techniques avancées de Qt pour des applications professionnelles
+- Maîtriser l'architecture MDI (Multiple Document Interface) avec QMdiArea et QMdiSubWindow
+- Utiliser les fonctions de tracé avancées pour créer des graphiques personnalisés
+- Implémenter des traitements asynchrones avec QRunnable et QThreadPool
+- Gérer les opérations sur le système de fichiers avec les classes Qt
+- Internationaliser une application PyQt6 pour supporter plusieurs langues
+- Créer une application complexe combinant tous ces aspects
 
 ## Durée estimée : 4h00
 - **Théorie** : 2h00
@@ -19,70 +18,89 @@
 
 ## 1. Architecture MDI (Multiple Document Interface)
 
-### 1.1 Introduction au MDI avec QMdiArea
+### 1.1 Qu'est-ce que l'architecture MDI ?
+
+L'architecture **MDI** permet de gérer plusieurs documents ou vues dans une seule fenêtre principale. C'est l'approche utilisée par des applications comme Microsoft Word (versions anciennes), Photoshop, ou les IDE de développement.
+
+#### 🏢 **Concepts clés**
+- **QMdiArea** : Le conteneur principal qui gère toutes les sous-fenêtres
+- **QMdiSubWindow** : Une sous-fenêtre individuelle contenant un widget
+- **Document** : Le contenu réel de chaque sous-fenêtre
+
+#### ✅ **Avantages de l'architecture MDI**
+- Gestion centralisée de plusieurs documents
+- Partage d'une barre de menu commune
+- Navigation facile entre les documents
+- Maximisation/minimisation indépendante
+
+### 1.2 Premier exemple MDI
+
+Créons une application MDI basique pour comprendre les concepts :
 
 ```python
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QMdiArea, QMdiSubWindow, 
-    QTextEdit, QVBoxLayout, QWidget, QMenuBar, QMenu, QMessageBox
-)
-from PyQt6.QtCore import Qt
 import sys
+from typing import Optional
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
+    QTextEdit, QMenuBar, QMenu, QVBoxLayout, QWidget
+)
 
 class MDIMainWindow(QMainWindow):
-    """Fenêtre principale MDI"""
+    """Fenêtre principale avec architecture MDI"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Application MDI")
-        self.setGeometry(100, 100, 1000, 700)
+        self.setWindowTitle("Mon Application MDI")
+        self.setGeometry(100, 100, 800, 600)
         
-        # Zone MDI centrale
+        # Créer la zone MDI
         self.mdi_area = QMdiArea()
         self.setCentralWidget(self.mdi_area)
         
-        # Configuration MDI
-        self.mdi_area.setViewMode(QMdiArea.ViewMode.TabbedView)
-        self.mdi_area.setTabsClosable(True)
+        # Configurer l'apparence
+        self.mdi_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.mdi_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         
-        self.setup_menus()
-        self.document_count = 0
+        self.setup_menu()
+        self.setup_initial_documents()
     
-    def setup_menus(self):
-        """Configure les menus MDI"""
+    def setup_menu(self) -> None:
+        """Configure le menu principal"""
         menubar = self.menuBar()
         
         # Menu Fichier
-        file_menu = menubar.addMenu("&Fichier")
-        
-        new_action = file_menu.addAction("&Nouveau document")
-        new_action.setShortcut("Ctrl+N")
-        new_action.triggered.connect(self.new_document)
+        file_menu = menubar.addMenu("Fichier")
+        file_menu.addAction("Nouveau document", self.create_text_document)
+        file_menu.addSeparator()
+        file_menu.addAction("Quitter", self.close)
         
         # Menu Fenêtre
-        window_menu = menubar.addMenu("&Fenêtre")
-        
-        tile_action = window_menu.addAction("Mosaïque")
-        tile_action.triggered.connect(self.mdi_area.tileSubWindows)
-        
-        cascade_action = window_menu.addAction("Cascade")
-        cascade_action.triggered.connect(self.mdi_area.cascadeSubWindows)
-        
-        close_all_action = window_menu.addAction("Fermer tout")
-        close_all_action.triggered.connect(self.mdi_area.closeAllSubWindows)
+        window_menu = menubar.addMenu("Fenêtre")
+        window_menu.addAction("Cascade", self.mdi_area.cascadeSubWindows)
+        window_menu.addAction("Mosaïque", self.mdi_area.tileSubWindows)
+        window_menu.addSeparator()
+        window_menu.addAction("Fermer tout", self.mdi_area.closeAllSubWindows)
     
-    def new_document(self):
-        """Crée un nouveau document"""
-        self.document_count += 1
+    def setup_initial_documents(self) -> None:
+        """Crée quelques documents d'exemple"""
+        self.create_text_document("Document 1")
+        self.create_text_document("Document 2")
         
-        # Widget de contenu
+        # Organiser en cascade
+        self.mdi_area.cascadeSubWindows()
+    
+    def create_text_document(self, title: str = "Nouveau document") -> QMdiSubWindow:
+        """Crée un nouveau document texte"""
+        # Créer le widget de contenu
         text_edit = QTextEdit()
-        text_edit.setPlainText(f"Document {self.document_count}\n\nContenu du document...")
+        text_edit.setPlainText(f"Contenu de {title}")
         
-        # Sous-fenêtre MDI
+        # Créer la sous-fenêtre
         sub_window = QMdiSubWindow()
         sub_window.setWidget(text_edit)
-        sub_window.setWindowTitle(f"Document {self.document_count}")
+        sub_window.setWindowTitle(title)
+        sub_window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         
         # Ajouter à la zone MDI
         self.mdi_area.addSubWindow(sub_window)
@@ -90,700 +108,479 @@ class MDIMainWindow(QMainWindow):
         
         return sub_window
 
-class CustomMDIChild(QWidget):
-    """Widget enfant MDI personnalisé"""
-    
-    def __init__(self, title="Nouveau document"):
-        super().__init__()
-        self.title = title
-        self.is_modified = False
-        self.setup_ui()
-    
-    def setup_ui(self):
-        layout = QVBoxLayout()
-        
-        self.text_edit = QTextEdit()
-        self.text_edit.textChanged.connect(self.mark_modified)
-        layout.addWidget(self.text_edit)
-        
-        self.setLayout(layout)
-    
-    def mark_modified(self):
-        """Marque le document comme modifié"""
-        self.is_modified = True
-        self.update_title()
-    
-    def update_title(self):
-        """Met à jour le titre avec indicateur de modification"""
-        title = self.title
-        if self.is_modified:
-            title += " *"
-        
-        parent = self.parent()
-        if parent and isinstance(parent, QMdiSubWindow):
-            parent.setWindowTitle(title)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MDIMainWindow()
+    window.show()
+    sys.exit(app.exec())
 ```
 
-### 1.2 Gestion avancée des sous-fenêtres
+### 1.3 Stratégies de positionnement
+
+QMdiArea propose plusieurs stratégies pour organiser les sous-fenêtres :
 
 ```python
-class AdvancedMDIArea(QMdiArea):
-    """Zone MDI avec fonctionnalités avancées"""
-    
-    def __init__(self):
-        super().__init__()
-        self.setup_advanced_features()
-    
-    def setup_advanced_features(self):
-        """Configure les fonctionnalités avancées"""
-        # Politique de fermeture
-        self.setDocumentMode(True)
-        self.setTabsMovable(True)
-        
-        # Connexions
-        self.subWindowActivated.connect(self.on_subwindow_activated)
-    
-    def on_subwindow_activated(self, window):
-        """Réaction à l'activation d'une sous-fenêtre"""
-        if window:
-            print(f"Fenêtre activée: {window.windowTitle()}")
+from PyQt6.QtWidgets import QMdiArea
 
-class MDIDocument:
-    """Gestionnaire de documents MDI"""
+class AdvancedMDIArea(QMdiArea):
+    """Zone MDI avec stratégies de positionnement avancées"""
     
-    def __init__(self, mdi_area):
-        self.mdi_area = mdi_area
-        self.documents = []
+    def __init__(self) -> None:
+        super().__init__()
+        self.setup_view_mode()
     
-    def create_document(self, document_type="text"):
-        """Crée un document selon le type"""
-        if document_type == "text":
-            widget = QTextEdit()
-        elif document_type == "image":
-            widget = QLabel("Éditeur d'image")
+    def setup_view_mode(self) -> None:
+        """Configure le mode d'affichage"""
+        # Mode par défaut : fenêtres libres
+        self.setViewMode(QMdiArea.ViewMode.SubWindowView)
         
-        sub_window = QMdiSubWindow()
-        sub_window.setWidget(widget)
-        sub_window.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        # Alternative : mode onglets
+        # self.setViewMode(QMdiArea.ViewMode.TabbedView)
+    
+    def arrange_cascade(self) -> None:
+        """Organise les fenêtres en cascade"""
+        self.cascadeSubWindows()
+    
+    def arrange_tile(self) -> None:
+        """Organise les fenêtres en mosaïque"""
+        self.tileSubWindows()
+    
+    def arrange_horizontal(self) -> None:
+        """Organise les fenêtres horizontalement"""
+        sub_windows = self.subWindowList()
+        if not sub_windows:
+            return
         
-        self.mdi_area.addSubWindow(sub_window)
-        self.documents.append(sub_window)
+        area_size = self.size()
+        window_width = area_size.width() // len(sub_windows)
         
-        sub_window.show()
-        return sub_window
+        for i, window in enumerate(sub_windows):
+            window.resize(window_width, area_size.height())
+            window.move(i * window_width, 0)
+    
+    def arrange_vertical(self) -> None:
+        """Organise les fenêtres verticalement"""
+        sub_windows = self.subWindowList()
+        if not sub_windows:
+            return
+        
+        area_size = self.size()
+        window_height = area_size.height() // len(sub_windows)
+        
+        for i, window in enumerate(sub_windows):
+            window.resize(area_size.width(), window_height)
+            window.move(0, i * window_height)
 ```
 
 ---
 
-## 2. Fonctions de tracé avec QPainter
+## 2. Fonctions de tracé avancées
 
-### 2.1 Dessin 2D basique
+### 2.1 QPainter et les primitives de dessin
+
+Qt propose un système de dessin puissant avec **QPainter** pour créer des graphiques personnalisés :
 
 ```python
+from typing import Optional
+from PyQt6.QtCore import QRectF, QPointF
 from PyQt6.QtGui import QPainter, QPen, QBrush, QColor, QFont
-from PyQt6.QtCore import QRect, QPoint
+from PyQt6.QtWidgets import QWidget
 
-class DrawingWidget(QWidget):
-    """Widget de dessin personnalisé"""
+class WeatherChartWidget(QWidget):
+    """Widget personnalisé pour afficher un graphique météo"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setMinimumSize(400, 300)
-        self.shapes = []
-    
-    def paintEvent(self, event):
-        """Événement de peinture"""
-        painter = QPainter(self)
         
-        # Configuration antialiasing
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # Dessiner l'arrière-plan
-        painter.fillRect(self.rect(), QColor(240, 240, 240))
-        
-        # Dessiner les formes
-        self.draw_basic_shapes(painter)
-        self.draw_text(painter)
-        self.draw_custom_shapes(painter)
+        # Données d'exemple (température par heure)
+        self.temperatures: list[float] = [12.5, 13.2, 14.1, 15.8, 17.2, 18.5, 19.1, 18.8]
+        self.hours: list[str] = ["8h", "9h", "10h", "11h", "12h", "13h", "14h", "15h"]
     
-    def draw_basic_shapes(self, painter):
-        """Dessine des formes de base"""
-        # Rectangle
-        painter.setPen(QPen(QColor(255, 0, 0), 2))
-        painter.setBrush(QBrush(QColor(255, 200, 200)))
-        painter.drawRect(10, 10, 100, 60)
-        
-        # Ellipse
-        painter.setPen(QPen(QColor(0, 255, 0), 3))
-        painter.setBrush(QBrush(QColor(200, 255, 200)))
-        painter.drawEllipse(130, 10, 80, 80)
-        
-        # Ligne
-        painter.setPen(QPen(QColor(0, 0, 255), 4))
-        painter.drawLine(10, 100, 200, 150)
-    
-    def draw_text(self, painter):
-        """Dessine du texte formaté"""
-        painter.setPen(QPen(QColor(0, 0, 0)))
-        painter.setFont(QFont("Arial", 14, QFont.Weight.Bold))
-        
-        rect = QRect(10, 180, 200, 50)
-        painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, "Texte centré")
-    
-    def draw_custom_shapes(self, painter):
-        """Dessine des formes personnalisées"""
-        # Polygone
-        from PyQt6.QtGui import QPolygon
-        
-        points = [QPoint(250, 50), QPoint(300, 20), QPoint(350, 50), 
-                 QPoint(320, 100), QPoint(280, 100)]
-        polygon = QPolygon(points)
-        
-        painter.setPen(QPen(QColor(255, 0, 255), 2))
-        painter.setBrush(QBrush(QColor(255, 200, 255)))
-        painter.drawPolygon(polygon)
-
-class InteractiveDrawing(QWidget):
-    """Widget de dessin interactif"""
-    
-    def __init__(self):
-        super().__init__()
-        self.setMinimumSize(600, 400)
-        self.drawing = False
-        self.last_point = QPoint()
-        self.path_points = []
-    
-    def mousePressEvent(self, event):
-        """Début du dessin"""
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.drawing = True
-            self.last_point = event.position().toPoint()
-            self.path_points = [self.last_point]
-    
-    def mouseMoveEvent(self, event):
-        """Dessin en cours"""
-        if self.drawing:
-            self.path_points.append(event.position().toPoint())
-            self.update()
-    
-    def mouseReleaseEvent(self, event):
-        """Fin du dessin"""
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.drawing = False
-    
-    def paintEvent(self, event):
-        """Dessine le chemin"""
+    def paintEvent(self, event) -> None:
+        """Dessine le graphique de température"""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         
-        # Arrière-plan
-        painter.fillRect(self.rect(), QColor(255, 255, 255))
+        # Préparer la zone de dessin
+        rect = self.rect()
+        margin = 40
+        chart_rect = QRectF(
+            margin, margin,
+            rect.width() - 2 * margin,
+            rect.height() - 2 * margin
+        )
         
-        # Dessiner le chemin
-        if len(self.path_points) > 1:
-            painter.setPen(QPen(QColor(0, 0, 255), 3))
-            
-            for i in range(1, len(self.path_points)):
-                painter.drawLine(self.path_points[i-1], self.path_points[i])
-```
-
-### 2.2 Transformations et animations
-
-```python
-from PyQt6.QtCore import QTimer, QPropertyAnimation, QEasingCurve
-
-class AnimatedDrawing(QWidget):
-    """Widget avec animations de dessin"""
+        self.draw_background(painter, chart_rect)
+        self.draw_axes(painter, chart_rect)
+        self.draw_temperature_curve(painter, chart_rect)
+        self.draw_labels(painter, chart_rect)
     
-    def __init__(self):
-        super().__init__()
-        self.setMinimumSize(400, 400)
+    def draw_background(self, painter: QPainter, chart_rect: QRectF) -> None:
+        """Dessine le fond du graphique"""
+        # Fond dégradé bleu clair
+        brush = QBrush(QColor(240, 248, 255))
+        painter.fillRect(chart_rect, brush)
         
-        self.rotation_angle = 0
-        self.scale_factor = 1.0
-        
-        # Timer pour animation
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.animate)
-        self.timer.start(50)  # 20 FPS
+        # Bordure
+        pen = QPen(QColor(100, 149, 237), 2)
+        painter.setPen(pen)
+        painter.drawRect(chart_rect)
     
-    def animate(self):
-        """Animation continue"""
-        self.rotation_angle += 2
-        self.scale_factor = 1.0 + 0.3 * abs(math.sin(self.rotation_angle * 0.1))
-        self.update()
-    
-    def paintEvent(self, event):
-        """Dessine avec transformations"""
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    def draw_axes(self, painter: QPainter, chart_rect: QRectF) -> None:
+        """Dessine les axes du graphique"""
+        pen = QPen(QColor(128, 128, 128), 1)
+        painter.setPen(pen)
         
-        # Centre du widget
-        center_x = self.width() // 2
-        center_y = self.height() // 2
-        
-        # Sauvegarder l'état du painter
-        painter.save()
-        
-        # Appliquer les transformations
-        painter.translate(center_x, center_y)
-        painter.rotate(self.rotation_angle)
-        painter.scale(self.scale_factor, self.scale_factor)
-        
-        # Dessiner une forme
-        painter.setPen(QPen(QColor(255, 0, 0), 3))
-        painter.setBrush(QBrush(QColor(255, 200, 200)))
-        painter.drawRect(-50, -50, 100, 100)
-        
-        # Restaurer l'état
-        painter.restore()
-        
-        # Dessiner sans transformation
-        painter.setPen(QPen(QColor(0, 0, 255), 2))
-        painter.drawText(10, 20, f"Rotation: {self.rotation_angle}°")
-```
-
----
-
-## 3. Gestion des styles CSS avancés
-
-### 3.1 Système de thèmes complet
-
-```python
-class ThemeManager:
-    """Gestionnaire de thèmes avancé"""
-    
-    def __init__(self):
-        self.themes = {
-            'clair': self.light_theme(),
-            'sombre': self.dark_theme(),
-            'bleu': self.blue_theme()
-        }
-        self.current_theme = 'clair'
-    
-    def light_theme(self):
-        return """
-        QMainWindow {
-            background-color: #f5f5f5;
-            color: #333333;
-        }
-        
-        QMenuBar {
-            background-color: #ffffff;
-            border-bottom: 1px solid #ddd;
-            padding: 4px;
-        }
-        
-        QMenuBar::item {
-            background-color: transparent;
-            padding: 8px 16px;
-            border-radius: 4px;
-        }
-        
-        QMenuBar::item:selected {
-            background-color: #e3f2fd;
-        }
-        
-        QPushButton {
-            background-color: #2196f3;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        
-        QPushButton:hover {
-            background-color: #1976d2;
-        }
-        
-        QPushButton:pressed {
-            background-color: #0d47a1;
-        }
-        """
-    
-    def dark_theme(self):
-        return """
-        QMainWindow {
-            background-color: #2b2b2b;
-            color: #ffffff;
-        }
-        
-        QMenuBar {
-            background-color: #3c3c3c;
-            color: #ffffff;
-            border-bottom: 1px solid #555;
-        }
-        
-        QMenuBar::item:selected {
-            background-color: #555555;
-        }
-        
-        QPushButton {
-            background-color: #0078d4;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-        }
-        
-        QTextEdit {
-            background-color: #1e1e1e;
-            color: #ffffff;
-            border: 1px solid #555;
-        }
-        """
-    
-    def blue_theme(self):
-        return """
-        QMainWindow {
-            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                stop: 0 #87ceeb, stop: 1 #4682b4);
-            color: #000080;
-        }
-        
-        QPushButton {
-            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                stop: 0 #87ceeb, stop: 1 #4682b4);
-            border: 2px solid #4682b4;
-            border-radius: 8px;
-            padding: 6px 12px;
-        }
-        """
-    
-    def apply_theme(self, widget, theme_name):
-        """Applique un thème à un widget"""
-        if theme_name in self.themes:
-            widget.setStyleSheet(self.themes[theme_name])
-            self.current_theme = theme_name
-
-class StyledApplication(QMainWindow):
-    """Application avec gestion de thèmes"""
-    
-    def __init__(self):
-        super().__init__()
-        self.theme_manager = ThemeManager()
-        self.setup_ui()
-        self.setup_theme_menu()
-    
-    def setup_theme_menu(self):
-        """Menu de sélection de thème"""
-        theme_menu = self.menuBar().addMenu("&Thème")
-        
-        for theme_name in self.theme_manager.themes.keys():
-            action = theme_menu.addAction(theme_name.title())
-            action.triggered.connect(
-                lambda checked, name=theme_name: self.change_theme(name)
+        # Lignes de grille horizontales
+        for i in range(5):
+            y = chart_rect.top() + (i * chart_rect.height() / 4)
+            painter.drawLine(
+                chart_rect.left(), y,
+                chart_rect.right(), y
             )
     
-    def change_theme(self, theme_name):
-        """Change le thème de l'application"""
-        self.theme_manager.apply_theme(self, theme_name)
+    def draw_temperature_curve(self, painter: QPainter, chart_rect: QRectF) -> None:
+        """Dessine la courbe de température"""
+        if len(self.temperatures) < 2:
+            return
+        
+        # Calculer les échelles
+        min_temp = min(self.temperatures)
+        max_temp = max(self.temperatures)
+        temp_range = max_temp - min_temp or 1
+        
+        # Préparer le pinceau pour la courbe
+        pen = QPen(QColor(255, 69, 0), 3)
+        painter.setPen(pen)
+        
+        # Dessiner la courbe point par point
+        points: list[QPointF] = []
+        for i, temp in enumerate(self.temperatures):
+            x = chart_rect.left() + (i * chart_rect.width() / (len(self.temperatures) - 1))
+            y = chart_rect.bottom() - ((temp - min_temp) / temp_range * chart_rect.height())
+            points.append(QPointF(x, y))
+        
+        # Tracer les segments
+        for i in range(len(points) - 1):
+            painter.drawLine(points[i], points[i + 1])
+        
+        # Dessiner les points
+        brush = QBrush(QColor(255, 69, 0))
+        painter.setBrush(brush)
+        for point in points:
+            painter.drawEllipse(point, 4, 4)
+    
+    def draw_labels(self, painter: QPainter, chart_rect: QRectF) -> None:
+        """Dessine les étiquettes"""
+        font = QFont("Arial", 10)
+        painter.setFont(font)
+        painter.setPen(QColor(0, 0, 0))
+        
+        # Labels des heures
+        for i, hour in enumerate(self.hours):
+            x = chart_rect.left() + (i * chart_rect.width() / (len(self.hours) - 1))
+            y = chart_rect.bottom() + 20
+            painter.drawText(QPointF(x - 10, y), hour)
 ```
+
+### 2.2 Primitives de dessin essentielles
+
+**QPainter** offre toutes les primitives classiques :
+- `drawRect()`, `drawEllipse()`, `drawLine()` - Formes de base
+- `drawText()` - Texte avec police personnalisée
+- `drawPolygon()` - Formes complexes
+- `QPen` pour les contours, `QBrush` pour les remplissages
 
 ---
 
-## 4. Threading avec QThread
+## 3. Programmation asynchrone avec les Threads
 
-### 4.1 Threads de base
+### 3.1 Pourquoi utiliser les Threads ?
+
+Les **Threads** permettent d'exécuter des tâches longues sans bloquer l'interface utilisateur :
+
+#### 🚫 **Problème sans Threads**
+```python
+# ❌ MAUVAIS : Bloque l'interface
+def download_weather_data(self) -> None:
+    for city in ["Paris", "Lyon", "Marseille"]:
+        response = requests.get(f"https://api.weather.com/{city}")
+        # L'interface est figée pendant 3 secondes !
+        time.sleep(1)  # Simulation de délai réseau
+```
+
+#### ✅ **Solution avec Threads**
+```python
+# ✅ BON : Interface réactive
+def download_weather_data(self) -> None:
+    worker = WeatherWorker(["Paris", "Lyon", "Marseille"])
+    worker.signals.data_received.connect(self.update_display)
+    self.thread_pool.start(worker)
+    # L'interface reste réactive !
+```
+
+### 3.2 Implémentation avec QRunnable et QThreadPool
+
+Créons un système de workers typé et robuste :
 
 ```python
-from PyQt6.QtCore import QThread, pyqtSignal, QMutex, QWaitCondition
+from typing import Any, Callable
+from PyQt6.QtCore import QObject, QRunnable, QThreadPool, pyqtSignal, pyqtSlot
+import requests
+import time
 
-class WorkerThread(QThread):
-    """Thread de travail basique"""
+class WorkerSignals(QObject):
+    """Signaux pour communiquer avec le thread principal"""
     
-    # Signaux pour communication
-    progress = pyqtSignal(int)
-    finished_work = pyqtSignal(str)
-    error_occurred = pyqtSignal(str)
+    # Signal émis quand des données sont reçues
+    data_received = pyqtSignal(int, dict)  # (worker_id, data)
     
-    def __init__(self):
+    # Signal émis en cas d'erreur
+    error_occurred = pyqtSignal(int, str)  # (worker_id, error_message)
+    
+    # Signal émis quand le travail est terminé
+    finished = pyqtSignal(int)  # (worker_id,)
+
+class WeatherWorker(QRunnable):
+    """Worker pour télécharger les données météo"""
+    
+    def __init__(self, worker_id: int, city: str) -> None:
         super().__init__()
-        self.is_running = False
+        self.worker_id = worker_id
+        self.city = city
+        self.signals = WorkerSignals()
     
-    def run(self):
-        """Exécution du thread"""
+    @pyqtSlot()
+    def run(self) -> None:
+        """Exécute le téléchargement des données"""
         try:
-            self.is_running = True
+            # Simulation d'un appel API
+            self.signals.data_received.emit(
+                self.worker_id,
+                {"city": self.city, "temp": 20.5, "humidity": 65}
+            )
             
-            for i in range(101):
-                if not self.is_running:
-                    break
-                
-                # Simulation de travail
-                self.msleep(50)  # 50ms
-                
-                # Émission du signal de progression
-                self.progress.emit(i)
-            
-            self.finished_work.emit("Travail terminé avec succès")
+            # Simulation de délai réseau
+            time.sleep(1)
             
         except Exception as e:
-            self.error_occurred.emit(str(e))
-    
-    def stop(self):
-        """Arrête le thread"""
-        self.is_running = False
+            self.signals.error_occurred.emit(self.worker_id, str(e))
+        finally:
+            self.signals.finished.emit(self.worker_id)
 
-class ThreadedApplication(QMainWindow):
-    """Application utilisant des threads"""
+class WeatherApp(QMainWindow):
+    """Application météo avec workers"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.setup_ui()
-        self.worker_thread = None
+        self.thread_pool = QThreadPool()
+        self.active_workers: set[int] = set()
+        
+        print(f"Threads maximum : {self.thread_pool.maxThreadCount()}")
     
-    def setup_ui(self):
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        
-        layout = QVBoxLayout()
-        
-        self.progress_bar = QProgressBar()
-        layout.addWidget(self.progress_bar)
-        
-        self.start_button = QPushButton("Démarrer travail")
-        self.start_button.clicked.connect(self.start_work)
-        layout.addWidget(self.start_button)
-        
-        self.stop_button = QPushButton("Arrêter")
-        self.stop_button.clicked.connect(self.stop_work)
-        self.stop_button.setEnabled(False)
-        layout.addWidget(self.stop_button)
-        
-        central_widget.setLayout(layout)
+    def download_weather_for_cities(self, cities: list[str]) -> None:
+        """Lance le téléchargement pour plusieurs villes"""
+        for worker_id, city in enumerate(cities):
+            worker = WeatherWorker(worker_id, city)
+            
+            # Connecter les signaux
+            worker.signals.data_received.connect(self.on_data_received)
+            worker.signals.error_occurred.connect(self.on_error_occurred)
+            worker.signals.finished.connect(self.on_worker_finished)
+            
+            # Démarrer le worker
+            self.active_workers.add(worker_id)
+            self.thread_pool.start(worker)
     
-    def start_work(self):
-        """Démarre le travail en arrière-plan"""
-        self.worker_thread = WorkerThread()
-        
-        # Connexions des signaux
-        self.worker_thread.progress.connect(self.progress_bar.setValue)
-        self.worker_thread.finished_work.connect(self.on_work_finished)
-        self.worker_thread.error_occurred.connect(self.on_error)
-        
-        # Démarrer le thread
-        self.worker_thread.start()
-        
-        # Interface utilisateur
-        self.start_button.setEnabled(False)
-        self.stop_button.setEnabled(True)
+    def on_data_received(self, worker_id: int, data: dict[str, Any]) -> None:
+        """Traite les données reçues"""
+        print(f"Worker {worker_id}: Données pour {data['city']}")
+        # Mettre à jour l'interface utilisateur ici
     
-    def stop_work(self):
-        """Arrête le travail"""
-        if self.worker_thread:
-            self.worker_thread.stop()
-            self.worker_thread.wait()  # Attendre la fin
-        
-        self.reset_ui()
+    def on_error_occurred(self, worker_id: int, error: str) -> None:
+        """Gère les erreurs"""
+        print(f"Worker {worker_id}: Erreur - {error}")
     
-    def on_work_finished(self, message):
-        """Travail terminé"""
-        QMessageBox.information(self, "Terminé", message)
-        self.reset_ui()
-    
-    def on_error(self, error_message):
-        """Erreur dans le thread"""
-        QMessageBox.critical(self, "Erreur", error_message)
-        self.reset_ui()
-    
-    def reset_ui(self):
-        """Remet l'interface à l'état initial"""
-        self.start_button.setEnabled(True)
-        self.stop_button.setEnabled(False)
-        self.progress_bar.setValue(0)
+    def on_worker_finished(self, worker_id: int) -> None:
+        """Nettoie quand un worker se termine"""
+        self.active_workers.discard(worker_id)
+        print(f"Worker {worker_id} terminé. Restants: {len(self.active_workers)}")
+```
+
+### 3.3 Règle essentielle
+
+**🚨 IMPORTANT** : Jamais modifier l'interface depuis un thread ! Toujours utiliser les signaux pour communiquer avec l'interface principale.
+
+---
+
+## 4. Gestion du système de fichiers
+
+### 4.1 Dialogues de fichiers
+
+Qt fournit des dialogues prêts à l'emploi pour sélectionner des fichiers :
+
+```python
+from PyQt6.QtWidgets import QFileDialog
+
+# Ouvrir un fichier
+file_path, _ = QFileDialog.getOpenFileName(
+    self,
+    "Ouvrir un fichier",
+    "",
+    "Fichiers texte (*.txt);;Tous les fichiers (*)"
+)
+
+# Sauvegarder un fichier
+file_path, _ = QFileDialog.getSaveFileName(
+    self,
+    "Sauvegarder",
+    "",
+    "Fichiers JSON (*.json)"
+)
+```
+
+### 4.2 Emplacements système
+
+`QStandardPaths` permet d'accéder aux dossiers système standards :
+
+```python
+from PyQt6.QtCore import QStandardPaths
+
+# Dossier Documents
+docs_path = QStandardPaths.writableLocation(
+    QStandardPaths.StandardLocation.DocumentsLocation
+)
+
+# Dossier de configuration de l'application
+app_data = QStandardPaths.writableLocation(
+    QStandardPaths.StandardLocation.AppDataLocation
+)
 ```
 
 ---
 
-## 5. Gestion du système de fichiers
+## 5. Internationalisation (i18n)
 
-### 5.1 QDir et QFile
+### 5.1 Principe de base
 
-```python
-from PyQt6.QtCore import QDir, QFile, QTextStream, QFileInfo
-
-class FileManager:
-    """Gestionnaire de fichiers Qt"""
-    
-    def __init__(self, base_path="."):
-        self.base_dir = QDir(base_path)
-    
-    def list_files(self, pattern="*"):
-        """Liste les fichiers selon un pattern"""
-        filters = QDir.Filter.Files | QDir.Filter.NoDotAndDotDot
-        files = self.base_dir.entryList([pattern], filters)
-        return files
-    
-    def create_directory(self, dir_name):
-        """Crée un répertoire"""
-        return self.base_dir.mkdir(dir_name)
-    
-    def read_file(self, filename):
-        """Lit un fichier texte"""
-        file_path = self.base_dir.absoluteFilePath(filename)
-        file = QFile(file_path)
-        
-        if file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text):
-            stream = QTextStream(file)
-            content = stream.readAll()
-            file.close()
-            return content
-        return None
-    
-    def write_file(self, filename, content):
-        """Écrit dans un fichier"""
-        file_path = self.base_dir.absoluteFilePath(filename)
-        file = QFile(file_path)
-        
-        if file.open(QFile.OpenModeFlag.WriteOnly | QFile.OpenModeFlag.Text):
-            stream = QTextStream(file)
-            stream << content
-            file.close()
-            return True
-        return False
-    
-    def get_file_info(self, filename):
-        """Obtient les informations d'un fichier"""
-        file_path = self.base_dir.absoluteFilePath(filename)
-        info = QFileInfo(file_path)
-        
-        return {
-            'exists': info.exists(),
-            'size': info.size(),
-            'modified': info.lastModified(),
-            'is_readable': info.isReadable(),
-            'is_writable': info.isWritable()
-        }
-```
-
----
-
-## 6. Internationalisation avec QTranslator
-
-### 6.1 Système de traduction
+Pour supporter plusieurs langues, marquez les textes avec `self.tr()` :
 
 ```python
-from PyQt6.QtCore import QTranslator, QLocale, QCoreApplication
+from PyQt6.QtCore import QTranslator, QCoreApplication
 
-class TranslationManager:
-    """Gestionnaire de traductions"""
-    
-    def __init__(self, app):
-        self.app = app
+class MyApp(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
         self.translator = QTranslator()
-        self.current_language = 'fr'
-    
-    def load_language(self, language_code):
-        """Charge une langue"""
-        # Désinstaller l'ancien traducteur
-        self.app.removeTranslator(self.translator)
         
-        # Charger la nouvelle traduction
-        translation_file = f"translations/app_{language_code}.qm"
-        
-        if self.translator.load(translation_file):
-            self.app.installTranslator(self.translator)
-            self.current_language = language_code
-            return True
-        return False
-    
-    def tr(self, text):
-        """Fonction de traduction"""
-        return QCoreApplication.translate("MainWindow", text)
+        # Textes traduisibles
+        self.setWindowTitle(self.tr("Mon Application"))
+        button = QPushButton(self.tr("Cliquez ici"))
+```
 
-class MultilingualApp(QMainWindow):
-    """Application multilingue"""
-    
-    def __init__(self):
-        super().__init__()
-        self.translation_manager = TranslationManager(QApplication.instance())
-        self.setup_ui()
-        self.setup_language_menu()
-    
-    def setup_language_menu(self):
-        """Menu de sélection de langue"""
-        lang_menu = self.menuBar().addMenu("&Langue")
-        
-        languages = [
-            ('fr', 'Français'),
-            ('en', 'English'),
-            ('es', 'Español')
-        ]
-        
-        for code, name in languages:
-            action = lang_menu.addAction(name)
-            action.triggered.connect(
-                lambda checked, c=code: self.change_language(c)
-            )
-    
-    def change_language(self, language_code):
-        """Change la langue de l'interface"""
-        if self.translation_manager.load_language(language_code):
-            self.retranslate_ui()
-    
-    def retranslate_ui(self):
-        """Met à jour les textes traduits"""
-        tr = self.translation_manager.tr
-        self.setWindowTitle(tr("Mon Application"))
-        # Mettre à jour tous les textes...
+### 5.2 Processus de traduction
+
+```bash
+# 1. Extraire les chaînes
+pylupdate6 *.py -ts app_fr.ts
+
+# 2. Traduire le fichier .ts avec un éditeur
+
+# 3. Compiler
+lrelease app_fr.ts
+```
+
+### 5.3 Changer de langue
+
+```python
+def change_language(self, lang_code: str) -> None:
+    if self.translator.load(f"app_{lang_code}.qm"):
+        QCoreApplication.installTranslator(self.translator)
+        # Mettre à jour l'interface
+        self.retranslate_ui()
 ```
 
 ---
 
-## 7. Travaux pratiques
+## 6. Travaux pratiques
 
-### 🚧 TP1 - Application MDI complète
-**Durée** : 30 minutes
-- Créer une application MDI avec différents types de documents
-- Implémenter la gestion des fenêtres et des menus
+Les 4 TPs construisent progressivement une **application météo MDI** complète :
 
-### 🚧 TP2 - Éditeur graphique avec QPainter
+### 🌤️ TP1 - Interface MDI météo de base
 **Durée** : 30 minutes  
-- Développer un mini-éditeur de formes géométriques
-- Ajouter des transformations et animations
+**Objectif** : Créer l'architecture MDI avec différents types de documents
 
-### 🚧 TP3 - Gestionnaire de fichiers avancé
-**Durée** : 30 minutes
-- Créer un explorateur de fichiers avec threads
-- Intégrer la gestion des styles et thèmes
+**À réaliser** :
+- Créer une fenêtre principale avec QMdiArea
+- Implémenter 3 types de documents : "Vue actuelle", "Prévisions", "Graphiques"
+- Ajouter un menu "Fenêtre" avec options de disposition (cascade, mosaïque)
+- Créer des sous-fenêtres avec contenu basique (QLabel avec texte d'exemple)
 
-### 🚧 TP4 - Application multilingue
-**Durée** : 30 minutes
-- Internationaliser une application existante
-- Créer les fichiers de traduction et les menus de langues
+**Concepts abordés** : QMdiArea, QMdiSubWindow, gestion des menus
+
+### 📊 TP2 - Graphiques météo personnalisés
+**Durée** : 30 minutes  
+**Objectif** : Utiliser QPainter pour créer des graphiques météo
+
+**À réaliser** :
+- Créer un widget personnalisé héritant de QWidget
+- Implémenter `paintEvent()` pour dessiner un graphique de températures
+- Ajouter ce widget dans une sous-fenêtre MDI "Graphiques"
+- Dessiner courbe, axes, grille et étiquettes
+
+**Concepts abordés** : QPainter, dessin personnalisé, intégration dans MDI
+
+### 🌐 TP3 - Téléchargement asynchrone de données
+**Durée** : 30 minutes  
+**Objectif** : Implémenter des workers pour récupérer des données météo
+
+**À réaliser** :
+- Créer un `WeatherWorker` héritant de `QRunnable`
+- Implémenter le téléchargement simulé de données pour plusieurs villes
+- Connecter les signaux pour mettre à jour l'interface
+- Afficher les données dans une nouvelle sous-fenêtre "Données temps réel"
+
+**Concepts abordés** : QRunnable, QThreadPool, signaux inter-threads
+
+### 🌍 TP4 - Internationalisation *(optionnel)*
+**Durée** : 30 minutes  
+**Objectif** : Ajouter le support multilingue
+
+**À réaliser** :
+- Marquer tous les textes avec `self.tr()`
+- Créer les fichiers de traduction (.ts) pour français et anglais
+- Ajouter un menu "Langue" pour changer la langue à la volée
+- Tester le changement de langue en temps réel
+
+**Concepts abordés** : QTranslator, processus de traduction, `tr()`
 
 ---
 
-## 8. Points clés à retenir
+## 7. Points clés à retenir
 
 ### ✅ Architecture MDI
-- **QMdiArea** pour les applications multi-documents
-- Gestion flexible des sous-fenêtres et de leur cycle de vie
-- Interface utilisateur adaptée aux workflows complexes
+- **QMdiArea** : Conteneur principal pour gérer plusieurs documents
+- **QMdiSubWindow** : Chaque document dans sa propre sous-fenêtre
+- **Disposition** : cascade, mosaïque, ou arrangements personnalisés
 
 ### ✅ Dessin personnalisé
-- **QPainter** pour les graphiques 2D avancés
-- Transformations, animations et rendu haute qualité
-- Intégration dans les widgets pour interfaces riches
+- **QPainter** : Outil principal pour le dessin
+- **paintEvent()** : Méthode à surcharger pour dessiner
+- **Antialiasing** : Améliore la qualité visuelle
 
-### ✅ Threading et performance
-- **QThread** pour les tâches longues sans bloquer l'interface
-- Communication par signaux pour la sécurité des threads
-- Gestion propre du cycle de vie des threads
+### ✅ Threads asynchrones
+- **QRunnable** : Classe de base pour les tâches asynchrones
+- **QThreadPool** : Gestionnaire de pool de threads
+- **Signaux** : Communication sécurisée entre threads
+
+### ✅ Gestion des fichiers
+- **QFileDialog** : Dialogues ouvrir/sauvegarder
+- **QStandardPaths** : Emplacements système standards
 
 ### ✅ Internationalisation
-- **QTranslator** pour supporter plusieurs langues
-- Workflow de traduction avec fichiers .ts/.qm
-- Interface adaptative aux différentes cultures
+- **QTranslator** : Gestionnaire de traductions
+- **tr()** : Marquer les chaînes traduisibles
+- **Processus** : lupdate → traduire → lrelease
 
 ---
-
-## Prochaine étape
-
-Dans le **Chapitre 8 - Projets pratiques et intégration**, nous mettrons en pratique :
-- Le développement d'applications complètes end-to-end
-- Les bonnes pratiques et patterns de développement Qt
-- Les techniques de tests, debugging et packaging
-- La distribution et déploiement d'applications PyQt6

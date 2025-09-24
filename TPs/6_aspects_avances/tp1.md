@@ -1,64 +1,51 @@
-# TP1 - Application MDI complète
+# TP1 - Interface MDI météo de base
 
 **Durée** : 30 minutes
 
-**Objectif** : Créer une application MDI avec différents types de documents et implémenter la gestion des fenêtres et des menus.
+**Objectif** : Découvrir l'architecture MDI avec QMdiArea et créer une application météo simple.
 
-**Pré-requis** : Tous les chapitres précédents maîtrisés.
+**Pré-requis** : Chapitres 1-5 maîtrisés.
 
-## 1) Structure MDI de base
+## 1) Créer le projet et fenêtre principale
 
-- **Action** : Créez un projet `tp_mdi_complete` avec `QMainWindow` et `QMdiArea` comme widget central.
-- **Piste** : Configurez le `QMdiArea` en mode onglets avec `setViewMode(QMdiArea.ViewMode.TabbedView)`.
-- **Validation** : Fenêtre principale avec zone MDI en onglets.
+- **Action** : Créez un projet `weather_mdi_app` avec `WeatherMainWindow` héritant de `QMainWindow`.
+- **Piste** : `uv init` puis `uv add PyQt6`. Ajoutez `QMdiArea` comme widget central.
+- **Validation** : Fenêtre principale avec zone MDI vide.
 
-## 2) Types de documents multiples
+## 2) Première sous-fenêtre "Météo actuelle"
 
-- **Action** : Créez 3 types de documents : Éditeur de texte, Calculatrice, Visionneuse d'image.
-- **Indice** : Chaque type hérite d'une classe `MDIDocument` de base avec interface commune.
-- **Validation** : Trois types de documents distincts créables depuis des menus.
+- **Action** : Créez une méthode `create_current_view()` qui ajoute une sous-fenêtre avec QLabel.
+- **Piste** : `sub_window = QMdiSubWindow()`, `sub_window.setWidget(QLabel("Météo : 22°C"))`, `self.mdi_area.addSubWindow(sub_window)`.
+- **Validation** : Sous-fenêtre visible avec texte météo.
 
-## 3) Menu et actions de documents
+## 3) Deuxième sous-fenêtre "Prévisions"
 
-- **Action** : Implémentez un menu "Fichier" avec "Nouveau" et sous-menu des types de documents.
-- **Piste** : Actions séparées pour chaque type : "Nouveau Texte", "Nouvelle Calculatrice", etc.
-- **Validation** : Menu permettant la création de tous les types de documents.
+- **Action** : Créez `create_forecast_view()` avec QTextEdit contenant les prévisions de 3 jours.
+- **Piste** : QTextEdit en lecture seule avec texte "Demain: 24°C\nAprès-demain: 20°C\n...".
+- **Validation** : Deuxième sous-fenêtre avec prévisions affichées.
 
-## 4) Gestion des fenêtres MDI
+## 4) Menu Fenêtre avec dispositions
 
-- **Action** : Ajoutez un menu "Fenêtres" avec Cascade, Mosaïque, Fermer tout, Fermer actif.
-- **Indice** : Utilisez les méthodes built-in de `QMdiArea` : `cascadeSubWindows()`, `tileSubWindows()`.
-- **Validation** : Gestion complète de l'organisation des sous-fenêtres.
+- **Action** : Ajoutez un menu "Fenêtre" avec actions "Cascade" et "Mosaïque".
+- **Piste** : `window_menu = menubar.addMenu("Fenêtre")` puis `self.mdi_area.cascadeSubWindows()`.
+- **Validation** : Menu fonctionnel qui réorganise les fenêtres.
 
-## 5) Liste des fenêtres ouvertes
+## 5) Configuration automatique
 
-- **Action** : Ajoutez au menu "Fenêtres" une liste dynamique des documents ouverts.
-- **Piste** : Connectez `subWindowActivated` pour maintenir la liste à jour.
-- **Validation** : Menu dynamique permettant de basculer entre les documents.
+- **Action** : Créez les 2 sous-fenêtres automatiquement au démarrage en cascade.
+- **Piste** : Appelez les méthodes dans `__init__()` puis `self.mdi_area.cascadeSubWindows()`.
+- **Validation** : Application démarre avec 2 fenêtres organisées.
 
-## 6) Barre d'état contextuelle
+## 6) Application complète
 
-- **Action** : La barre d'état doit afficher des informations selon la fenêtre active.
-- **Indice** : Chaque type de document met à jour la barre d'état différemment.
-- **Validation** : Barre d'état changeant selon le document actif.
-
-## 7) Sauvegarde d'état MDI
-
-- **Action** : Sauvegardez et restaurez l'état des fenêtres (position, taille, documents ouverts).
-- **Piste** : Utilisez `QSettings` et gérez `closeEvent` de la fenêtre principale.
-- **Validation** : Application qui retrouve son état MDI au redémarrage.
-
-## 8) Gestion des modifications
-
-- **Action** : Implémentez un système de détection des modifications avec confirmation avant fermeture.
-- **Indice** : Signal `modificationChanged` et gestion dans `closeEvent` des sous-fenêtres.
-- **Validation** : Demande de confirmation si des documents sont modifiés.
+- **Action** : Finalisez avec fonction `main()` et testez toutes les fonctionnalités MDI.
+- **Piste** : Boucle d'événements classique. Testez la fermeture, redimensionnement des sous-fenêtres.
+- **Validation** : Application MDI complète et interactive.
 
 ---
 
 ## Exercices supplémentaires
 
-- **Onglets détachables** : Permettez de détacher les onglets en fenêtres indépendantes.
-- **Sessions** : Sauvegardez/chargez des sessions complètes de travail.
-- **Recherche globale** : Fonction de recherche dans tous les documents texte ouverts.
-- **Plugin architecture** : Préparez l'architecture pour ajouter facilement de nouveaux types de documents.
+- **Troisième fenêtre** : Ajoutez "Graphiques" pour le TP2.
+- **Icônes** : Ajoutez des icônes ☀️ 📊 aux sous-fenêtres.
+- **Menu Fichier** : Ajoutez "Quitter" dans un menu Fichier.
