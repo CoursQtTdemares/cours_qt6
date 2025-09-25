@@ -8,7 +8,6 @@
 - Implémenter des traitements asynchrones avec QRunnable et QThreadPool
 - Gérer les opérations sur le système de fichiers avec les classes Qt
 - Internationaliser une application PyQt6 pour supporter plusieurs langues
-- Créer une application complexe combinant tous ces aspects
 
 ## Durée estimée : 4h00
 - **Théorie** : 2h00
